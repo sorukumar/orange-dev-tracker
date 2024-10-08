@@ -1,0 +1,7 @@
+pandas
+numpy
+requests
+pyarrow
+echarts-python-placeholder # Note: echarts is handled via JS, but if you used any specific python libs for them
+python-dotenv
+tqdm

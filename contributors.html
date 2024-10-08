@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orange Dev Tracker: Contributors</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Orange Dev Tracker</h1>
+            <p class="subtitle">15 Years of Bitcoin Source Code Forensics</p>
+            <nav style="margin-top:20px;">
+                <a href="index.html"
+                    style="color:var(--text-primary); text-decoration:none; margin-right:15px;">Dashboard</a>
+                <a href="contributors.html" style="color:#f7931a; font-weight:bold; margin-right:15px;">Contributors</a>
+                <a href="codebase.html"
+                    style="color:var(--text-primary); text-decoration:none; margin-right:15px;">Codebase</a>
+                <a href="health.html" style="color:var(--text-primary); text-decoration:none;">Health & Culture</a>
+            </nav>
+        </header>
+
+        <!-- Contributor Landscape -->
+        <section class="slide">
+            <div class="card" style="height: 1100px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>The Contributor Landscape</h3>
+                    <div style="font-size:0.8em; opacity:0.7;">X: Join Year | Y: Commits | Size: Commits | Color: Last
+                        Active
+                    </div>
+                </div>
+                <div id="chart-contributor-landscape" style="width: 100%; height: 1000px;"></div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="js/app.js?v=2"></script>
+</body>
+
+</html>

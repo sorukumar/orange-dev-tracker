@@ -1,0 +1,21 @@
+# Environment & Secrets
+.env
+*.env
+
+# Python Junk
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+.ipynb_checkpoints/
+
+# OS/IDE Junk
+.DS_Store
+.vscode/
+.idea/
+.history/
+
+# Cloned Repos & Notebooks
+code/bitcoin/
+colab/
