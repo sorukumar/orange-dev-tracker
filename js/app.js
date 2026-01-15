@@ -1,10 +1,37 @@
-// Initialize ECharts instances
+// Helper to read CSS variables for the chart palette
+function getGhibliPalette() {
+    const style = getComputedStyle(document.documentElement);
+    const vars = [
+        'sky', 'sky-light', 'leaf', 'leaf-light', 'sunset', 'sunset-light',
+        'gold', 'gold-light', 'rose', 'rose-light', 'ocean', 'ocean-light',
+        'meadow', 'meadow-light', 'sakura', 'sakura-light', 'moss', 'earth',
+        'twilight', 'cloud'
+    ];
+    const palette = vars.map(v => style.getPropertyValue(`--ghibli-${v}`).trim()).filter(c => c !== '');
+    return palette.length > 0 ? palette : [
+        '#7BA9CC', '#B9D4E7', '#5B8266', '#A2C5AC', '#E07A5F', '#F4A261',
+        '#D4AF37', '#E9C46A', '#6D597A', '#B5838D', '#3E6073', '#8BBEE8',
+        '#89B449', '#C5D86D', '#E27396', '#FFB3C1', '#585123', '#DDA15E',
+        '#384D48', '#ACD7EC'
+    ];
+}
+
+let GHIBLI_PALETTE = getGhibliPalette();
+
 const charts = {};
+const chartConfig = {
+    color: GHIBLI_PALETTE,
+    backgroundColor: 'transparent',
+    textStyle: { color: 'var(--text-secondary)', fontFamily: 'Inter' }
+};
 
 async function init() {
+    // Refresh palette from CSS variables just before initialization
+    GHIBLI_PALETTE = getGhibliPalette();
+
     function initChart(id) {
         const el = document.getElementById(id);
-        return el ? echarts.init(el, 'dark') : null;
+        return el ? echarts.init(el) : null;
     }
 
     // Vital Signs Snapshots (Reused)
@@ -142,11 +169,12 @@ async function loadSnapshots() {
                     type: 'pie',
                     radius: ['40%', '70%'],
                     avoidLabelOverlap: false,
-                    itemStyle: { borderRadius: 5, borderColor: '#161b22', borderWidth: 2 },
+                    itemStyle: { borderRadius: 5, borderColor: '#ffffff', borderWidth: 2 },
                     label: { show: false },
-                    emphasis: { label: { show: true, fontSize: 16, fontWeight: 'bold', color: '#fff' }, itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.5)' } },
+                    emphasis: { label: { show: true, fontSize: 16, fontWeight: 'bold', color: 'var(--secondary)' }, itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.1)' } },
                     data: dataWork.data
-                }]
+                }],
+                color: GHIBLI_PALETTE
             });
         } catch (e) { }
     }
@@ -173,9 +201,10 @@ async function loadSnapshots() {
                 series: [{
                     type: 'pie',
                     radius: '60%',
-                    label: { color: '#ccc' },
+                    label: { color: 'var(--text-secondary)' },
                     data: dataVol.data,
-                }]
+                }],
+                color: GHIBLI_PALETTE
             });
         } catch (e) { }
     }
@@ -205,10 +234,11 @@ async function loadSnapshots() {
                 series: [{
                     type: 'pie',
                     radius: '60%',
-                    label: { color: '#ccc' },
+                    label: { color: 'var(--text-secondary)' },
                     data: pieData,
-                    itemStyle: { borderRadius: 5, borderColor: '#161b22', borderWidth: 1 }
-                }]
+                    itemStyle: { borderRadius: 5, borderColor: '#ffffff', borderWidth: 1 }
+                }],
+                color: GHIBLI_PALETTE.slice(2) // Offset for variety
             });
         } catch (e) { }
     }
@@ -261,9 +291,10 @@ async function loadCategory() {
                 data: data.categories,
                 bottom: 0,
                 type: 'scroll',
-                pageTextStyle: { color: '#fff' },
-                textStyle: { color: '#ccc' }
+                pageTextStyle: { color: 'var(--text-primary)' },
+                textStyle: { color: 'var(--text-secondary)' }
             },
+            color: GHIBLI_PALETTE,
             grid: { left: '3%', right: '4%', bottom: '20%', containLabel: true },
             xAxis: { type: 'category', boundaryGap: false, data: data.xAxis },
             yAxis: { type: 'value' },
@@ -309,7 +340,7 @@ async function loadGrowth() {
                             { offset: 1, color: 'rgba(247, 147, 26, 0.1)' }
                         ])
                     },
-                    lineStyle: { color: '#f7931a', width: 2 },
+                    lineStyle: { color: GHIBLI_PALETTE[4], width: 3 },
                     data: filteredData
                 }]
             });
@@ -343,11 +374,11 @@ async function loadEngagementTiers() {
         function sumC(arr) { return arr.reduce((s, c) => s + c.total_commits, 0); }
 
         const tiers = [
-            { name: "👑 The Core (Top 1%)", val: sumC(group1), count: group1.length, color: '#d35400' },
-            { name: "⭐ The Regulars (Top 10%)", val: sumC(group2), count: group2.length, color: '#e67e22' },
-            { name: "⚒️ The Sustainers (Top 25%)", val: sumC(group3), count: group3.length, color: '#f39c12' },
-            { name: "🔭 The Explorers (Top 50%)", val: sumC(group4), count: group4.length, color: '#f1c40f' },
-            { name: "🧱 The Scouts (Bottom 50%)", val: sumC(group5), count: group5.length, color: '#7f8c8d' }
+            { name: "👑 The Core (Top 1%)", val: sumC(group1), count: group1.length, color: GHIBLI_PALETTE[4] },
+            { name: "⭐ The Regulars (Top 10%)", val: sumC(group2), count: group2.length, color: GHIBLI_PALETTE[5] },
+            { name: "⚒️ The Sustainers (Top 25%)", val: sumC(group3), count: group3.length, color: GHIBLI_PALETTE[7] },
+            { name: "🔭 The Explorers (Top 50%)", val: sumC(group4), count: group4.length, color: GHIBLI_PALETTE[3] },
+            { name: "🧱 The Scouts (Bottom 50%)", val: sumC(group5), count: group5.length, color: GHIBLI_PALETTE[19] }
         ];
 
         // Chart: Horizontal Bar showing Share of Commits
@@ -409,15 +440,15 @@ async function loadSocial() {
 
         charts.social.setOption({
             tooltip: { trigger: 'axis' },
-            legend: { bottom: 0, textStyle: { color: '#ccc' } },
+            legend: { bottom: 0, textStyle: { color: 'var(--text-secondary)' } },
             xAxis: { type: 'category', data: filteredX },
             yAxis: [
                 { type: 'value', name: 'Stars', position: 'left' },
                 { type: 'value', name: 'Forks', position: 'right', splitLine: { show: false } }
             ],
             series: [
-                { name: 'Stars', type: 'line', data: filteredStars, yAxisIndex: 0, showSymbol: false, itemStyle: { color: '#f7931a' } },
-                { name: 'Forks', type: 'line', data: filteredForks, yAxisIndex: 1, showSymbol: false, itemStyle: { color: '#ffffff' } }
+                { name: 'Stars', type: 'line', data: filteredStars, yAxisIndex: 0, showSymbol: false, itemStyle: { color: GHIBLI_PALETTE[4] } },
+                { name: 'Forks', type: 'line', data: filteredForks, yAxisIndex: 1, showSymbol: false, itemStyle: { color: 'var(--secondary)' } }
             ]
         });
     } catch (e) { }
@@ -443,7 +474,7 @@ async function loadMaintainers() {
                 step: 'start',
                 data: filteredData,
                 areaStyle: { opacity: 0.2 },
-                itemStyle: { color: '#00ff88' }
+                itemStyle: { color: GHIBLI_PALETTE[2] }
             }]
         });
     } catch (e) { }
@@ -464,7 +495,16 @@ async function loadStory() {
             grid: { height: '80%', top: '10%' },
             xAxis: { type: 'category', data: filteredYears, splitArea: { show: true } },
             yAxis: { type: 'category', data: dataHM.hours, splitArea: { show: true } },
-            visualMap: { min: 0, max: 800, calculable: true, orient: 'horizontal', left: 'center', bottom: '0%' },
+            visualMap: {
+                min: 0,
+                max: 800,
+                calculable: true,
+                orient: 'horizontal',
+                left: 'center',
+                bottom: '0%',
+                inRange: { color: ['#F5F1EE', '#ACD7EC', '#3E6073'] } // Nature Breath: Cream -> Sky -> Deep Sea
+            },
+            color: GHIBLI_PALETTE,
             series: [{
                 type: 'heatmap',
                 data: filteredDataHM,
@@ -484,11 +524,12 @@ async function loadStory() {
         }));
 
         charts.weekend.setOption({
-            title: { text: 'Weekend Coding Ratio', left: 'center', textStyle: { color: '#ccc' } },
+            title: { text: 'Weekend Coding Ratio', left: 'center', textStyle: { color: 'var(--text-secondary)' } },
             tooltip: { trigger: 'axis' },
             xAxis: { type: 'category', data: filteredXW },
             yAxis: { type: 'value', max: 0.5 },
-            series: filteredSeriesW
+            series: filteredSeriesW,
+            color: GHIBLI_PALETTE.slice(4)
         });
     } catch (e) { }
 }
@@ -532,10 +573,10 @@ async function loadContributorLandscape() {
             tooltip: {
                 trigger: 'item',
                 padding: 0,
-                backgroundColor: 'rgba(20, 20, 20, 0.95)',
-                borderColor: '#444',
+                backgroundColor: '#ffffff',
+                borderColor: 'var(--border-color)',
                 borderWidth: 1,
-                textStyle: { color: '#eee' },
+                textStyle: { color: 'var(--text-primary)' },
                 formatter: function (params) {
                     const r = params.data.raw;
 
@@ -609,12 +650,10 @@ async function loadContributorLandscape() {
                 orient: 'vertical',
                 right: 0,
                 top: 'middle',
-                textStyle: { color: '#ccc', fontSize: 10 },
+                textStyle: { color: 'var(--text-secondary)', fontSize: 10 },
                 calculable: true,
                 inRange: {
-                    color: ['#440055', '#3333aa', '#00aabb', '#55bb55', '#ffff00', '#ff0000']
-                    // Spectrum: Cold (Old) -> Hot (Recent)
-                    // Purple -> Blue -> Cyan -> Green -> Yellow -> Red
+                    color: ['#3E6073', '#A2C5AC', '#E07A5F'] // Ocean -> Sage -> Sunset (Harmonious Transition)
                 }
             },
             series: [{
@@ -629,10 +668,10 @@ async function loadContributorLandscape() {
                 },
                 data: seriesData,
                 itemStyle: {
-                    shadowBlur: 5,
-                    shadowColor: 'rgba(0,0,0,0.4)',
-                    opacity: 0.8,
-                    borderColor: '#fff',
+                    shadowBlur: 2,
+                    shadowColor: 'rgba(0,0,0,0.1)',
+                    opacity: 0.6, // Increased transparency for density awareness
+                    borderColor: 'rgba(255,255,255,0.5)', // Softened border
                     borderWidth: 0.5
                 },
                 emphasis: {
@@ -655,11 +694,11 @@ async function loadCorporateEra() {
         if (!response.ok) return;
         const data = await response.json();
 
-        const chart = echarts.init(document.getElementById('chart-corporate'), 'dark');
+        const chart = echarts.init(document.getElementById('chart-corporate'));
         chart.setOption({
             backgroundColor: 'transparent',
             tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
-            legend: { bottom: 0, textStyle: { color: '#ccc' } },
+            legend: { bottom: 0, textStyle: { color: 'var(--text-secondary)' } },
             grid: { left: '3%', right: '4%', bottom: '10%', containLabel: true },
             xAxis: {
                 type: 'category',
@@ -684,19 +723,19 @@ async function loadGeography() {
         const json = await response.json();
         const data = json.data.reverse(); // Top 15, reverse for bar chart bottom-up
 
-        const chart = echarts.init(document.getElementById('chart-geography'), 'dark');
+        const chart = echarts.init(document.getElementById('chart-geography'));
         chart.setOption({
             backgroundColor: 'transparent',
             title: { text: 'Top Contributors by Location', left: 'center', textStyle: { color: '#888', fontSize: 12 } },
             tooltip: { trigger: 'axis' },
             grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
             xAxis: { type: 'value', show: false },
-            yAxis: { type: 'category', data: data.map(d => d.name), axisLabel: { color: "#ccc" } },
+            yAxis: { type: 'category', data: data.map(d => d.name), axisLabel: { color: "var(--text-secondary)" } },
             series: [{
                 type: 'bar',
                 data: data.map(d => d.value),
-                color: '#f7931a',
-                label: { show: true, position: 'right', color: "#fff" }
+                color: GHIBLI_PALETTE[2],
+                label: { show: true, position: 'right', color: "var(--text-primary)" }
             }]
         });
     } catch (e) { console.error(e); }
@@ -746,12 +785,12 @@ async function loadCodebaseSnapshots() {
                 },
                 grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
                 xAxis: { type: 'value', splitLine: { show: false } }, // Reversed? No, standard bar
-                yAxis: { type: 'category', data: slice.map(x => x.name), axisLabel: { color: '#ccc' }, inverse: true }, // Inverse to show Top at top
+                yAxis: { type: 'category', data: slice.map(x => x.name), axisLabel: { color: 'var(--text-secondary)' }, inverse: true }, // Inverse to show Top at top
                 series: [{
                     name: 'Files',
                     type: 'bar',
                     data: slice.map(x => x.value),
-                    itemStyle: { color: '#e67eff', borderRadius: [0, 4, 4, 0] }
+                    itemStyle: { color: GHIBLI_PALETTE[2], borderRadius: [0, 4, 4, 0] }
                 }]
             });
         }
@@ -774,12 +813,12 @@ async function loadCodebaseSnapshots() {
                 },
                 grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
                 xAxis: { type: 'value', splitLine: { show: false } },
-                yAxis: { type: 'category', data: slice.map(x => x.name), axisLabel: { color: '#ccc', fontSize: 10 }, inverse: true },
+                yAxis: { type: 'category', data: slice.map(x => x.name), axisLabel: { color: 'var(--text-secondary)', fontSize: 10 }, inverse: true },
                 series: [{
                     name: 'Files',
                     type: 'bar',
                     data: slice.map(x => x.value),
-                    itemStyle: { color: '#3498db', borderRadius: [0, 4, 4, 0] }
+                    itemStyle: { color: GHIBLI_PALETTE[5], borderRadius: [0, 4, 4, 0] }
                 }]
             });
         }

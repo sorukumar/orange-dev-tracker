@@ -7,22 +7,21 @@
     <title>Orange Dev Tracker: Health & Culture</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://sorukumar.github.io/Bitcoin-Data-Labs/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <div id="header"></div>
+
     <div class="container">
-        <header>
-            <h1>Orange Dev Tracker</h1>
-            <p class="subtitle">15 Years of Bitcoin Source Code Forensics</p>
-            <nav style="margin-top:20px;">
-                <a href="index.html"
-                    style="color:var(--text-primary); text-decoration:none; margin-right:15px;">Dashboard</a>
-                <a href="contributors.html"
-                    style="color:var(--text-primary); text-decoration:none; margin-right:15px;">Contributors</a>
-                <a href="codebase.html"
-                    style="color:var(--text-primary); text-decoration:none; margin-right:15px;">Codebase</a>
-                <a href="health.html" style="color:#f7931a; font-weight:bold;">Health & Culture</a>
+        <header style="margin-bottom: 20px;">
+            <nav>
+                <a href="index.html">Dashboard</a>
+                <a href="contributors.html">Contributors</a>
+                <a href="codebase.html">Codebase</a>
+                <a href="health.html" class="active">Health & Culture</a>
             </nav>
         </header>
 
@@ -31,36 +30,50 @@
             <div class="card">
                 <h3>The Keepers (Maintainers)</h3>
                 <p>The "Bus Factor" over time.</p>
-                <div id="chart-maintainers" class="chart"></div>
+                <div id="chart-maintainers" style="height: 400px;"></div>
             </div>
-        </section>
-
         </section>
 
         <!-- Story Section: Corporate Era -->
         <section class="story-section">
-            <h2>The Corporate Era</h2>
-            <p class="narrative">From cypherpunks to corporate labs. Tracking the shift from personal emails to
-                corporate domains.</p>
-            <div id="chart-corporate" class="chart-container large"></div>
-            <!-- <div class="chart-container small">Side stats (optional)</div> -->
+            <div class="card">
+                <h2>The Corporate Era</h2>
+                <p class="narrative">From cypherpunks to corporate labs. Tracking the shift from personal emails to
+                    corporate domains.</p>
+                <div id="chart-corporate" style="height: 400px;"></div>
+            </div>
         </section>
 
         <!-- Story Section: heartbeat -->
         <section id="heartbeat" class="story-section">
-            <h2>The Global Heartbeat</h2>
-            <p class="narrative">Does Bitcoin sleep? From a US-centric hobby to a global 24/7 phenomenon.</p>
-            <div style="display:flex; gap:20px; height: 400px;">
-                <div id="chart-heatmap" class="chart-container" style="flex:2; height: 100%;"></div>
-                <div id="chart-geography" class="chart-container" style="flex:1; height: 100%;"></div>
+            <div class="card">
+                <h2>The Global Heartbeat</h2>
+                <p class="narrative">Does Bitcoin sleep? From a US-centric hobby to a global 24/7 phenomenon.</p>
+                <div style="display:flex; gap:20px; height: 400px; flex-wrap: wrap;">
+                    <div id="chart-heatmap" style="flex:2; min-width: 400px; height: 100%;"></div>
+                    <div id="chart-geography" style="flex:1; min-width: 300px; height: 100%;"></div>
+                </div>
+                <div id="chart-weekend" style="height: 200px; margin-top:30px;"></div>
             </div>
-            <div id="chart-weekend" class="chart-container small" style="margin-top:20px;"></div>
         </section>
-
     </div>
 
+    <div id="footer"></div>
 
+    <script src="https://sorukumar.github.io/Bitcoin-Data-Labs/components/app-components.js"></script>
     <script src="js/app.js?v=2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            BitcoinLabsAppComponents.init({
+                isApp: true,
+                appName: 'Orange Dev Tracker',
+                appHomeUrl: 'index.html'
+            });
+        });
+    </script>
 </body>
+
+</html>
+
 
 </html>

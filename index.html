@@ -7,28 +7,27 @@
     <title>Orange Dev Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://sorukumar.github.io/Bitcoin-Data-Labs/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <div id="header"></div>
+
     <div class="container">
-        <!-- Header -->
-        <header>
-            <h1>Orange Dev Tracker</h1>
-            <p class="subtitle">15 Years of Bitcoin Source Code Forensics</p>
-            <nav style="margin-top:20px;">
-                <a href="index.html" style="color:#f7931a; font-weight:bold; margin-right:15px;">Dashboard</a>
-                <a href="contributors.html"
-                    style="color:var(--text-primary); text-decoration:none; margin-right:15px;">Contributors</a>
-                <a href="codebase.html"
-                    style="color:var(--text-primary); text-decoration:none; margin-right:15px;">Codebase</a>
-                <a href="health.html" style="color:var(--text-primary); text-decoration:none;">Health & Culture</a>
+        <header style="margin-bottom: 20px;">
+            <nav>
+                <a href="index.html" class="active">Dashboard</a>
+                <a href="contributors.html">Contributors</a>
+                <a href="codebase.html">Codebase</a>
+                <a href="health.html">Health & Culture</a>
             </nav>
         </header>
 
         <!-- Vital Signs: KPIs -->
         <section id="vital-signs" style="margin-bottom: 30px;">
-            <div class="kpi-grid" style="grid-template-columns: repeat(5, 1fr);">
+            <div class="kpi-grid">
                 <div class="kpi-card">
                     <div class="kpi-label">Unique Contributors</div>
                     <div class="kpi-value" id="kpi-contributors">-</div>
@@ -58,30 +57,30 @@
         </section>
 
         <!-- Combined Analysis Row: Work Dist + Evolution -->
-        <section style="display: flex; gap: 20px; margin-bottom: 30px; height: 400px;">
+        <section style="display: flex; gap: 20px; margin-bottom: 30px; min-height: 400px; flex-wrap: wrap;">
             <!-- Left 1/3: Snapshot -->
-            <div class="card" style="flex: 1; display: flex; flex-direction: column;">
+            <div class="card" style="flex: 1; min-width: 350px; display: flex; flex-direction: column;">
                 <h3>Unique Commits by Area (2025 Snapshot)</h3>
-                <div id="chart-snapshot-work" style="flex: 1;"></div>
+                <div id="chart-snapshot-work" style="flex: 1; height: 350px;"></div>
             </div>
             <!-- Right 2/3: Trend -->
-            <div class="card" style="flex: 2; display: flex; flex-direction: column;">
+            <div class="card" style="flex: 2; min-width: 350px; display: flex; flex-direction: column;">
                 <h3>Evolution of Functional Areas (Commit Trends)</h3>
-                <div id="chart-category" style="flex: 1;"></div>
+                <div id="chart-category" style="flex: 1; height: 350px;"></div>
             </div>
         </section>
 
         <!-- Combined: Contributor Army -->
-        <section style="display: flex; gap: 20px; margin-bottom: 30px; height: 400px;">
+        <section style="display: flex; gap: 20px; margin-bottom: 30px; min-height: 400px; flex-wrap: wrap;">
             <!-- Left 1/3: Engagement Tiers -->
-            <div class="card" style="flex: 1; display: flex; flex-direction: column;">
+            <div class="card" style="flex: 1; min-width: 350px; display: flex; flex-direction: column;">
                 <h3>The Engagement Pyramid</h3>
-                <div id="chart-engagement-tiers" style="flex: 1;"></div>
+                <div id="chart-engagement-tiers" style="flex: 1; height: 350px;"></div>
             </div>
             <!-- Right 2/3: Recruitment Velocity -->
-            <div class="card" style="flex: 2; display: flex; flex-direction: column;">
+            <div class="card" style="flex: 2; min-width: 350px; display: flex; flex-direction: column;">
                 <h3>Recruitment Velocity</h3>
-                <div id="chart-growth" style="flex: 1;"></div>
+                <div id="chart-growth" style="flex: 1; height: 350px;"></div>
             </div>
         </section>
 
@@ -89,15 +88,24 @@
         <section class="slide">
             <div class="card">
                 <h3>Social Proof</h3>
-                <div id="chart-social" class="chart"></div>
+                <div id="chart-social" style="height: 400px;"></div>
             </div>
         </section>
-
-        <!-- Slide 4: Maintainers moved to health.html -->
-
     </div>
 
+    <div id="footer"></div>
+
+    <script src="https://sorukumar.github.io/Bitcoin-Data-Labs/components/app-components.js"></script>
     <script src="js/app.js?v=2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            BitcoinLabsAppComponents.init({
+                isApp: true,
+                appName: 'Orange Dev Tracker',
+                appHomeUrl: 'index.html' // Relative is fine since they are in same site usually
+            });
+        });
+    </script>
 </body>
 
 </html>

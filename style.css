@@ -1,74 +1,139 @@
 :root {
-    --bg-color: #0d1117;
-    --card-bg: #161b22;
-    --text-primary: #c9d1d9;
-    --text-accent: #f7931a; /* Bitcoin Orange */
-    --border-color: #30363d;
+    /* Ghibli Nature Palette tokens */
+    --ghibli-sky: #7BA9CC;
+    --ghibli-sky-light: #B9D4E7;
+    --ghibli-leaf: #5B8266;
+    --ghibli-leaf-light: #A2C5AC;
+    --ghibli-sunset: #E07A5F;
+    --ghibli-sunset-light: #F4A261;
+    --ghibli-gold: #D4AF37;
+    --ghibli-gold-light: #E9C46A;
+    --ghibli-rose: #6D597A;
+    --ghibli-rose-light: #B5838D;
+    --ghibli-ocean: #3E6073;
+    --ghibli-ocean-light: #8BBEE8;
+    --ghibli-meadow: #89B449;
+    --ghibli-meadow-light: #C5D86D;
+    --ghibli-sakura: #E27396;
+    --ghibli-sakura-light: #FFB3C1;
+    --ghibli-moss: #585123;
+    --ghibli-earth: #DDA15E;
+    --ghibli-twilight: #384D48;
+    --ghibli-cloud: #ACD7EC;
+
+    /* Compatibility with old names */
+    --bg-color: var(--bg-primary);
+    --card-bg: #ffffff;
+    --text-accent: var(--primary);
+    --border-color: #ececec;
 }
 
-body {
-    background-color: var(--bg-color);
-    color: var(--text-primary);
-    font-family: 'Inter', sans-serif;
-    margin: 0;
+/* Override BDL's header hiding to show dashboard title/nav */
+body header {
+    display: block !important;
+    text-align: center;
+    margin-bottom: 10px;
     padding: 0;
+}
+
+/* App Header Specific Styles (Overriding BDL for dashboard look) */
+.app-header {
+    padding: 0.5rem 0;
+    box-shadow: 0 2px 16px rgba(var(--shadow-secondary, 42, 51, 66), 0.07);
+    border-radius: 0 0 16px 16px;
+}
+
+.logos-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.app-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--primary);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.app-name:hover {
+    color: var(--accent-warm);
+    transform: scale(1.07);
+}
+
+.divider {
+    width: 2px;
+    height: 32px;
+    background: linear-gradient(to bottom, var(--accent-cool), var(--accent-warm));
+    margin: 0 0.75rem;
+    border-radius: 2px;
+    opacity: 0.7;
+}
+
+/* Base body styles */
+body {
+    padding-top: 100px;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 20px;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 60px;
-}
-
-h1 {
-    font-size: 3em;
-    font-weight: 800;
-    color: var(--text-accent);
-    margin: 0;
-}
-
+header h1,
 .subtitle {
-    font-size: 1.2em;
-    opacity: 0.7;
+    display: none;
 }
 
-.story-section {
-    margin-bottom: 80px;
+nav {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+nav a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+nav a:hover {
+    color: var(--primary);
+    background: var(--bg-secondary);
+}
+
+nav a.active {
+    color: var(--primary);
+    font-weight: 600;
+    background: var(--bg-secondary);
 }
 
 .card {
-    background: var(--card-bg);
+    background: #ffffff;
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 40px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(42, 51, 66, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.chart-container {
-    width: 100%;
-    margin-bottom: 20px;
+.card:hover {
+    box-shadow: 0 8px 24px rgba(42, 51, 66, 0.08);
 }
 
-.large { height: 400px; }
-.small { height: 200px; }
-.chart { height: 400px; }
-
-h2, h3 {
+h2,
+h3 {
     margin-top: 0;
     font-weight: 600;
-}
-
-.narrative {
-    font-size: 1.1em;
-    line-height: 1.6;
-    max-width: 800px;
-    margin-bottom: 30px;
+    color: var(--secondary);
 }
 
 /* Vital Signs */
@@ -78,43 +143,59 @@ h2, h3 {
     gap: 20px;
     margin-bottom: 40px;
 }
-.kpi-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-}
-.kpi-value {
-    font-size: 2.5em;
-    font-weight: bold;
-    color: var(--text-accent);
-    margin: 10px 0;
-}
-.kpi-label {
-    opacity: 0.8;
-    font-size: 0.9em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
 
-.snapshot-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    margin-bottom: 60px;
-}
-.snapshot-card {
-    background: var(--card-bg);
+.kpi-card {
+    background: #ffffff;
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 20px;
+    padding: 24px 15px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(42, 51, 66, 0.04);
 }
 
+.kpi-value {
+    font-size: 2.2em;
+    font-weight: bold;
+    color: var(--primary);
+    margin: 10px 0;
+}
+
+.kpi-label {
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
 
 .kpi-sub {
     font-size: 0.8em;
-    color: var(--text-primary);
-    opacity: 0.6;
+    color: var(--text-secondary);
+    opacity: 0.8;
     margin-top: -5px;
+}
+
+/* ECharts responsive overrides if needed */
+.chart-container {
+    width: 100%;
+    height: 400px;
+}
+
+/* Mobile responsiveness */
+@media screen and (max-width: 768px) {
+    body {
+        padding-top: 80px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    header h1 {
+        font-size: 2em;
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr 1fr;
+    }
 }
