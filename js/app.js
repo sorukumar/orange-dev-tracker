@@ -16,13 +16,47 @@ function getGhibliPalette() {
     ];
 }
 
+const COLORS = {
+    textPrimary: '#2D3748',
+    textSecondary: '#4A5568',
+    textLight: '#718096',
+    border: '#E2E8F0',
+    gridLine: 'rgba(226, 232, 240, 0.6)'
+};
+
+const tooltipStyle = {
+    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+    borderColor: COLORS.border,
+    borderWidth: 1,
+    padding: [10, 14],
+    textStyle: { color: COLORS.textPrimary, fontFamily: 'Inter', fontSize: 13 },
+    shadowBlur: 10,
+    shadowColor: 'rgba(0,0,0,0.1)',
+    extraCssText: 'border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);'
+};
+
+const axisStyle = {
+    axisLine: { lineStyle: { color: COLORS.border } },
+    axisTick: { lineStyle: { color: COLORS.border } },
+    axisLabel: { color: COLORS.textSecondary, fontSize: 11 },
+    splitLine: { lineStyle: { color: COLORS.gridLine, type: 'dashed' } },
+    nameTextStyle: { color: COLORS.textLight, fontSize: 12, fontWeight: 500 }
+};
+
+const legendStyle = {
+    textStyle: { color: COLORS.textSecondary, fontSize: 11, fontFamily: 'Inter' },
+    itemGap: 15,
+    pageIconColor: COLORS.textSecondary,
+    pageTextStyle: { color: COLORS.textSecondary }
+};
+
 let GHIBLI_PALETTE = getGhibliPalette();
 
 const charts = {};
 const chartConfig = {
     color: GHIBLI_PALETTE,
     backgroundColor: 'transparent',
-    textStyle: { color: 'var(--text-secondary)', fontFamily: 'Inter' }
+    textStyle: { color: COLORS.textSecondary, fontFamily: 'Inter' }
 };
 
 async function init() {
@@ -143,43 +177,57 @@ async function loadSnapshots() {
         try {
             const resWork = await fetch('data/stats_work_distribution.json');
             const dataWork = await resWork.json();
+            const total = dataWork.data.reduce((acc, curr) => acc + curr.value, 0);
+
             charts.snapshotWork.setOption({
                 backgroundColor: 'transparent',
                 tooltip: {
+                    ...tooltipStyle,
                     trigger: 'item',
                     formatter: function (p) {
                         const pct = p.percent;
                         const strat = pct < 5 ? 1 : 0;
-
-                        let valStr = "";
-                        if (p.value > 1000) {
-                            const valK = p.value / 1000;
-                            const valStrat = valK < 10 ? 1 : 0;
-                            valStr = valK.toFixed(valStrat) + "k";
-                        } else {
-                            valStr = p.value;
-                        }
-
-                        // "Activity by Area" is commits, so just number is fine, but user asked for "15k" format
-                        return p.name + ': ' + valStr + ' (' + pct.toFixed(strat) + '%)';
+                        let valStr = p.value > 1000 ? (p.value / 1000).toFixed(1) + "k" : p.value;
+                        return `<b>${p.name}</b><br/>Commits: <b>${valStr}</b> (${pct.toFixed(strat)}%)`;
                     }
                 },
-                legend: { show: false }, // No legend for donut to save space
+                legend: { show: false },
                 series: [{
                     type: 'pie',
-                    radius: ['40%', '70%'],
+                    radius: ['50%', '75%'],
                     avoidLabelOverlap: false,
-                    itemStyle: { borderRadius: 5, borderColor: '#ffffff', borderWidth: 2 },
-                    label: { show: false },
-                    emphasis: { label: { show: true, fontSize: 16, fontWeight: 'bold', color: 'var(--secondary)' }, itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.1)' } },
+                    itemStyle: { borderRadius: 8, borderColor: '#ffffff', borderWidth: 2 },
+                    label: { show: false, position: 'center' },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: 14,
+                            fontWeight: 'bold',
+                            color: COLORS.textPrimary,
+                            formatter: '{b}\n{d}%'
+                        },
+                        itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.1)' }
+                    },
                     data: dataWork.data
+                }],
+                graphic: [{
+                    type: 'text',
+                    left: 'center',
+                    top: 'center',
+                    style: {
+                        text: 'ACTIVITY',
+                        fill: COLORS.textLight,
+                        fontSize: 10,
+                        fontWeight: 600,
+                        letterSpacing: 1
+                    }
                 }],
                 color: GHIBLI_PALETTE
             });
         } catch (e) { }
     }
 
-    // Volume (Codebase Page Only now?)
+    // Volume (Codebase Page Only)
     if (charts.snapshotVolume) {
         try {
             const resVol = await fetch('data/stats_code_volume.json');
@@ -187,58 +235,56 @@ async function loadSnapshots() {
             charts.snapshotVolume.setOption({
                 backgroundColor: 'transparent',
                 tooltip: {
+                    ...tooltipStyle,
                     trigger: 'item',
                     formatter: function (p) {
                         const pct = p.percent;
                         const pctStrat = pct < 5 ? 1 : 0;
-
                         const valK = p.value / 1000;
                         const valStrat = valK < 5 ? 1 : 0;
-
-                        return p.name + ': ' + valK.toFixed(valStrat) + 'k Lines (' + pct.toFixed(pctStrat) + '%)';
+                        return `<b>${p.name}</b><br/>Volume: <b>${valK.toFixed(valStrat)}k</b> Lines (${pct.toFixed(pctStrat)}%)`;
                     }
                 },
                 series: [{
                     type: 'pie',
-                    radius: '60%',
-                    label: { color: 'var(--text-secondary)' },
+                    radius: '65%',
+                    label: { color: COLORS.textSecondary, fontSize: 11 },
                     data: dataVol.data,
+                    itemStyle: { borderRadius: 4, borderColor: '#ffffff', borderWidth: 1 }
                 }],
                 color: GHIBLI_PALETTE
             });
         } catch (e) { }
     }
 
-    // Tech Stack (Codebase Page Only now?)
+    // Tech Stack (Codebase Page Only)
     if (charts.snapshotStack) {
         try {
             const resStack = await fetch('data/stats_tech_stack.json');
             const dataStack = await resStack.json();
-            // Top 8 for Pie visibility
             const pieData = dataStack.data.slice(0, 8);
 
             charts.snapshotStack.setOption({
                 backgroundColor: 'transparent',
                 tooltip: {
+                    ...tooltipStyle,
                     trigger: 'item',
                     formatter: function (p) {
                         const pct = p.percent;
                         const pctStrat = pct < 5 ? 1 : 0;
-
                         const valK = p.value / 1000;
                         const valStrat = valK < 5 ? 1 : 0;
-
-                        return p.name + ': ' + valK.toFixed(valStrat) + 'k Lines (' + pct.toFixed(pctStrat) + '%)';
+                        return `<b>${p.name}</b><br/>Lines: <b>${valK.toFixed(valStrat)}k</b> (${pct.toFixed(pctStrat)}%)`;
                     }
                 },
                 series: [{
                     type: 'pie',
-                    radius: '60%',
-                    label: { color: 'var(--text-secondary)' },
+                    radius: '65%',
+                    label: { color: COLORS.textSecondary, fontSize: 11 },
                     data: pieData,
-                    itemStyle: { borderRadius: 5, borderColor: '#ffffff', borderWidth: 1 }
+                    itemStyle: { borderRadius: 4, borderColor: '#ffffff', borderWidth: 1 }
                 }],
-                color: GHIBLI_PALETTE.slice(2) // Offset for variety
+                color: GHIBLI_PALETTE.slice(2)
             });
         } catch (e) { }
     }
@@ -259,17 +305,18 @@ async function loadCategory() {
         }
 
         charts.category.setOption({
+            backgroundColor: 'transparent',
             tooltip: {
+                ...tooltipStyle,
                 trigger: 'axis',
-                axisPointer: { type: 'cross', label: { backgroundColor: '#6a7985' } },
+                axisPointer: { type: 'cross', label: { backgroundColor: COLORS.textSecondary } },
                 formatter: function (params) {
                     let total = 0;
                     params.forEach(p => total += p.value);
 
-                    let tooltipHtml = `<div><b>${params[0].axisValueLabel}</b></div>`;
-                    tooltipHtml += `<div style="font-size:10px; color:#aaa; margin-bottom:5px;">Total Activity: ${total.toLocaleString()}</div>`;
+                    let tooltipHtml = `<div style="margin-bottom:8px; border-bottom:1px solid ${COLORS.border}; padding-bottom:4px;"><b>${params[0].axisValueLabel}</b></div>`;
+                    tooltipHtml += `<div style="font-size:11px; color:${COLORS.textLight}; margin-bottom:8px;">Total Activity: <b>${total.toLocaleString()}</b> Commits</div>`;
 
-                    // Sort params by value desc for clearer tooltip
                     const sorted = [...params].sort((a, b) => b.value - a.value);
 
                     sorted.forEach(p => {
@@ -278,9 +325,9 @@ async function loadCategory() {
 
                         if (p.value > 0) {
                             tooltipHtml += `
-                            <div style="display:flex; justify-content:space-between; gap:15px; font-size:12px;">
+                            <div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; margin-bottom:2px;">
                                 <span>${p.marker} ${p.seriesName}</span>
-                                <span><b>${pctStr}%</b> <span style="color:#888; font-size:10px;">(${p.value.toLocaleString()})</span></span>
+                                <span><b>${pctStr}%</b> <span style="color:${COLORS.textLight}; font-size:10px;">(${p.value.toLocaleString()})</span></span>
                             </div>`;
                         }
                     });
@@ -288,20 +335,30 @@ async function loadCategory() {
                 }
             },
             legend: {
+                ...legendStyle,
                 data: data.categories,
                 bottom: 0,
-                type: 'scroll',
-                pageTextStyle: { color: 'var(--text-primary)' },
-                textStyle: { color: 'var(--text-secondary)' }
+                type: 'scroll'
             },
             color: GHIBLI_PALETTE,
-            grid: { left: '3%', right: '4%', bottom: '20%', containLabel: true },
-            xAxis: { type: 'category', boundaryGap: false, data: data.xAxis },
-            yAxis: { type: 'value' },
+            grid: { left: '4%', right: '4%', bottom: '15%', containLabel: true },
+            xAxis: {
+                ...axisStyle,
+                type: 'category',
+                boundaryGap: false,
+                data: data.xAxis
+            },
+            yAxis: {
+                ...axisStyle,
+                type: 'value',
+                name: 'Commits',
+                nameGap: 10
+            },
             series: data.series.map(s => ({
                 ...s,
                 symbol: 'none',
-                smooth: true
+                smooth: true,
+                emphasis: { focus: 'series', lineStyle: { width: 3 } }
             }))
         });
     } catch (e) { console.error("Category Load Error", e); }
@@ -325,19 +382,20 @@ async function loadGrowth() {
 
             charts.growth.setOption({
                 backgroundColor: 'transparent',
-                tooltip: { trigger: 'axis' },
-                grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-                xAxis: { type: 'category', boundaryGap: false, data: filteredX },
-                yAxis: { type: 'value' },
+                tooltip: { ...tooltipStyle, trigger: 'axis' },
+                grid: { left: '4%', right: '4%', bottom: '10%', containLabel: true },
+                xAxis: { ...axisStyle, type: 'category', boundaryGap: false, data: filteredX },
+                yAxis: { ...axisStyle, type: 'value', name: 'New Devs' },
                 series: [{
                     name: 'New Contributors',
                     type: 'line',
                     smooth: true,
-                    symbol: 'none',
+                    symbol: 'circle',
+                    symbolSize: 6,
                     areaStyle: {
                         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                            { offset: 0, color: 'rgba(247, 147, 26, 0.8)' },
-                            { offset: 1, color: 'rgba(247, 147, 26, 0.1)' }
+                            { offset: 0, color: 'rgba(224, 122, 95, 0.4)' }, // Sunset
+                            { offset: 1, color: 'rgba(224, 122, 95, 0.05)' }
                         ])
                     },
                     lineStyle: { color: GHIBLI_PALETTE[4], width: 3 },
@@ -385,6 +443,7 @@ async function loadEngagementTiers() {
         charts.engagement.setOption({
             backgroundColor: 'transparent',
             tooltip: {
+                ...tooltipStyle,
                 trigger: 'axis',
                 axisPointer: { type: 'shadow' },
                 formatter: (params) => {
@@ -392,31 +451,35 @@ async function loadEngagementTiers() {
                     const tier = tiers.find(t => t.name === p.name);
                     const pct = (p.value / totalCommits * 100).toFixed(1);
                     return `
-                        <b>${p.name}</b><br/>
-                        Contributors: <b>${tier ? tier.count : '-'}</b><br/>
-                        Commits: <b>${p.value.toLocaleString()}</b> (${pct}%)
+                        <div style="margin-bottom:4px; font-weight:bold;">${p.name}</div>
+                        <div style="font-size:12px;">Contributors: <b>${tier ? tier.count : '-'}</b></div>
+                        <div style="font-size:12px;">Commits: <b>${p.value.toLocaleString()}</b> (${pct}%)</div>
                     `;
                 }
             },
-            grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+            grid: { left: '4%', right: '8%', bottom: '3%', containLabel: true },
             xAxis: { type: 'value', show: false },
             yAxis: {
+                ...axisStyle,
                 type: 'category',
                 data: tiers.map(t => t.name).reverse(),
-                axisLabel: { color: '#ccc', fontSize: 11 },
+                axisLabel: { ...axisStyle.axisLabel, fontSize: 10 },
                 axisLine: { show: false },
                 axisTick: { show: false }
             },
             series: [{
                 type: 'bar',
-                data: tiers.map(t => ({ value: t.val, itemStyle: { color: t.color } })).reverse(),
+                data: tiers.map(t => ({ value: t.val, itemStyle: { color: t.color, borderRadius: [0, 4, 4, 0] } })).reverse(),
                 label: {
                     show: true,
                     position: 'right',
                     formatter: (p) => (p.value / totalCommits * 100).toFixed(0) + "%",
-                    color: '#fff'
+                    color: COLORS.textSecondary,
+                    fontSize: 11,
+                    fontWeight: 'bold',
+                    distance: 10
                 },
-                barWidth: '60%'
+                barWidth: '50%'
             }]
         });
 
@@ -439,16 +502,18 @@ async function loadSocial() {
         const filteredForks = validIndices.map(i => data.forks[i]);
 
         charts.social.setOption({
-            tooltip: { trigger: 'axis' },
-            legend: { bottom: 0, textStyle: { color: 'var(--text-secondary)' } },
-            xAxis: { type: 'category', data: filteredX },
+            backgroundColor: 'transparent',
+            tooltip: { ...tooltipStyle, trigger: 'axis' },
+            legend: { ...legendStyle, bottom: 0 },
+            grid: { left: '4%', right: '4%', bottom: '15%', containLabel: true },
+            xAxis: { ...axisStyle, type: 'category', data: filteredX },
             yAxis: [
-                { type: 'value', name: 'Stars', position: 'left' },
-                { type: 'value', name: 'Forks', position: 'right', splitLine: { show: false } }
+                { ...axisStyle, type: 'value', name: 'Stars', position: 'left' },
+                { ...axisStyle, type: 'value', name: 'Forks', position: 'right', splitLine: { show: false } }
             ],
             series: [
-                { name: 'Stars', type: 'line', data: filteredStars, yAxisIndex: 0, showSymbol: false, itemStyle: { color: GHIBLI_PALETTE[4] } },
-                { name: 'Forks', type: 'line', data: filteredForks, yAxisIndex: 1, showSymbol: false, itemStyle: { color: 'var(--secondary)' } }
+                { name: 'Stars', type: 'line', data: filteredStars, yAxisIndex: 0, showSymbol: false, itemStyle: { color: GHIBLI_PALETTE[4] }, smooth: true },
+                { name: 'Forks', type: 'line', data: filteredForks, yAxisIndex: 1, showSymbol: false, itemStyle: { color: GHIBLI_PALETTE[10] }, smooth: true }
             ]
         });
     } catch (e) { }
@@ -465,15 +530,22 @@ async function loadMaintainers() {
         const filteredData = validIndices.map(i => data.series[0].data[i]);
 
         charts.maintainers.setOption({
-            tooltip: { trigger: 'axis' },
-            xAxis: { type: 'category', data: filteredX },
-            yAxis: { type: 'value' },
+            backgroundColor: 'transparent',
+            tooltip: { ...tooltipStyle, trigger: 'axis' },
+            grid: { left: '4%', right: '4%', bottom: '10%', containLabel: true },
+            xAxis: { ...axisStyle, type: 'category', data: filteredX },
+            yAxis: { ...axisStyle, type: 'value', name: 'Maintainers' },
             series: [{
                 name: 'Active Maintainers',
                 type: 'line',
                 step: 'start',
                 data: filteredData,
-                areaStyle: { opacity: 0.2 },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(91, 130, 102, 0.3)' }, // Leaf
+                        { offset: 1, color: 'rgba(91, 130, 102, 0.05)' }
+                    ])
+                },
                 itemStyle: { color: GHIBLI_PALETTE[2] }
             }]
         });
@@ -491,10 +563,15 @@ async function loadStory() {
         const filteredDataHM = dataHM.data.filter(item => validYearIndices.includes(item[0]));
 
         charts.heatmap.setOption({
-            tooltip: { position: 'top' },
-            grid: { height: '80%', top: '10%' },
-            xAxis: { type: 'category', data: filteredYears, splitArea: { show: true } },
-            yAxis: { type: 'category', data: dataHM.hours, splitArea: { show: true } },
+            backgroundColor: 'transparent',
+            tooltip: {
+                ...tooltipStyle,
+                position: 'top',
+                formatter: (p) => `<b>${p.data[1]}:00</b> on ${p.data[0]}<br/>Commits: <b>${p.data[2]}</b>`
+            },
+            grid: { height: '75%', top: '5%', bottom: '15%' },
+            xAxis: { ...axisStyle, type: 'category', data: filteredYears, splitArea: { show: true } },
+            yAxis: { ...axisStyle, type: 'category', data: dataHM.hours, splitArea: { show: true } },
             visualMap: {
                 min: 0,
                 max: 800,
@@ -502,9 +579,10 @@ async function loadStory() {
                 orient: 'horizontal',
                 left: 'center',
                 bottom: '0%',
-                inRange: { color: ['#F5F1EE', '#ACD7EC', '#3E6073'] } // Nature Breath: Cream -> Sky -> Deep Sea
+                itemWidth: 15,
+                textStyle: { color: COLORS.textSecondary, fontSize: 10 },
+                inRange: { color: ['#F5F1EE', '#ACD7EC', '#3E6073'] }
             },
-            color: GHIBLI_PALETTE,
             series: [{
                 type: 'heatmap',
                 data: filteredDataHM,
@@ -515,19 +593,23 @@ async function loadStory() {
         const resW = await fetch('data/stats_weekend.json');
         const dataW = await resW.json();
 
-        // Filter out 2026+
         const validIndicesW = dataW.xAxis.map((x, i) => parseInt(x) <= 2025 ? i : -1).filter(i => i !== -1);
         const filteredXW = validIndicesW.map(i => dataW.xAxis[i]);
         const filteredSeriesW = dataW.series.map(s => ({
             ...s,
-            data: validIndicesW.map(i => s.data[i])
+            data: validIndicesW.map(i => s.data[i]),
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 6
         }));
 
         charts.weekend.setOption({
-            title: { text: 'Weekend Coding Ratio', left: 'center', textStyle: { color: 'var(--text-secondary)' } },
-            tooltip: { trigger: 'axis' },
-            xAxis: { type: 'category', data: filteredXW },
-            yAxis: { type: 'value', max: 0.5 },
+            backgroundColor: 'transparent',
+            title: { text: 'Weekend Coding Ratio', left: 'center', top: 0, textStyle: { color: COLORS.textLight, fontSize: 12, fontWeight: 500 } },
+            tooltip: { ...tooltipStyle, trigger: 'axis' },
+            grid: { left: '4%', right: '4%', bottom: '10%', containLabel: true },
+            xAxis: { ...axisStyle, type: 'category', data: filteredXW },
+            yAxis: { ...axisStyle, type: 'value', max: 0.5, name: 'Ratio' },
             series: filteredSeriesW,
             color: GHIBLI_PALETTE.slice(4)
         });
@@ -563,63 +645,52 @@ async function loadContributorLandscape() {
 
         charts.landscape.setOption({
             backgroundColor: 'transparent',
-            grid: { top: 60, right: 120, bottom: 60, left: 60 },
+            grid: { top: 80, right: 140, bottom: 80, left: 80 },
             title: {
                 text: 'Contributor Landscape',
-                subtext: `Colored by Last Active Year (Warm = Recent, Cold = Retired)`,
+                subtext: `Bubble size = Total Commits • Color = Last Active Year`,
                 left: 'center',
-                top: 10
+                top: 10,
+                textStyle: { color: COLORS.textPrimary, fontSize: 18, fontWeight: 'bold' },
+                subtextStyle: { color: COLORS.textLight, fontSize: 12 }
             },
             tooltip: {
                 trigger: 'item',
                 padding: 0,
-                backgroundColor: '#ffffff',
-                borderColor: 'var(--border-color)',
+                backgroundColor: '#1A202C', // Deep Navy/Charcoal
+                borderColor: '#2D3748',
                 borderWidth: 1,
-                textStyle: { color: 'var(--text-primary)' },
+                shadowBlur: 15,
+                shadowColor: 'rgba(0,0,0,0.4)',
                 formatter: function (params) {
                     const r = params.data.raw;
-
-                    // --- Header: Identity ---
-                    const loginPart = r.login && r.login !== "Anonymous" ? `(@${r.login})` : "";
-                    const badge = r.rank_label ? `<span style="background:#333; padding:2px 6px; border-radius:4px; font-size:10px; border:1px solid #777;">${r.rank_label}</span>` : "";
-
-                    // --- Body: Metadata ---
+                    const loginPart = r.login && r.login !== "Anonymous" ? `<span style="color:#A0AEC0;">@${r.login}</span>` : "";
+                    const badge = r.rank_label ? `<span style="background:#4A5568; padding:2px 6px; border-radius:4px; font-size:10px; color:#EDF2F7; margin-left:8px;">${r.rank_label}</span>` : "";
                     const company = r.company ? `🏢 ${r.company}` : "";
                     const loc = r.location ? `📍 ${r.location}` : "";
                     const metaRow = [company, loc].filter(x => x).join(" &nbsp; ");
 
-                    // --- Stats Grid ---
-                    // Explicitly showing Percentile as requested
                     const stats = `
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px; margin-top:8px; font-size:11px;">
-                            <div>📅 <b>${r.span}</b> (${r.tenure}y)</div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; font-size:11px; border-top: 1px solid #2D3748; padding-top:10px;">
+                            <div>📅 <b>${r.span}</b></div>
                             <div>💻 <b>${r.total_commits.toLocaleString()}</b> commits</div>
                             <div>📊 <b>${r.contribution_pct}%</b> share</div>
                             <div>🏆 <b>Top ${(100 - r.percentile_raw + 0.1).toFixed(1)}%</b></div>
                         </div>
                     `;
 
-                    // --- Footer: Focus Areas ---
                     let focusStr = "";
-                    const topFocus = Object.entries(r.focus_areas)
-                        .sort((a, b) => b[1] - a[1]) // Sort by % desc
-                        .slice(0, 3); // Top 3 only
-
+                    const topFocus = Object.entries(r.focus_areas).sort((a, b) => b[1] - a[1]).slice(0, 3);
                     if (topFocus.length > 0) {
-                        const badges = topFocus.map(([cat, pct]) =>
-                            `<span style="color:#aaa;">${cat} ${(pct * 100).toFixed(0)}%</span>`
-                        ).join(" • ");
-                        focusStr = `<div style="margin-top:8px; border-top:1px solid #444; padding-top:4px; font-size:10px;"><b>Focus:</b> ${badges}</div>`;
+                        const badges = topFocus.map(([cat, pct]) => `<span style="color:#CBD5E0;">${cat} ${(pct * 100).toFixed(0)}%</span>`).join(" • ");
+                        focusStr = `<div style="margin-top:10px; border-top:1px solid #2D3748; padding-top:6px; font-size:10px;"><b>Active In:</b> ${badges}</div>`;
                     }
 
                     return `
-                        <div style="width:240px; padding:10px; font-family:sans-serif;">
-                            <div style="border-bottom:1px solid #555; padding-bottom:5px; margin-bottom:5px;">
-                                <div style="font-size:14px; color:#fff; font-weight:bold;">${r.name}</div>
-                                <div style="font-size:11px; color:#aaa; margin-top:2px;">${loginPart} ${badge}</div>
-                            </div>
-                            <div style="font-size:11px; color:#ddd; margin-bottom:4px;">${metaRow}</div>
+                        <div style="width:260px; padding:15px; font-family:Inter, sans-serif; color:#EDF2F7;">
+                            <div style="font-size:16px; font-weight:bold; color:#F6AD55; margin-bottom:2px;">${r.name}</div>
+                            <div style="font-size:12px; margin-bottom:8px;">${loginPart}${badge}</div>
+                            <div style="font-size:11px; color:#A0AEC0;">${metaRow}</div>
                             ${stats}
                             ${focusStr}
                         </div>
@@ -627,60 +698,59 @@ async function loadContributorLandscape() {
                 }
             },
             xAxis: {
+                ...axisStyle,
                 type: 'value',
                 name: 'Cohort Year (First Commit)',
                 nameLocation: 'middle',
-                nameGap: 30,
+                nameGap: 40,
                 min: 2008,
                 max: 2025,
-                splitLine: { show: false },
-                axisLabel: { formatter: '{value}' }
+                axisLabel: { ...axisStyle.axisLabel, fontSize: 12 }
             },
             yAxis: {
+                ...axisStyle,
                 type: 'log',
-                name: 'Total Commits (Log Scale)',
-                splitLine: { lineStyle: { type: 'dashed', opacity: 0.1 } }
+                name: 'Total Commits',
+                nameGap: 50,
+                nameLocation: 'middle',
+                axisLabel: { ...axisStyle.axisLabel, fontSize: 12 }
             },
             visualMap: {
                 type: 'continuous',
                 dimension: 3,
                 min: minYear,
                 max: maxYear,
-                text: ['Recent', 'Old'],
+                text: ['Active', 'Retired'],
                 orient: 'vertical',
-                right: 0,
-                top: 'middle',
-                textStyle: { color: 'var(--text-secondary)', fontSize: 10 },
+                right: 10,
+                top: 'center',
+                textStyle: { color: COLORS.textSecondary, fontSize: 11 },
                 calculable: true,
                 inRange: {
-                    color: ['#3E6073', '#A2C5AC', '#E07A5F'] // Ocean -> Sage -> Sunset (Harmonious Transition)
+                    color: ['#3182CE', '#68D391', '#F6AD55'] // Blue -> Green -> Orange (Vibrant)
                 }
             },
             series: [{
                 type: 'scatter',
-                // Size based on Commits, log scaled - Cleaner Look
                 symbolSize: function (data) {
-                    // data[1] is Total Commits
-                    // Log scale: log10(1) = 0, log10(10) = 1, log10(100) = 2, log10(1000) = 3, log10(10k) = 4
-                    // Previous was impact (huge numbers). Commits are smaller.
-                    // Multiplier 8 gives: 1 commit -> 4px, 100 -> 16px+4=20px, 1000 -> 24+4=28px
-                    return Math.max(4, Math.log10(data[1] + 1) * 8);
+                    return Math.max(6, Math.log10(data[1] + 1) * 10);
                 },
                 data: seriesData,
                 itemStyle: {
-                    shadowBlur: 2,
-                    shadowColor: 'rgba(0,0,0,0.1)',
-                    opacity: 0.6, // Increased transparency for density awareness
-                    borderColor: 'rgba(255,255,255,0.5)', // Softened border
-                    borderWidth: 0.5
+                    shadowBlur: 5,
+                    shadowColor: 'rgba(0,0,0,0.2)',
+                    opacity: 0.7,
+                    borderColor: 'rgba(255,255,255,0.4)',
+                    borderWidth: 1
                 },
                 emphasis: {
                     focus: 'self',
                     itemStyle: {
-                        shadowBlur: 10,
-                        shadowColor: 'rgba(255,255,255,0.5)',
+                        shadowBlur: 20,
+                        shadowColor: 'rgba(255,255,255,0.3)',
                         borderColor: '#fff',
-                        borderWidth: 2
+                        borderWidth: 2,
+                        opacity: 1
                     }
                 }
             }]
@@ -697,15 +767,16 @@ async function loadCorporateEra() {
         const chart = echarts.init(document.getElementById('chart-corporate'));
         chart.setOption({
             backgroundColor: 'transparent',
-            tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
-            legend: { bottom: 0, textStyle: { color: 'var(--text-secondary)' } },
-            grid: { left: '3%', right: '4%', bottom: '10%', containLabel: true },
+            tooltip: { ...tooltipStyle, trigger: 'axis', axisPointer: { type: 'cross' } },
+            legend: { ...legendStyle, bottom: 0 },
+            grid: { left: '4%', right: '4%', bottom: '15%', containLabel: true },
             xAxis: {
+                ...axisStyle,
                 type: 'category',
                 boundaryGap: false,
                 data: data.xAxis.filter(x => parseInt(x) <= 2025)
             },
-            yAxis: { type: 'value', max: 100, axisLabel: { formatter: '{value}%' } },
+            yAxis: { ...axisStyle, type: 'value', max: 100, axisLabel: { ...axisStyle.axisLabel, formatter: '{value}%' } },
             series: data.series.map(s => ({
                 ...s,
                 data: s.data.slice(0, data.xAxis.filter(x => parseInt(x) <= 2025).length),
@@ -726,16 +797,27 @@ async function loadGeography() {
         const chart = echarts.init(document.getElementById('chart-geography'));
         chart.setOption({
             backgroundColor: 'transparent',
-            title: { text: 'Top Contributors by Location', left: 'center', textStyle: { color: '#888', fontSize: 12 } },
-            tooltip: { trigger: 'axis' },
-            grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+            title: { text: 'Impact by Geography', left: 'center', top: 0, textStyle: { color: COLORS.textLight, fontSize: 12, fontWeight: 500 } },
+            tooltip: { ...tooltipStyle, trigger: 'axis' },
+            grid: { left: '4%', right: '10%', bottom: '5%', containLabel: true },
             xAxis: { type: 'value', show: false },
-            yAxis: { type: 'category', data: data.map(d => d.name), axisLabel: { color: "var(--text-secondary)" } },
+            yAxis: {
+                ...axisStyle,
+                type: 'category',
+                data: data.map(d => d.name),
+                axisLabel: { ...axisStyle.axisLabel, color: COLORS.textSecondary }
+            },
             series: [{
                 type: 'bar',
-                data: data.map(d => d.value),
+                data: data.map(d => ({ value: d.value, itemStyle: { borderRadius: [0, 4, 4, 0] } })),
                 color: GHIBLI_PALETTE[2],
-                label: { show: true, position: 'right', color: "var(--text-primary)" }
+                label: {
+                    show: true,
+                    position: 'right',
+                    color: COLORS.textSecondary,
+                    fontSize: 11,
+                    fontWeight: 'bold'
+                }
             }]
         });
     } catch (e) { console.error(e); }
@@ -769,56 +851,57 @@ async function loadCodebaseSnapshots() {
 
         // Files by Lang (Bar)
         if (charts.filesLang) {
-            // Top 10 + Consolidated "Others"? No, just Top 12 for clarity
             const slice = data.files_by_lang.slice(0, 12);
             charts.filesLang.setOption({
                 backgroundColor: 'transparent',
                 tooltip: {
+                    ...tooltipStyle,
                     trigger: 'axis',
                     axisPointer: { type: 'shadow' },
                     formatter: function (params) {
                         const item = params[0];
                         const val = item.value / totalFiles * 100;
                         const pct = val < 5 ? val.toFixed(1) : val.toFixed(0);
-                        return `${item.name}<br/><b>${item.value} Files</b> (${pct}%)`;
+                        return `<b>${item.name}</b><br/><b>${item.value.toLocaleString()} Files</b> (${pct}%)`;
                     }
                 },
-                grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-                xAxis: { type: 'value', splitLine: { show: false } }, // Reversed? No, standard bar
-                yAxis: { type: 'category', data: slice.map(x => x.name), axisLabel: { color: 'var(--text-secondary)' }, inverse: true }, // Inverse to show Top at top
+                grid: { left: '4%', right: '10%', bottom: '3%', containLabel: true },
+                xAxis: { type: 'value', show: false },
+                yAxis: { ...axisStyle, type: 'category', data: slice.map(x => x.name), inverse: true },
                 series: [{
                     name: 'Files',
                     type: 'bar',
                     data: slice.map(x => x.value),
-                    itemStyle: { color: GHIBLI_PALETTE[2], borderRadius: [0, 4, 4, 0] }
+                    itemStyle: { color: GHIBLI_PALETTE[2], borderRadius: [0, 4, 4, 0] },
+                    label: { show: true, position: 'right', color: COLORS.textSecondary, fontSize: 10, fontWeight: 'bold' }
                 }]
             });
         }
 
-        // Files by Category (Bar)
-        // Files by Category (Bar)
         if (charts.filesCat) {
             const slice = data.files_by_cat;
             charts.filesCat.setOption({
                 backgroundColor: 'transparent',
                 tooltip: {
+                    ...tooltipStyle,
                     trigger: 'axis',
                     axisPointer: { type: 'shadow' },
                     formatter: function (params) {
                         const item = params[0];
                         const val = item.value / totalFiles * 100;
                         const pct = val < 5 ? val.toFixed(1) : val.toFixed(0);
-                        return `${item.name}<br/><b>${item.value} Files</b> (${pct}%)`;
+                        return `<b>${item.name}</b><br/><b>${item.value.toLocaleString()} Files</b> (${pct}%)`;
                     }
                 },
-                grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-                xAxis: { type: 'value', splitLine: { show: false } },
-                yAxis: { type: 'category', data: slice.map(x => x.name), axisLabel: { color: 'var(--text-secondary)', fontSize: 10 }, inverse: true },
+                grid: { left: '4%', right: '10%', bottom: '3%', containLabel: true },
+                xAxis: { type: 'value', show: false },
+                yAxis: { ...axisStyle, type: 'category', data: slice.map(x => x.name), inverse: true, axisLabel: { ...axisStyle.axisLabel, fontSize: 10 } },
                 series: [{
                     name: 'Files',
                     type: 'bar',
                     data: slice.map(x => x.value),
-                    itemStyle: { color: GHIBLI_PALETTE[5], borderRadius: [0, 4, 4, 0] }
+                    itemStyle: { color: GHIBLI_PALETTE[5], borderRadius: [0, 4, 4, 0] },
+                    label: { show: true, position: 'right', color: COLORS.textSecondary, fontSize: 10, fontWeight: 'bold' }
                 }]
             });
         }
@@ -835,61 +918,49 @@ async function loadStackEvolution() {
         charts.stackEvolution.setOption({
             backgroundColor: 'transparent',
             tooltip: {
+                ...tooltipStyle,
                 trigger: 'axis',
-                axisPointer: { type: 'cross', label: { backgroundColor: '#6a7985' } },
+                axisPointer: { type: 'cross', label: { backgroundColor: COLORS.textSecondary } },
                 formatter: function (params) {
                     let total = 0;
                     params.forEach(p => total += p.value);
+                    let totalStr = total > 1000000 ? (total / 1000000).toFixed(2) + "M" : (total / 1000).toFixed(0) + "k";
 
-                    // Smart Total Formatting (M or k)
-                    let totalStr = "";
-                    if (total > 1000000) {
-                        totalStr = (total / 1000000).toFixed(2) + "M";
-                    } else if (total > 1000) {
-                        totalStr = (total / 1000).toFixed(0) + "k";
-                    } else {
-                        totalStr = total.toFixed(0);
-                    }
-
-                    let tooltipHtml = `<div><b>${params[0].axisValueLabel}</b></div>`;
-                    tooltipHtml += `<div style="font-size:10px; color:#aaa; margin-bottom:5px;">Total: ${totalStr} Lines</div>`;
+                    let tooltipHtml = `<div style="margin-bottom:8px; border-bottom:1px solid ${COLORS.border}; padding-bottom:4px;"><b>${params[0].axisValueLabel}</b></div>`;
+                    tooltipHtml += `<div style="font-size:11px; color:${COLORS.textLight}; margin-bottom:8px;">Total: <b>${totalStr}</b> Lines</div>`;
 
                     params.forEach(p => {
                         const pct = total > 0 ? (p.value / total * 100).toFixed(0) : 0;
-
-                        let valStr = "";
-                        if (p.value > 1000000) valStr = (p.value / 1000000).toFixed(2) + "M";
-                        else if (p.value > 1000) valStr = (p.value / 1000).toFixed(0) + "k";
-                        else valStr = p.value.toFixed(0);
-
-                        // Show marker + Name + Value + Pct
+                        let valStr = p.value > 1000000 ? (p.value / 1000000).toFixed(2) + "M" : (p.value / 1000).toFixed(0) + "k";
                         tooltipHtml += `
-                        <div style="display:flex; justify-content:space-between; gap:15px; font-size:12px;">
+                        <div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; margin-bottom:2px;">
                             <span>${p.marker} ${p.seriesName}</span>
-                            <span><b>${pct}%</b> <span style="color:#888; font-size:10px;">(${valStr})</span></span>
+                            <span><b>${pct}%</b> <span style="color:${COLORS.textLight}; font-size:10px;">(${valStr})</span></span>
                         </div>`;
                     });
                     return tooltipHtml;
                 }
             },
             legend: {
+                ...legendStyle,
                 data: data.series.map(s => s.name),
-                textStyle: { color: "#ccc" },
-                bottom: 0
+                bottom: 0,
+                type: 'scroll'
             },
-            grid: { left: '3%', right: '4%', bottom: '10%', containLabel: true },
+            grid: { left: '4%', right: '4%', bottom: '15%', containLabel: true },
             xAxis: {
+                ...axisStyle,
                 type: 'category',
                 boundaryGap: false,
                 data: data.xAxis.filter(x => parseInt(x) <= 2025)
             },
-            yAxis: {
-                type: 'value',
-                name: 'Lines of Code'
-            },
+            yAxis: { ...axisStyle, type: 'value', name: 'Lines of Code' },
             series: data.series.map(s => ({
                 ...s,
-                data: s.data.slice(0, data.xAxis.filter(x => parseInt(x) <= 2025).length)
+                data: s.data.slice(0, data.xAxis.filter(x => parseInt(x) <= 2025).length),
+                smooth: true,
+                symbol: 'none',
+                emphasis: { focus: 'series', lineStyle: { width: 3 } }
             }))
         });
 
@@ -905,61 +976,49 @@ async function loadCategoryHistory() {
         charts.catEvolution.setOption({
             backgroundColor: 'transparent',
             tooltip: {
+                ...tooltipStyle,
                 trigger: 'axis',
-                axisPointer: { type: 'cross', label: { backgroundColor: '#6a7985' } },
+                axisPointer: { type: 'cross', label: { backgroundColor: COLORS.textSecondary } },
                 formatter: function (params) {
                     let total = 0;
                     params.forEach(p => total += p.value);
+                    let totalStr = total > 1000000 ? (total / 1000000).toFixed(2) + "M" : (total / 1000).toFixed(0) + "k";
 
-                    // Smart Total Formatting (M or k)
-                    let totalStr = "";
-                    if (total > 1000000) {
-                        totalStr = (total / 1000000).toFixed(2) + "M";
-                    } else if (total > 1000) {
-                        totalStr = (total / 1000).toFixed(0) + "k";
-                    } else {
-                        totalStr = total.toFixed(0);
-                    }
-
-                    let tooltipHtml = `<div><b>${params[0].axisValueLabel}</b></div>`;
-                    tooltipHtml += `<div style="font-size:10px; color:#aaa; margin-bottom:5px;">Total: ${totalStr} Lines</div>`;
+                    let tooltipHtml = `<div style="margin-bottom:8px; border-bottom:1 solid ${COLORS.border}; padding-bottom:4px;"><b>${params[0].axisValueLabel}</b></div>`;
+                    tooltipHtml += `<div style="font-size:11px; color:${COLORS.textLight}; margin-bottom:8px;">Total: <b>${totalStr}</b> Lines</div>`;
 
                     params.forEach(p => {
                         const pct = total > 0 ? (p.value / total * 100).toFixed(0) : 0;
-
-                        let valStr = "";
-                        if (p.value > 1000000) valStr = (p.value / 1000000).toFixed(2) + "M";
-                        else if (p.value > 1000) valStr = (p.value / 1000).toFixed(0) + "k";
-                        else valStr = p.value.toFixed(0);
-
-                        // Show marker + Name + Value + Pct
+                        let valStr = p.value > 1000000 ? (p.value / 1000000).toFixed(2) + "M" : (p.value / 1000).toFixed(0) + "k";
                         tooltipHtml += `
-                        <div style="display:flex; justify-content:space-between; gap:15px; font-size:12px;">
+                        <div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; margin-bottom:2px;">
                             <span>${p.marker} ${p.seriesName}</span>
-                            <span><b>${pct}%</b> <span style="color:#888; font-size:10px;">(${valStr})</span></span>
+                            <span><b>${pct}%</b> <span style="color:${COLORS.textLight}; font-size:10px;">(${valStr})</span></span>
                         </div>`;
                     });
                     return tooltipHtml;
                 }
             },
             legend: {
+                ...legendStyle,
                 data: data.series.map(s => s.name),
-                textStyle: { color: "#ccc" },
-                bottom: 0
+                bottom: 0,
+                type: 'scroll'
             },
-            grid: { left: '3%', right: '4%', bottom: '10%', containLabel: true },
+            grid: { left: '4%', right: '4%', bottom: '15%', containLabel: true },
             xAxis: {
+                ...axisStyle,
                 type: 'category',
                 boundaryGap: false,
                 data: data.xAxis.filter(x => parseInt(x) <= 2025)
             },
-            yAxis: {
-                type: 'value',
-                name: 'Lines of Code'
-            },
+            yAxis: { ...axisStyle, type: 'value', name: 'Lines of Code' },
             series: data.series.map(s => ({
                 ...s,
-                data: s.data.slice(0, data.xAxis.filter(x => parseInt(x) <= 2025).length)
+                data: s.data.slice(0, data.xAxis.filter(x => parseInt(x) <= 2025).length),
+                smooth: true,
+                symbol: 'none',
+                emphasis: { focus: 'series', lineStyle: { width: 3 } }
             }))
         });
 
