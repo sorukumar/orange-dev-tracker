@@ -76,7 +76,9 @@ async function init() {
     // Codebase New Charts
     charts.filesLang = initChart('chart-snapshot-files-lang');
     charts.filesCat = initChart('chart-snapshot-files-cat');
+    charts.filesCat = initChart('chart-snapshot-files-cat');
     charts.stackEvolution = initChart('chart-stack-evolution');
+    charts.streamgraph = initChart('chart-streamgraph'); // New
     charts.catEvolution = initChart('chart-category-evolution');
 
     // Trends
@@ -100,10 +102,10 @@ async function init() {
     if (charts.snapshotWork || charts.snapshotVolume || charts.snapshotStack) await loadSnapshots();
 
     // Codebase Page
-    if (charts.stackEvolution) {
+    if (charts.streamgraph || charts.filesCat) {
         await loadCodebaseSnapshots();
-        await loadStackEvolution();
     }
+    if (charts.streamgraph) await loadStreamgraph();
     if (charts.catEvolution) await loadCategoryHistory();
 
     // Index Page
@@ -909,62 +911,104 @@ async function loadCodebaseSnapshots() {
     } catch (e) { console.error("Codebase Snapshots Error", e); }
 }
 
-async function loadStackEvolution() {
+
+
+async function loadStreamgraph() {
     try {
         const res = await fetch('data/stats_stack_evolution.json');
         if (!res.ok) return;
         const data = await res.json();
 
-        charts.stackEvolution.setOption({
+        // Filter dates <= 2025
+        const validIndices = data.xAxis.map((x, i) => parseInt(x) <= 2025 ? i : -1).filter(i => i !== -1);
+        const filteredX = validIndices.map(i => data.xAxis[i]);
+
+        // Transform to ThemeRiver format: [date, value, id]
+        const riverData = [];
+        data.series.forEach(s => {
+            validIndices.forEach(idx => {
+                // ECharts ThemeRiver needs exact date strings, usually YYYY-MM-DD
+                // Our xAxis is YYYY-MM. Let's append -01
+                const date = data.xAxis[idx] + "-01";
+                const val = s.data[idx];
+                if (val > 0) {
+                    riverData.push([date, val, s.name]);
+                }
+            });
+        });
+
+        charts.streamgraph.setOption({
             backgroundColor: 'transparent',
             tooltip: {
-                ...tooltipStyle,
                 trigger: 'axis',
-                axisPointer: { type: 'cross', label: { backgroundColor: COLORS.textSecondary } },
+                axisPointer: { type: 'line', lineStyle: { color: 'rgba(0,0,0,0.2)', width: 1, type: 'solid' } },
                 formatter: function (params) {
+                    // ThemeRiver tooltip params is just the single point if trigger item, 
+                    // or array if trigger axis? ThemeRiver axis trigger is tricky.
+                    // Actually usually 'axis' works but it gives all points at that time.
+
+                    if (!params || !params.length) return "";
+
+                    const dateStr = params[0].axisValue; // "2024-12-01"
+                    // Format date to "Dec 2024"
+                    const dateObj = new Date(dateStr);
+                    const formattedDate = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+
                     let total = 0;
-                    params.forEach(p => total += p.value);
-                    let totalStr = total > 1000000 ? (total / 1000000).toFixed(2) + "M" : (total / 1000).toFixed(0) + "k";
+                    params.forEach(p => total += p.value[1]);
 
-                    let tooltipHtml = `<div style="margin-bottom:8px; border-bottom:1px solid ${COLORS.border}; padding-bottom:4px;"><b>${params[0].axisValueLabel}</b></div>`;
-                    tooltipHtml += `<div style="font-size:11px; color:${COLORS.textLight}; margin-bottom:8px;">Total: <b>${totalStr}</b> Lines</div>`;
+                    let html = `<div style="margin-bottom:5px; border-bottom:1px solid #eee;"><b>${formattedDate}</b></div>`;
+                    html += `<div style="margin-bottom:5px; font-size:11px;">Total: <b>${(total / 1000).toFixed(0)}k</b> Lines</div>`;
 
-                    params.forEach(p => {
-                        const pct = total > 0 ? (p.value / total * 100).toFixed(0) : 0;
-                        let valStr = p.value > 1000000 ? (p.value / 1000000).toFixed(2) + "M" : (p.value / 1000).toFixed(0) + "k";
-                        tooltipHtml += `
-                        <div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; margin-bottom:2px;">
-                            <span>${p.marker} ${p.seriesName}</span>
-                            <span><b>${pct}%</b> <span style="color:${COLORS.textLight}; font-size:10px;">(${valStr})</span></span>
+                    // Sort descending
+                    const sorted = [...params].sort((a, b) => b.value[1] - a.value[1]);
+
+                    sorted.forEach(p => {
+                        const val = p.value[1];
+                        const name = p.value[2];
+                        const pct = (val / total * 100).toFixed(1);
+                        html += `
+                        <div style="display:flex; justify-content:space-between; gap:15px; font-size:12px;">
+                            <span>${p.marker} ${name}</span>
+                            <span><b>${pct}%</b> <span style="opacity:0.7">(${(val / 1000).toFixed(1)}k)</span></span>
                         </div>`;
                     });
-                    return tooltipHtml;
-                }
+
+                    return html;
+                },
+                ...tooltipStyle
             },
             legend: {
                 ...legendStyle,
                 data: data.series.map(s => s.name),
-                bottom: 0,
-                type: 'scroll'
+                bottom: 0
             },
-            grid: { left: '4%', right: '4%', bottom: '15%', containLabel: true },
-            xAxis: {
-                ...axisStyle,
-                type: 'category',
-                boundaryGap: false,
-                data: data.xAxis.filter(x => parseInt(x) <= 2025)
+            singleAxis: {
+                top: 50,
+                bottom: 50,
+                axisTick: { show: false },
+                axisLabel: { ...axisStyle.axisLabel },
+                type: 'time',
+                axisPointer: {
+                    animation: true,
+                    label: { show: true }
+                },
+                splitLine: { show: true, lineStyle: { type: 'dashed', opacity: 0.2 } }
             },
-            yAxis: { ...axisStyle, type: 'value', name: 'Lines of Code' },
-            series: data.series.map(s => ({
-                ...s,
-                data: s.data.slice(0, data.xAxis.filter(x => parseInt(x) <= 2025).length),
-                smooth: true,
-                symbol: 'none',
-                emphasis: { focus: 'series', lineStyle: { width: 3 } }
-            }))
+            series: [{
+                type: 'themeRiver',
+                emphasis: { itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0, 0, 0, 0.8)' } },
+                data: riverData,
+                label: { show: false },  // Too cluttered usually
+                itemStyle: {
+                    shadowBlur: 2,
+                    shadowColor: 'rgba(0,0,0,0.3)'
+                }
+            }],
+            color: GHIBLI_PALETTE.slice(2) // Match stack colors roughly
         });
 
-    } catch (e) { console.error("Stack Evolution Error", e); }
+    } catch (e) { console.error("Streamgraph Error", e); }
 }
 
 async function loadCategoryHistory() {
@@ -973,31 +1017,55 @@ async function loadCategoryHistory() {
         if (!res.ok) return;
         const data = await res.json();
 
+        // 1. Filter dates <= 2025
+        const validIndices = data.xAxis.map((x, i) => parseInt(x) <= 2025 ? i : -1).filter(i => i !== -1);
+
+        // 2. Transform to ThemeRiver format: [date, value, id]
+        const riverData = [];
+        data.series.forEach(s => {
+            validIndices.forEach(idx => {
+                const date = data.xAxis[idx] + "-01"; // "2024-12" -> "2024-12-01"
+                const val = s.data[idx];
+                if (val > 0) {
+                    riverData.push([date, val, s.name]);
+                }
+            });
+        });
+
         charts.catEvolution.setOption({
             backgroundColor: 'transparent',
             tooltip: {
-                ...tooltipStyle,
                 trigger: 'axis',
-                axisPointer: { type: 'cross', label: { backgroundColor: COLORS.textSecondary } },
+                axisPointer: { type: 'line', lineStyle: { color: 'rgba(0,0,0,0.2)', width: 1, type: 'solid' } },
                 formatter: function (params) {
+                    if (!params || !params.length) return "";
+
+                    const dateStr = params[0].axisValue;
+                    const dateObj = new Date(dateStr);
+                    const formattedDate = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+
                     let total = 0;
-                    params.forEach(p => total += p.value);
-                    let totalStr = total > 1000000 ? (total / 1000000).toFixed(2) + "M" : (total / 1000).toFixed(0) + "k";
+                    params.forEach(p => total += p.value[1]);
 
-                    let tooltipHtml = `<div style="margin-bottom:8px; border-bottom:1 solid ${COLORS.border}; padding-bottom:4px;"><b>${params[0].axisValueLabel}</b></div>`;
-                    tooltipHtml += `<div style="font-size:11px; color:${COLORS.textLight}; margin-bottom:8px;">Total: <b>${totalStr}</b> Lines</div>`;
+                    let html = `<div style="margin-bottom:5px; border-bottom:1px solid #eee;"><b>${formattedDate}</b></div>`;
+                    html += `<div style="margin-bottom:5px; font-size:11px;">Total: <b>${(total / 1000).toFixed(0)}k</b> Lines</div>`;
 
-                    params.forEach(p => {
-                        const pct = total > 0 ? (p.value / total * 100).toFixed(0) : 0;
-                        let valStr = p.value > 1000000 ? (p.value / 1000000).toFixed(2) + "M" : (p.value / 1000).toFixed(0) + "k";
-                        tooltipHtml += `
-                        <div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; margin-bottom:2px;">
-                            <span>${p.marker} ${p.seriesName}</span>
-                            <span><b>${pct}%</b> <span style="color:${COLORS.textLight}; font-size:10px;">(${valStr})</span></span>
+                    const sorted = [...params].sort((a, b) => b.value[1] - a.value[1]);
+
+                    sorted.forEach(p => {
+                        const val = p.value[1];
+                        const name = p.value[2];
+                        const pct = (val / total * 100).toFixed(1);
+                        html += `
+                        <div style="display:flex; justify-content:space-between; gap:15px; font-size:12px;">
+                            <span>${p.marker} ${name}</span>
+                            <span><b>${pct}%</b> <span style="opacity:0.7">(${(val / 1000).toFixed(1)}k)</span></span>
                         </div>`;
                     });
-                    return tooltipHtml;
-                }
+
+                    return html;
+                },
+                ...tooltipStyle
             },
             legend: {
                 ...legendStyle,
@@ -1005,21 +1073,29 @@ async function loadCategoryHistory() {
                 bottom: 0,
                 type: 'scroll'
             },
-            grid: { left: '4%', right: '4%', bottom: '15%', containLabel: true },
-            xAxis: {
-                ...axisStyle,
-                type: 'category',
-                boundaryGap: false,
-                data: data.xAxis.filter(x => parseInt(x) <= 2025)
+            singleAxis: {
+                top: 50,
+                bottom: 50,
+                axisTick: { show: false },
+                axisLabel: { ...axisStyle.axisLabel },
+                type: 'time',
+                axisPointer: {
+                    animation: true,
+                    label: { show: true }
+                },
+                splitLine: { show: true, lineStyle: { type: 'dashed', opacity: 0.2 } }
             },
-            yAxis: { ...axisStyle, type: 'value', name: 'Lines of Code' },
-            series: data.series.map(s => ({
-                ...s,
-                data: s.data.slice(0, data.xAxis.filter(x => parseInt(x) <= 2025).length),
-                smooth: true,
-                symbol: 'none',
-                emphasis: { focus: 'series', lineStyle: { width: 3 } }
-            }))
+            series: [{
+                type: 'themeRiver',
+                emphasis: { itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0, 0, 0, 0.8)' } },
+                data: riverData,
+                label: { show: false },
+                itemStyle: {
+                    shadowBlur: 2,
+                    shadowColor: 'rgba(0,0,0,0.3)'
+                }
+            }],
+            color: GHIBLI_PALETTE // Use full palette for categories (more distinct)
         });
 
     } catch (e) { console.error("Category History Error", e); }

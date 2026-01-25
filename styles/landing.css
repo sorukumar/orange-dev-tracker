@@ -1,0 +1,190 @@
+:root {
+    --bg-color: #0B0E14; /* Deep, deep blue/black */
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --accent: #F7931A; /* Bitcoin Orange */
+    --accent-glow: rgba(247, 147, 26, 0.3);
+    
+    --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+    --container-max: 1200px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* --- Layout --- */
+#main-container {
+    position: relative;
+    width: 100%;
+}
+
+/* The Graphic Layer - Stays Sticky */
+#viz-container {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 0;
+    background: radial-gradient(circle at center, #131A26 0%, #0B0E14 70%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: opacity 0.5s ease;
+}
+
+#landing-chart {
+    width: 100%;
+    height: 100%;
+    /* Allow pointer events only when needed, usually we want click-through to scroll */
+    pointer-events: all; 
+}
+
+/* The Narrative Layer - Scrolls Over */
+#scroll-content {
+    position: relative;
+    z-index: 10;
+    /* Move visualization behind content visually by using transparent spacers or padding */
+    margin-top: -100vh; 
+    padding-bottom: 50vh; /* Extra space at bottom */
+    pointer-events: none; /* Let clicks pass through to chart if hitting empty space */
+}
+
+.step {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start; /* Left align usually looks better for scrollytelling */
+    padding: 2rem 5%;
+    max-width: 600px;
+    margin-left: 5%; /* Offset to left */
+    pointer-events: all; /* Re-enable for text selection/buttons */
+}
+
+/* Right aligned steps for variety */
+.step.right {
+    margin-left: auto;
+    margin-right: 5%;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.step.center {
+    margin: 0 auto;
+    align-items: center;
+    text-align: center;
+    max-width: 800px;
+}
+
+/* --- Typography & Components --- */
+h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, #94A3B8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+}
+
+h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+}
+
+p.lead {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin-bottom: 2rem;
+}
+
+.text-box {
+    background: rgba(11, 14, 20, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.step.active .text-box {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.highlight {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.btn-primary {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 4px 14px var(--accent-glow);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--accent-glow);
+}
+
+.btn-secondary {
+    display: inline-block;
+    background: rgba(255,255,255,0.1);
+    color: var(--text-primary);
+    padding: 14px 28px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 10px;
+    backdrop-filter: blur(5px);
+    transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* Scroll indicator */
+.scroll-down {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--text-secondary);
+    animation: bounce 2s infinite;
+    font-size: 24px;
+    opacity: 0.7;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
+    40% {transform: translateY(-10px) translateX(-50%);}
+    60% {transform: translateY(-5px) translateX(-50%);}
+}

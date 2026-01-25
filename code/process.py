@@ -58,6 +58,38 @@ class DataFactory:
         return clean.Consolidator.normalize(commits)
 
 
+# --- Helpers ---
+class CodeClassifier:
+    @staticmethod
+    def get_lang_name(ext):
+        ext = ext.lower()
+        # Non-Code / Excluded
+        if ext in ['.ts', '.xlf']: return "Qt Translation"
+        if ext in ['.ui', '.qrc']: return "Qt UI"
+        if ext in ['.json', '.hex', '.raw', '.csv', '.xml']: return "Data"
+        if ext in ['.cmake', '.m4', '.in', '.am', '.ac', '.mk', '.dockerfile', '.supp', '.patch']: return "Build System"
+        if ext in ['.yml', '.yaml', '.conf', '.cfg', '.ini', '.toml', '.lock']: return "Config"
+        if ext in ['.png', '.svg', '.ico', '.jpg', '.bmp', '.xpm', '.icns', '.ttf']: return "Assets"
+        if 'makefile' in ext: return "Build System"
+        
+        # Code
+        mapping = {
+            ".cpp": "C++", ".h": "C++", ".hpp": "C++", ".cc": "C++", ".c": "C", 
+            ".py": "Python", ".pyi": "Python",
+            ".md": "Markdown", ".txt": "Text", ".rst": "Documentation",
+            ".sh": "Shell", ".bash": "Shell",
+            ".java": "Java", ".go": "Go", ".js": "JavaScript", 
+            ".html": "Web", ".css": "Web"
+        }
+        return mapping.get(ext, "Other")
+
+    @staticmethod
+    def is_logic_code(lang_name):
+        # We exclude Markdown/Text/Docs, Build, Data, Config, Assets, Translation, UI
+        # Logic = The core programming languages
+        allowed = {"C++", "C", "Python", "Shell", "Java", "Go", "JavaScript", "TypeScript", "Web"}
+        return lang_name in allowed
+
 # --- Metric Generators ---
 class MetricGenerators:
     
@@ -92,9 +124,12 @@ class MetricGenerators:
              try:
                  with open(meta_path, "r") as f:
                      meta_scan = json.load(f)
-                     # Sum all categories
+                     # Sum ONLY Logic Code
                      for cat_data in meta_scan.values():
-                         net_lines += cat_data.get("loc", 0)
+                         for ext, stats in cat_data.get("languages", {}).items():
+                             lang = CodeClassifier.get_lang_name(ext)
+                             if CodeClassifier.is_logic_code(lang):
+                                 net_lines += stats.get("loc", 0)
              except: 
                  pass
         
@@ -185,9 +220,19 @@ class MetricGenerators:
         for cat in all_cats:
             # Static
             s = static_meta.get(cat, {})
-            files = s.get("files", 0)
-            loc = s.get("loc", 0)
+            # files = s.get("files", 0) # OLD: Raw total
+            # loc = s.get("loc", 0) # OLD: Raw total
+            
+            # NEW: Filtered Total (Logic Only)
+            filtered_files = 0
+            filtered_loc = 0
             langs = s.get("languages", {})
+            
+            for ext, l_stats in langs.items():
+                lang_name = CodeClassifier.get_lang_name(ext)
+                if CodeClassifier.is_logic_code(lang_name):
+                    filtered_files += l_stats.get("files", 0)
+                    filtered_loc += l_stats.get("loc", 0)
             
             # Dynamic
             total_c = int(cat_counts.get(cat, 0))
@@ -197,12 +242,12 @@ class MetricGenerators:
             # Language breakdown calculations
             rich_data.append({
                 "name": cat,
-                "files": files,
-                "loc": loc,
+                "files": filtered_files, # Updated
+                "loc": filtered_loc,     # Updated
                 "commits_total": total_c,
                 "commits_last_5y": recent_c,
                 "last_year": last_y,
-                "languages": langs # {ext: {files, loc}}
+                "languages": langs 
             })
             
         with open(os.path.join(Config.OUTPUT_DIR, "stats_category_details.json"), "w") as f:
@@ -230,25 +275,12 @@ class MetricGenerators:
                 if ext not in global_langs: global_langs[ext] = 0
                 global_langs[ext] += metrics["loc"]
         
-        # Map extension to Name
-        def get_lang_name(ext):
-            mapping = {
-                ".cpp": "C++", ".h": "C++", ".hpp": "C++", ".cc": "C++", ".c": "C", 
-                ".py": "Python", ".pyi": "Python",
-                ".md": "Markdown", ".txt": "Text", ".rst": "Documentation",
-                ".sh": "Shell", ".bash": "Shell",
-                ".java": "Java", ".go": "Go", ".js": "JavaScript", ".ts": "TypeScript",
-                ".yml": "YAML", ".yaml": "YAML", ".json": "JSON", ".xml": "XML",
-                ".am": "Build System", ".ac": "Build System", "Makefile": "Build System", ".m4": "Build System",
-                ".in": "Build System", ".cmake": "Build System", "CMakeLists.txt": "Build System",
-                ".html": "Web", ".css": "Web"
-            }
-            return mapping.get(ext, "Other")
-
         final_stack = {}
         for ext, count in global_langs.items():
-            name = get_lang_name(ext)
-            final_stack[name] = final_stack.get(name, 0) + count
+            name = CodeClassifier.get_lang_name(ext)
+            # Filter: Only Logic Code
+            if CodeClassifier.is_logic_code(name):
+                final_stack[name] = final_stack.get(name, 0) + count
             
         stack_out = [{"name": k, "value": v} for k, v in final_stack.items() if v > 1000]
         stack_out.sort(key=lambda x: x['value'], reverse=True)
@@ -400,7 +432,7 @@ class MetricGenerators:
             if pct > 0.90: return "⭐ The Regulars" # Top 10%
             if pct > 0.75: return "⚒️ The Sustainers" # Top 25%
             if pct > 0.50: return "🔭 The Explorers" # Top 50%
-            return "🔎 The Scouts" # Bottom 50%
+            return "🧱 The Scouts" # Bottom 50%
 
         # Build JSON list
         output_list = []
@@ -708,34 +740,22 @@ class MetricGenerators:
         files_by_lang = {}
         files_by_cat = []
         
-        # We need mapping for lang names again
-        def get_lang_name(ext):
-            mapping = {
-                ".cpp": "C++", ".h": "C++", ".hpp": "C++", ".cc": "C++", ".c": "C", 
-                ".py": "Python", ".pyi": "Python",
-                ".md": "Markdown", ".txt": "Text", ".rst": "Documentation",
-                ".sh": "Shell", ".bash": "Shell",
-                ".java": "Java", ".go": "Go", ".js": "JavaScript", ".ts": "TypeScript",
-                ".yml": "YAML", ".yaml": "YAML", ".json": "JSON", ".xml": "XML",
-                ".am": "Build System", ".ac": "Build System", "Makefile": "Build System", ".m4": "Build System",
-                ".in": "Build System", ".cmake": "Build System", "CMakeLists.txt": "Build System",
-                ".html": "Web", ".css": "Web"
-            }
-            return mapping.get(ext, "Other")
-
         for cat, stats in meta.items():
             # Files by Cat
             files_by_cat.append({"name": cat, "value": stats.get("files", 0)})
             
             # Files by Lang
             for ext, lstats in stats.get("languages", {}).items():
-                name = get_lang_name(ext)
+                name = CodeClassifier.get_lang_name(ext)
                 if name not in files_by_lang: files_by_lang[name] = 0
                 files_by_lang[name] += lstats.get("files", 0)
 
         # Output Snapshot
         snapshot_data = {
             "files_by_cat": sorted(files_by_cat, key=lambda x: x['value'], reverse=True),
+            # We can allow ALL files here for the "Codebase Snapshot" overview, or filter?
+            # Usually strict filtering is better for "Languages". 
+            # Let's show everything but grouped by the better names.
             "files_by_lang": sorted([{"name": k, "value": v} for k,v in files_by_lang.items() if v > 0], key=lambda x: x['value'], reverse=True)
         }
         
@@ -773,11 +793,15 @@ class MetricGenerators:
                     ext_map = ast.literal_eval(row['extensions_json'])
                     
                     for ext, delta in ext_map.items():
-                        lang = get_lang_name(ext)
-                        net = delta['adds'] - delta['dels']
+                        lang = CodeClassifier.get_lang_name(ext)
                         
-                        current_state[lang] = current_state.get(lang, 0) + net
-                        all_langs.add(lang)
+                        # Only track Logic Code evolution?
+                        # If we track everything, Qt Translation clutters the chart.
+                        # Yes, filter here too.
+                        if CodeClassifier.is_logic_code(lang):
+                            net = delta['adds'] - delta['dels']
+                            current_state[lang] = current_state.get(lang, 0) + net
+                            all_langs.add(lang)
                 except:
                     continue
             
@@ -807,7 +831,10 @@ class MetricGenerators:
              try:
                  with open(meta_path, "r") as f:
                      meta = json.load(f)
-                     for c in meta.values(): target_loc += c.get("loc", 0)
+                     for c in meta.values():
+                         for ext, stats in c.get("languages", {}).items():
+                             if CodeClassifier.is_logic_code(CodeClassifier.get_lang_name(ext)):
+                                 target_loc += stats.get("loc", 0)
              except: pass
         
         current_hist_total = 0
@@ -908,7 +935,10 @@ class MetricGenerators:
              try:
                  with open(meta_path, "r") as f:
                      meta = json.load(f)
-                     for c in meta.values(): target_loc += c.get("loc", 0)
+                     for c in meta.values():
+                         for ext, stats in c.get("languages", {}).items():
+                             if CodeClassifier.is_logic_code(CodeClassifier.get_lang_name(ext)):
+                                 target_loc += stats.get("loc", 0)
              except: pass
         
         current_hist_total = 0

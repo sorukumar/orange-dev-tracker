@@ -78,7 +78,7 @@
         <!-- Header -->
         <header style="margin-bottom: 20px;">
             <nav>
-                <a href="index.html">Dashboard</a>
+                <a href="dashboard.html">Dashboard</a>
                 <a href="contributors.html">Contributors</a>
                 <a href="codebase.html" class="active">Codebase</a>
                 <a href="health.html">Health & Culture</a>
@@ -140,10 +140,12 @@
             reflect realistic growth patterns.
         </div>
 
-        <!-- Row 3: Trend Tech -->
+
+
+        <!-- Row 3b: Streamgraph (Repose Style) -->
         <section class="chart-box" style="margin-bottom: 30px;">
             <div class="chart-header">Longitudinal Tech Evolution (Lines of Code 2009-2025)</div>
-            <div id="chart-stack-evolution" style="height:400px;"></div>
+            <div id="chart-streamgraph" style="height:400px;"></div>
         </section>
 
         <!-- Row 4: Trend Category -->
@@ -162,7 +164,7 @@
             BitcoinLabsAppComponents.init({
                 isApp: true,
                 appName: 'orange-dev-tracker',
-                appHomeUrl: 'index.html'
+                appHomeUrl: 'dashboard.html'
             });
         });
     </script>

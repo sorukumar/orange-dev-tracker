@@ -4,108 +4,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orange Dev Tracker</title>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://sorukumar.github.io/Bitcoin-Data-Labs/styles/styles.css">
+    <title>Orange Dev Tracker: The Code That Built Bitcoin</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <!-- ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/landing.css">
 </head>
 
 <body>
-    <div id="header"></div>
 
-    <div class="container">
-        <header style="margin-bottom: 20px;">
-            <nav>
-                <a href="index.html" class="active">Dashboard</a>
-                <a href="contributors.html">Contributors</a>
-                <a href="codebase.html">Codebase</a>
-                <a href="health.html">Health & Culture</a>
-            </nav>
-        </header>
+    <div id="main-container">
+        <!-- Sticky Visualization Background -->
+        <div id="viz-container">
+            <div id="landing-chart"></div>
+        </div>
 
-        <!-- Vital Signs: KPIs -->
-        <section id="vital-signs" style="margin-bottom: 30px;">
-            <div class="kpi-grid">
-                <div class="kpi-card">
-                    <div class="kpi-label">Unique Contributors</div>
-                    <div class="kpi-value" id="kpi-contributors">-</div>
-                    <div class="kpi-sub">All-time Authors</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Maintainers</div>
-                    <div class="kpi-value" id="kpi-maintainers">-</div>
-                    <div class="kpi-sub">Total / Active</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Codebase Size</div>
-                    <div class="kpi-value" id="kpi-codebase">-</div>
-                    <div class="kpi-sub">Lines of Code</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Total Commits</div>
-                    <div class="kpi-value" id="kpi-total-commits">-</div>
-                    <div class="kpi-sub">History Length</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Social Interest</div>
-                    <div class="kpi-value" id="kpi-social" style="font-size: 1.8em;">-</div>
-                    <div class="kpi-sub">Stars / Forks / Watchers</div>
-                </div>
-            </div>
-        </section>
+        <!-- Scrolling Narrative -->
+        <div id="scroll-content">
 
-        <!-- Combined Analysis Row: Work Dist + Evolution -->
-        <section style="display: flex; gap: 20px; margin-bottom: 30px; min-height: 400px; flex-wrap: wrap;">
-            <!-- Left 1/3: Snapshot -->
-            <div class="card" style="flex: 1; min-width: 350px; display: flex; flex-direction: column;">
-                <h3>Unique Commits by Area (2025 Snapshot)</h3>
-                <div id="chart-snapshot-work" style="flex: 1; height: 350px;"></div>
-            </div>
-            <!-- Right 2/3: Trend -->
-            <div class="card" style="flex: 2; min-width: 350px; display: flex; flex-direction: column;">
-                <h3>Evolution of Functional Areas (Commit Trends)</h3>
-                <div id="chart-category" style="flex: 1; height: 350px;"></div>
-            </div>
-        </section>
+            <!-- Hero / Hook -->
+            <section class="step center" data-step="hero">
+                <h1>ORANGE DEV TRACKER</h1>
+                <p class="lead">Decoding the DNA of the most important software in financial history.</p>
+                <div class="scroll-down">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </section>
 
-        <!-- Combined: Contributor Army -->
-        <section style="display: flex; gap: 20px; margin-bottom: 30px; min-height: 400px; flex-wrap: wrap;">
-            <!-- Left 1/3: Engagement Tiers -->
-            <div class="card" style="flex: 1; min-width: 350px; display: flex; flex-direction: column;">
-                <h3>The Engagement Pyramid</h3>
-                <div id="chart-engagement-tiers" style="flex: 1; height: 350px;"></div>
-            </div>
-            <!-- Right 2/3: Recruitment Velocity -->
-            <div class="card" style="flex: 2; min-width: 350px; display: flex; flex-direction: column;">
-                <h3>Recruitment Velocity</h3>
-                <div id="chart-growth" style="flex: 1; height: 350px;"></div>
-            </div>
-        </section>
+            <!-- Chapter 1: The Scale (Codebase) -->
+            <section class="step" data-step="scale-intro">
+                <div class="text-box">
+                    <h2>From Zero to Fortress</h2>
+                    <p>It began with a single zip file in 2009. Satoshi Nakamoto released the first version of Bitcoin.
+                    </p>
+                    <p>It was experimental. It was fragile. It was just an idea written in C++.</p>
+                </div>
+            </section>
 
-        <!-- Slide 3: Social -->
-        <section class="slide">
-            <div class="card">
-                <h3>Social Proof</h3>
-                <div id="chart-social" style="height: 400px;"></div>
-            </div>
-        </section>
+            <section class="step" data-step="scale-growth">
+                <div class="text-box">
+                    <h2>Explosive Growth</h2>
+                    <p>Over 15 years, the codebase has evolved into a fortress. </p>
+                    <p class="lead"><span class="highlight">480,000+ Lines of Code</span></p>
+                    <p>Battled hardened through the Block Size Wars, SegWit, and Taproot.</p>
+                </div>
+            </section>
+
+
+            <!-- Chapter 2: The Army (Contributors) -->
+            <section class="step right" data-step="army-intro">
+                <div class="text-box">
+                    <h2>A Decentralized Army</h2>
+                    <p>Who builds Bitcoin? Not a corporation. Not a government.</p>
+                    <p>It is built by <span class="highlight">volunteers</span>.</p>
+                </div>
+            </section>
+
+            <section class="step right" data-step="army-pyramid">
+                <div class="text-box">
+                    <h2>The 1% Rule</h2>
+                    <p>While thousands contribute, a dedicated "Core" of less than 12 developers drives 80% of the
+                        changes.</p>
+                    <p>They are the guardians of the protocol.</p>
+                </div>
+            </section>
+
+
+            <!-- Chapter 3: The DNA (Tech Stack) -->
+            <section class="step" data-step="dna-intro">
+                <div class="text-box">
+                    <h2>The Language of Money</h2>
+                    <p>C++ is the bedrock. It provides the performance and manual memory control needed for a global
+                        financial layer.</p>
+                </div>
+            </section>
+            <section class="step" data-step="dna-evolution">
+                <div class="text-box">
+                    <h2>Modernizing the Core</h2>
+                    <p>But the ecosystem is evolving. Python now drives the massive test suite, ensuring stability
+                        before every release.</p>
+                </div>
+            </section>
+
+            <!-- Chapter 4: Global (Heartbeat) -->
+            <section class="step center" data-step="global">
+                <div class="text-box">
+                    <h2>24/7. 365.</h2>
+                    <p>Bitcoin never sleeps. Neither do its developers.</p>
+                    <p>From Tokyo to London, from New York to Sao Paulo, the commits never stop.</p>
+                </div>
+            </section>
+
+            <!-- Final CTA -->
+            <section class="step center" data-step="outro" style="margin-bottom: 0; padding-bottom: 25vh;">
+                <h1>Explore the Data</h1>
+                <p class="lead">Dive deep into the analytics of Bitcoin Core development.</p>
+                <div style="margin-top: 2rem;">
+                    <a href="dashboard.html" class="btn-primary">Launch Dashboard</a>
+                    <a href="contributors.html" class="btn-secondary">Meet Contributors</a>
+                </div>
+            </section>
+
+        </div>
     </div>
 
-    <div id="footer"></div>
-
-    <script src="https://sorukumar.github.io/Bitcoin-Data-Labs/components/app-components.js"></script>
-    <script src="js/app.js?v=2"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            BitcoinLabsAppComponents.init({
-                isApp: true,
-                appName: 'orange-dev-tracker',
-                appHomeUrl: 'index.html' // Relative is fine since they are in same site usually
-            });
-        });
-    </script>
+    <!-- Logic -->
+    <script src="js/landing.js"></script>
 </body>
 
 </html>
