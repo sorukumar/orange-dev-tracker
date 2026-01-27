@@ -1,0 +1,47 @@
+# Orange Dev Tracker - Full Documentation | Bitcoin Data Labs
+
+This document provides comprehensive context on the Orange Dev Tracker project, a Bitcoin Data Labs initiative, for LLMs.
+
+## Project Mission
+Orange Dev Tracker aims to provide transparency into the development of Bitcoin Core. By visualizing 15+ years of git history, the project highlights the strength, decentralization, and evolution of the most important software in financial history.
+
+## Detailed Metrics
+
+### 1. Codebase Evolution
+The codebase has grown from a handful of files in 2009 to a complex system.
+- **Languages**: C++ (Core), Python (Testing), Shell (Build System).
+- **Functional Areas**: P2P, Consensus, Wallet, RPC/REST, Tests, Build, Libs, Scripts.
+- **Growth Pattern**: Steady linear growth with periodic spikes during major upgrades (e.g., SegWit, Taproot).
+
+### 2. Contributor Dynamics
+Analysis of the human effort behind Bitcoin.
+- **The Engagement Pyramid**: Categorizes contributors into Core (Top 5%), Regulars (Top 15%), Occasional (Top 30%), and Casual (Remaining 50%).
+- **Recruitment Velocity**: Tracks how many new developers join the project over time.
+- **Maintainer Concentration**: Discusses the role of 'Maintainers' who have merging privileges vs. 'Contributors' who submit PRs.
+
+### 3. Project Health
+- **Retention**: How many developers stay active year-over-year.
+- **Bus Factor**: A measure of institutional knowledge distribution.
+- **Global Heartbeat**: Commits happen 24/7 across all time zones.
+
+## Data Sources
+- **Git Logs**: Direct analysis of the Bitcoin Core repository history.
+- **GitHub API**: Used for stars, forks, and issue/PR metadata.
+- **Social Proof**: Sentiment and engagement metrics from the broader community.
+
+## Technical Implementation
+The tracker is a static site built with:
+- **Frontend**: Vanilla JS, HTML5, CSS3.
+- **Visualizations**: Apache ECharts and D3.js.
+- **Data Layers**: Pre-processed JSON snapshots stored in the `data/` directory.
+
+## Site Structure
+- `/index.html`: Scrollytelling landing page.
+- `/dashboard.html`: Main KPI dashboard.
+- `/contributors.html`: Deep dive into developers.
+- `/codebase.html`: Code distribution and language stats.
+- `/health.html`: Project sustainability metrics.
+- `/methodology.html`: Detailed technical explanation of data processing.
+
+---
+*Created on 2026-01-27 for the benefit of LLM agents and web crawlers.*

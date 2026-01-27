@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://sorukumar.github.io/orange-dev-tracker/sitemap.xml

@@ -1,4 +1,4 @@
-# 🍊 Orange Dev Tracker
+# 🍊 Orange Dev Tracker | Bitcoin Data Labs
 ### 15 Years of Bitcoin Source Code Forensics
 
 A high-fidelity, interactive dashboard exploring the architectural evolution and contributor landscape of the Bitcoin Core repository from 2009 to 2025.
@@ -8,7 +8,7 @@ A high-fidelity, interactive dashboard exploring the architectural evolution and
 ![ECharts](https://img.shields.io/badge/viz-ECharts-red)
 
 ## 📊 Live Dashboard
-**[View the Live Tracker](https://saurabhkumar.github.io/orange-dev-tracker/)** *(Replace with your final URL)*
+**[View the Live Tracker](https://sorukumar.github.io/orange-dev-tracker/)**
 
 ## 🔍 Project Overview
 This project performs a deep "forensic audit" of the Bitcoin source code history. Instead of simple commit counts, it categorizes every change into architectural areas (Consensus, P2P, Wallet, Scripts, etc.) to visualize how the "Orange" codebase has matured.
