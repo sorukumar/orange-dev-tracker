@@ -328,7 +328,7 @@ async function loadCategory() {
         const riverData = [];
         data.series.forEach(s => {
             validIndices.forEach(idx => {
-                const date = data.xAxis[idx] + "-01-01"; // "2009" -> "2009-01-01"
+                const date = data.xAxis[idx] + "-12-31"; // Map annual totals to end of year
                 const val = s.data[idx];
                 if (val > 0) {
                     riverData.push([date, val, s.name]);
