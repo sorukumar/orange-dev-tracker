@@ -1010,15 +1010,14 @@ class MetricGenerators:
             # Files by Lang
             for ext, lstats in stats.get("languages", {}).items():
                 name = CodeClassifier.get_lang_name(ext)
-                if name not in files_by_lang: files_by_lang[name] = 0
-                files_by_lang[name] += lstats.get("files", 0)
+                # Only include proper programming languages in the Tech Stack count
+                if CodeClassifier.is_logic_code(name):
+                    if name not in files_by_lang: files_by_lang[name] = 0
+                    files_by_lang[name] += lstats.get("files", 0)
 
         # Output Snapshot
         snapshot_data = {
             "files_by_cat": sorted(files_by_cat, key=lambda x: x['value'], reverse=True),
-            # We can allow ALL files here for the "Codebase Snapshot" overview, or filter?
-            # Usually strict filtering is better for "Languages". 
-            # Let's show everything but grouped by the better names.
             "files_by_lang": sorted([{"name": k, "value": v} for k,v in files_by_lang.items() if v > 0], key=lambda x: x['value'], reverse=True)
         }
         

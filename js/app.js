@@ -1219,11 +1219,7 @@ async function loadCodebaseSnapshots() {
 
         // Calculate Totals from Snapshots
         const totalFiles = data.files_by_cat.reduce((acc, curr) => acc + curr.value, 0);
-
-        // Define Proper Programming Languages (Excluding Assets, Docs, Build tools)
-        const properLangNames = ["C++", "Python", "C", "Shell", "Web", "Java", "Perl"];
-        const curatedLangs = data.files_by_lang.filter(l => properLangNames.includes(l.name));
-        const totalLangs = curatedLangs.length;
+        const totalLangs = data.files_by_lang.length;
 
         if (document.getElementById('kpi-total-files')) document.getElementById('kpi-total-files').innerText = totalFiles.toLocaleString();
         if (document.getElementById('kpi-total-langs')) document.getElementById('kpi-total-langs').innerText = totalLangs;
@@ -1231,7 +1227,7 @@ async function loadCodebaseSnapshots() {
 
         // Files by Lang (Bar)
         if (charts.filesLang) {
-            const slice = curatedLangs.slice(0, 10); // Use curated list
+            const slice = data.files_by_lang.slice(0, 12); // Use all properly categorized langs from backend
             charts.filesLang.setOption({
                 backgroundColor: 'transparent',
                 tooltip: {
