@@ -321,44 +321,52 @@ async function loadCategory() {
         const res = await fetch('data/stats_category_evolution.json');
         const data = await res.json();
 
-        // Remove 2026 columns if present
-        if (data.xAxis.some(x => parseInt(x) >= 2026)) {
-            const validIndices = data.xAxis.map((x, i) => parseInt(x) <= 2025 ? i : -1).filter(i => i !== -1);
-            data.xAxis = validIndices.map(i => data.xAxis[i]);
-            data.series.forEach(s => {
-                s.data = validIndices.map(i => s.data[i]);
+        // 1. Filter dates <= 2025
+        const validIndices = data.xAxis.map((x, i) => parseInt(x) <= 2025 ? i : -1).filter(i => i !== -1);
+
+        // 2. Transform to ThemeRiver format: [date, value, id]
+        const riverData = [];
+        data.series.forEach(s => {
+            validIndices.forEach(idx => {
+                const date = data.xAxis[idx] + "-01-01"; // "2009" -> "2009-01-01"
+                const val = s.data[idx];
+                if (val > 0) {
+                    riverData.push([date, val, s.name]);
+                }
             });
-        }
+        });
 
         charts.category.setOption({
             backgroundColor: 'transparent',
             tooltip: {
-                ...tooltipStyle,
                 trigger: 'axis',
-                axisPointer: { type: 'cross', label: { backgroundColor: COLORS.textSecondary } },
+                axisPointer: { type: 'line', lineStyle: { color: 'rgba(0,0,0,0.2)', width: 1, type: 'solid' } },
                 formatter: function (params) {
+                    if (!params || !params.length) return "";
+                    const dateStr = params[0].axisValue;
+                    const year = new Date(dateStr).getFullYear();
+
                     let total = 0;
-                    params.forEach(p => total += p.value);
+                    params.forEach(p => total += p.value[1]);
 
-                    let tooltipHtml = `<div style="margin-bottom:8px; border-bottom:1px solid ${COLORS.border}; padding-bottom:4px;"><b>${params[0].axisValueLabel}</b></div>`;
-                    tooltipHtml += `<div style="font-size:11px; color:${COLORS.textLight}; margin-bottom:8px;">Total Activity: <b>${total.toLocaleString()}</b> Commits</div>`;
+                    let html = `<div style="margin-bottom:8px; border-bottom:1px solid ${COLORS.border}; padding-bottom:4px;"><b>Year: ${year}</b></div>`;
+                    html += `<div style="font-size:11px; color:${COLORS.textLight}; margin-bottom:8px;">Total Activity: <b>${total.toLocaleString()}</b> Commits</div>`;
 
-                    const sorted = [...params].sort((a, b) => b.value - a.value);
+                    const sorted = [...params].sort((a, b) => b.value[1] - a.value[1]);
 
                     sorted.forEach(p => {
-                        const rawPct = total > 0 ? (p.value / total * 100) : 0;
-                        const pctStr = formatPct(rawPct);
-
-                        if (p.value > 0) {
-                            tooltipHtml += `
-                            <div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; margin-bottom:2px;">
-                                <span>${p.marker} ${p.seriesName}</span>
-                                <span><b>${pctStr}%</b> <span style="color:${COLORS.textLight}; font-size:10px;">(${p.value.toLocaleString()})</span></span>
-                            </div>`;
-                        }
+                        const val = p.value[1];
+                        const name = p.value[2];
+                        const pct = (total > 0 ? (val / total * 100) : 0).toFixed(1);
+                        html += `
+                        <div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; margin-bottom:2px;">
+                            <span>${p.marker} ${name}</span>
+                            <span><b>${pct}%</b> <span style="color:${COLORS.textLight}; font-size:10px;">(${val.toLocaleString()})</span></span>
+                        </div>`;
                     });
-                    return tooltipHtml;
-                }
+                    return html;
+                },
+                ...tooltipStyle
             },
             legend: {
                 ...legendStyle,
@@ -366,28 +374,30 @@ async function loadCategory() {
                 bottom: 0,
                 type: 'scroll'
             },
-            color: GHIBLI_PALETTE,
-            grid: { left: '4%', right: '4%', bottom: '15%', containLabel: true },
-            xAxis: {
-                ...axisStyle,
-                type: 'category',
-                boundaryGap: false,
-                data: data.xAxis
+            singleAxis: {
+                top: 20,
+                bottom: 60,
+                axisTick: { show: false },
+                axisLabel: { ...axisStyle.axisLabel },
+                type: 'time',
+                axisPointer: { animation: true, label: { show: true } },
+                splitLine: { show: true, lineStyle: { type: 'dashed', opacity: 0.1 } }
             },
-            yAxis: {
-                ...axisStyle,
-                type: 'value',
-                name: 'Commits',
-                nameGap: 10
-            },
-            series: data.series.map(s => ({
-                ...s,
-                symbol: 'none',
-                smooth: true,
-                emphasis: { focus: 'series', lineStyle: { width: 3 } }
-            }))
+            series: [{
+                type: 'themeRiver',
+                emphasis: { itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0, 0, 0, 0.3)' } },
+                data: riverData,
+                label: { show: false },
+                itemStyle: {
+                    shadowBlur: 2,
+                    shadowColor: 'rgba(0,0,0,0.1)'
+                }
+            }],
+            color: GHIBLI_PALETTE
         });
-    } catch (e) { console.error("Category Load Error", e); }
+    } catch (e) {
+        console.error("Category Load Error", e);
+    }
 }
 
 async function loadGrowth() {

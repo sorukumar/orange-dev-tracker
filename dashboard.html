@@ -66,39 +66,37 @@
             </div>
         </section>
 
-        <!-- Combined Analysis Row: Work Dist + Evolution -->
+        <!-- Row 1: Structural Distribution (Status Quo) -->
         <section style="display: flex; gap: 20px; margin-bottom: 30px; min-height: 400px; flex-wrap: wrap;">
-            <!-- Left 1/3: Snapshot -->
+            <!-- Left 1/3: Work Snapshot -->
             <div class="card" style="flex: 1; min-width: 350px; display: flex; flex-direction: column;">
                 <h3>Unique Commits by Area (2025 Snapshot)</h3>
                 <div id="chart-snapshot-work" style="flex: 1; height: 350px;"></div>
             </div>
-            <!-- Right 2/3: Trend -->
+            <!-- Right 2/3: Human Pyramid -->
             <div class="card" style="flex: 2; min-width: 350px; display: flex; flex-direction: column;">
-                <h3>Evolution of Functional Areas (Commit Trends)</h3>
-                <div id="chart-category" style="flex: 1; height: 350px;"></div>
-            </div>
-        </section>
-
-        <!-- Combined: Contributor Army -->
-        <section style="display: flex; gap: 20px; margin-bottom: 30px; min-height: 400px; flex-wrap: wrap;">
-            <!-- Left 1/3: Engagement Tiers -->
-            <div class="card" style="flex: 1; min-width: 350px; display: flex; flex-direction: column;">
                 <h3>The Engagement Pyramid</h3>
                 <div id="chart-engagement-tiers" style="flex: 1; height: 350px;"></div>
             </div>
-            <!-- Right 2/3: Recruitment Velocity -->
-            <div class="card" style="flex: 2; min-width: 350px; display: flex; flex-direction: column;">
+        </section>
+
+        <!-- Row 2: The Hero Narrative (Historial Context) -->
+        <section class="card" style="margin-bottom: 30px;">
+            <h3>Evolution of Functional Areas (Commit Trends)</h3>
+            <div id="chart-category" style="height: 450px; width: 100%;"></div>
+        </section>
+
+        <!-- Row 3: Momentum (Velocity & Adoption) -->
+        <section style="display: flex; gap: 20px; margin-bottom: 30px; min-height: 400px; flex-wrap: wrap;">
+            <!-- Left 1/2: Recruitment -->
+            <div class="card" style="flex: 1; min-width: 350px; display: flex; flex-direction: column;">
                 <h3>Recruitment Velocity</h3>
                 <div id="chart-growth" style="flex: 1; height: 350px;"></div>
             </div>
-        </section>
-
-        <!-- Slide 3: Social -->
-        <section class="slide">
-            <div class="card">
+            <!-- Right 1/2: Social Adoption -->
+            <div class="card" style="flex: 1; min-width: 350px; display: flex; flex-direction: column;">
                 <h3>Social Proof</h3>
-                <div id="chart-social" style="height: 400px;"></div>
+                <div id="chart-social" style="flex: 1; height: 350px;"></div>
             </div>
         </section>
     </div>
