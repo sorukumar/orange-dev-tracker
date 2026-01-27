@@ -22,45 +22,58 @@
                 <a href="contributors.html">Contributors</a>
                 <a href="codebase.html">Codebase</a>
                 <a href="health.html" class="active">Health & Culture</a>
+                <a href="methodology.html">Methodology</a>
             </nav>
         </header>
 
         <!-- Slide: Maintainers -->
+        <!-- Slide: Maintainers -->
         <section class="slide">
             <div class="card">
-                <h3>The Keepers (Maintainers)</h3>
-                <p>The "Bus Factor" over time — how many people can merge code?</p>
-                <div id="chart-maintainers" style="height: 350px;"></div>
+                <h3>The Relay Race: Maintainer Legacy</h3>
+                <p>From Satoshi to the current guard. Each bar represents a maintainer's active tenure.</p>
+                <div id="chart-maintainers" style="height: 450px;"></div>
             </div>
         </section>
 
-        <!-- Story Section: Corporate Era - Now with TWO charts -->
+        <!-- Story Section: Corporate Era -->
         <section class="story-section">
             <div class="card">
-                <h2>The Corporate Era</h2>
-                <p class="narrative">From cypherpunks to corporate labs. Tracking the shift from hobbyist to sponsored development.</p>
-                
+                <h2>Institutionalization & Independence</h2>
+                <p class="narrative">Bitcoin development has shifted from a weekend hobby for cypherpunks to a
+                    professionalized workforce. Who is funding the code?</p>
+
                 <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-top: 20px;">
                     <!-- Chart 1: Contributor Sponsorship (Commits over time) -->
                     <div style="flex: 2; min-width: 450px;">
                         <h4 style="margin-bottom: 10px; color: #4A5568; font-size: 14px;">
                             <i class="fas fa-users" style="margin-right: 8px; opacity: 0.7;"></i>
-                            Contributor Activity by Sponsorship
+                            The Shift to Sponsored Development
                         </h4>
                         <p style="font-size: 12px; color: #718096; margin-bottom: 15px;">
-                            % of commits from sponsored vs independent developers
+                            % of commits from sponsored vs independent developers over time.
                         </p>
                         <div id="chart-corporate" style="height: 350px;"></div>
                     </div>
-                    
+
                     <!-- Chart 2: Maintainer Independence (Pie/Bar) -->
                     <div style="flex: 1; min-width: 300px;">
-                        <h4 style="margin-bottom: 10px; color: #4A5568; font-size: 14px;">
-                            <i class="fas fa-shield-alt" style="margin-right: 8px; opacity: 0.7;"></i>
-                            Maintainer Independence
-                        </h4>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h4 style="margin-bottom: 0; color: #4A5568; font-size: 14px;">
+                                <i class="fas fa-shield-alt" style="margin-right: 8px; opacity: 0.7;"></i>
+                                Funding the Gatekeepers
+                            </h4>
+                            <div class="toggle-group"
+                                style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 10px; font-weight: 600;">
+                                <button id="btn-maintainer-active" class="active"
+                                    style="padding: 4px 8px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">Active</button>
+                                <button id="btn-maintainer-all"
+                                    style="padding: 4px 8px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">All-Time</button>
+                            </div>
+                        </div>
                         <p style="font-size: 12px; color: #718096; margin-bottom: 15px;">
-                            Who funds the gatekeepers?
+                            Distribution of maintainers by sponsoring entity.
                         </p>
                         <div id="chart-maintainer-independence" style="height: 350px;"></div>
                     </div>

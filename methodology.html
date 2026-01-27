@@ -5,89 +5,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Methodology | Orange Dev Tracker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://sorukumar.github.io/Bitcoin-Data-Labs/styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="https://sorukumar.github.io/Bitcoin-Data-Labs/favicon.png">
     <link rel="stylesheet" href="style.css">
     <style>
-        :root {
-            --bg-primary: #FDFCFB;
-            --bg-secondary: #F7F5F3;
-            --text-primary: #2D3748;
-            --text-secondary: #4A5568;
-            --text-muted: #718096;
-            --accent-orange: #F6AD55;
-            --accent-green: #68D391;
-            --accent-blue: #63B3ED;
-            --border-color: #E2E8F0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.7;
-        }
-
-        /* Navigation */
-        .nav {
-            background: white;
+        /* Methodology Specific Component Styles */
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
             border-bottom: 1px solid var(--border-color);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            display: block !important;
+            /* Force override for dashboard look if needed */
         }
 
-        .nav-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-brand {
+        /* Ensure heading is visible in methodology */
+        .page-header h1 {
+            display: block !important;
+            font-size: 2.5rem;
             font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--secondary, #2A3342);
+        }
+
+        .page-header .subtitle {
+            display: block !important;
             font-size: 1.1rem;
-            color: var(--text-primary);
+            color: var(--text-secondary, #5F6C7E);
+        }
+
+        /* Table of Contents - Matching .card style */
+        .toc {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(42, 51, 66, 0.05);
+        }
+
+        .toc h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted, #94A3B8);
+            margin-bottom: 1.5rem;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .toc ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .toc a {
+            color: var(--text-secondary, #4A5568);
             text-decoration: none;
-        }
-
-        .nav-brand span {
-            color: var(--accent-orange);
-        }
-
-        .nav-links {
+            font-size: 0.95rem;
             display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
+            align-items: center;
+            gap: 0.5rem;
             transition: color 0.2s;
         }
 
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--accent-orange);
-        }
-
-        /* Main Content */
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 3rem 2rem 5rem;
+        .toc a:hover {
+            color: var(--accent, #F7931A);
         }
 
         .page-header {
@@ -155,41 +140,44 @@
         }
 
         section h2 {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid var(--accent-orange);
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--accent, #F7931A);
             display: inline-block;
+            color: var(--secondary, #2A3342);
         }
 
         section h3 {
-            font-size: 1.15rem;
+            font-size: 1.3rem;
             font-weight: 600;
-            margin: 2rem 0 1rem;
-            color: var(--text-primary);
+            margin: 2.5rem 0 1.2rem;
+            color: var(--secondary, #2A3342);
+            border-bottom: none;
         }
 
         section p {
-            margin-bottom: 1rem;
-            color: var(--text-secondary);
+            margin-bottom: 1.2rem;
+            color: var(--text-secondary, #4A5568);
+            font-size: 1.05rem;
         }
 
         /* Metric Cards */
         .metric-card {
             background: white;
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow-sm);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(42, 51, 66, 0.04);
         }
 
         .metric-card h4 {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
+            color: var(--secondary, #2A3342);
+            margin-bottom: 1rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -197,37 +185,44 @@
 
         .metric-card h4 .badge {
             font-size: 0.7rem;
-            background: var(--bg-secondary);
-            padding: 0.2rem 0.5rem;
+            background: var(--bg-secondary, #F7F5F3);
+            padding: 0.2rem 0.6rem;
             border-radius: 4px;
-            font-weight: 500;
-            color: var(--text-muted);
+            font-weight: 600;
+            color: var(--accent, #F7931A);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .metric-card .definition {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: var(--text-secondary, #4A5568);
+            margin-bottom: 1.2rem;
             line-height: 1.6;
         }
 
         .metric-card .details {
-            background: var(--bg-secondary);
-            border-radius: 8px;
-            padding: 1rem;
-            font-size: 0.85rem;
+            background: #F8FAFC;
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
         }
 
         .metric-card .details dt {
             font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
+            color: var(--secondary, #2A3342);
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
         }
 
         .metric-card .details dd {
-            color: var(--text-muted);
-            margin-bottom: 0.75rem;
+            color: var(--text-secondary, #4A5568);
+            margin-bottom: 1rem;
             margin-left: 0;
+            line-height: 1.5;
         }
 
         .metric-card .details dd:last-child {
@@ -236,20 +231,21 @@
 
         /* Callouts */
         .callout {
-            border-left: 4px solid var(--accent-orange);
-            background: #FFFAF0;
-            padding: 1rem 1.5rem;
-            border-radius: 0 8px 8px 0;
-            margin: 1.5rem 0;
+            border-left: 4px solid var(--accent, #F7931A);
+            background: #FFF9F2;
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+            box-shadow: 0 2px 8px rgba(247, 147, 26, 0.05);
         }
 
         .callout.info {
-            border-color: var(--accent-blue);
+            border-color: #3182CE;
             background: #EBF8FF;
         }
 
         .callout.success {
-            border-color: var(--accent-green);
+            border-color: #38A169;
             background: #F0FFF4;
         }
 
@@ -274,7 +270,8 @@
             font-size: 0.9rem;
         }
 
-        th, td {
+        th,
+        td {
             text-align: left;
             padding: 0.75rem 1rem;
             border-bottom: 1px solid var(--border-color);
@@ -341,11 +338,11 @@
             .container {
                 padding: 2rem 1rem;
             }
-            
+
             .page-header h1 {
                 font-size: 1.8rem;
             }
-            
+
             .nav-links {
                 gap: 1rem;
             }
@@ -354,408 +351,489 @@
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav class="nav">
-        <div class="nav-inner">
-            <a href="index.html" class="nav-brand"><span>Orange</span> Dev Tracker</a>
-            <div class="nav-links">
-                <a href="dashboard.html">Dashboard</a>
-                <a href="codebase.html">Codebase</a>
-                <a href="contributors.html">Contributors</a>
-                <a href="health.html">Health</a>
-                <a href="methodology.html" class="active">Methodology</a>
-            </div>
-        </div>
-    </nav>
+    <div id="header"></div>
 
-    <!-- Main Content -->
-    <main class="container">
-        <header class="page-header">
-            <h1>Methodology</h1>
-            <p class="subtitle">How we measure Bitcoin Core development — definitions, sources, and limitations.</p>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <nav>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="contributors.html">Contributors</a>
+                <a href="codebase.html">Codebase</a>
+                <a href="health.html">Health & Culture</a>
+                <a href="methodology.html" class="active">Methodology</a>
+            </nav>
         </header>
 
-        <!-- Table of Contents -->
-        <div class="toc">
-            <h3>On This Page</h3>
-            <ul>
-                <li><a href="#contributors"><i class="fas fa-chevron-right"></i> Contributors</a></li>
-                <li><a href="#maintainers"><i class="fas fa-chevron-right"></i> Maintainers</a></li>
-                <li><a href="#codebase"><i class="fas fa-chevron-right"></i> Codebase & LOC</a></li>
-                <li><a href="#categories"><i class="fas fa-chevron-right"></i> Categories</a></li>
-                <li><a href="#activity"><i class="fas fa-chevron-right"></i> Activity Patterns</a></li>
-                <li><a href="#social"><i class="fas fa-chevron-right"></i> Social & Sponsorship</a></li>
-                <li><a href="#limitations"><i class="fas fa-chevron-right"></i> Limitations</a></li>
-                <li><a href="#data-sources"><i class="fas fa-chevron-right"></i> Data Sources</a></li>
-            </ul>
-        </div>
+        <!-- Main Content -->
+        <main>
+            <header class="page-header">
+                <h1>Methodology</h1>
+                <p class="subtitle">How we measure Bitcoin Core development — definitions, sources, and limitations.</p>
+            </header>
 
-        <!-- Contributors Section -->
-        <section id="contributors">
-            <h2>Contributors</h2>
-            <p>We track individuals who have authored at least one commit to the Bitcoin Core repository. Because developers often use multiple names or email addresses, we apply identity resolution to unify aliases.</p>
-
-            <div class="metric-card">
-                <h4>Unique Contributors <span class="badge">KPI</span></h4>
-                <p class="definition">The total count of distinct individuals who have authored commits to Bitcoin Core, with aliases unified into single identities.</p>
-                <dl class="details">
-                    <dt>How it's calculated</dt>
-                    <dd>We build a graph where names and emails are nodes, connected when they appear in the same commit. Connected components represent one person. Known pseudonyms (e.g., "sipa" = Pieter Wuille) are manually linked.</dd>
-                    <dt>What it includes</dt>
-                    <dd>Any person who authored a commit, including documentation, tests, and typo fixes.</dd>
-                    <dt>What it excludes</dt>
-                    <dd>Reviewers who only ACK/NACK without authoring commits. Bot accounts are filtered out.</dd>
-                </dl>
+            <!-- Table of Contents -->
+            <div class="toc">
+                <h3>On This Page</h3>
+                <ul>
+                    <li><a href="#contributors"><i class="fas fa-chevron-right"></i> Contributors</a></li>
+                    <li><a href="#maintainers"><i class="fas fa-chevron-right"></i> Maintainers</a></li>
+                    <li><a href="#codebase"><i class="fas fa-chevron-right"></i> Codebase & LOC</a></li>
+                    <li><a href="#categories"><i class="fas fa-chevron-right"></i> Categories</a></li>
+                    <li><a href="#activity"><i class="fas fa-chevron-right"></i> Activity Patterns</a></li>
+                    <li><a href="#social"><i class="fas fa-chevron-right"></i> Social & Sponsorship</a></li>
+                    <li><a href="#limitations"><i class="fas fa-chevron-right"></i> Limitations</a></li>
+                    <li><a href="#data-sources"><i class="fas fa-chevron-right"></i> Data Sources</a></li>
+                </ul>
             </div>
 
-            <div class="metric-card">
-                <h4>Cohort Year</h4>
-                <p class="definition">The year of a contributor's first commit to the repository.</p>
-                <dl class="details">
-                    <dt>Use case</dt>
-                    <dd>Enables analysis of contributor retention and generational patterns. "Veterans" (first commit years ago) vs "Newcomers" (first commit this year).</dd>
-                </dl>
-            </div>
+            <!-- Contributors Section -->
+            <section id="contributors">
+                <h2>Contributors</h2>
+                <p>We track individuals who have authored at least one commit to the Bitcoin Core repository. Because
+                    developers often use multiple names or email addresses, we apply identity resolution to unify
+                    aliases.
+                </p>
 
-            <div class="metric-card">
-                <h4>Tenure (Active Years)</h4>
-                <p class="definition">The count of distinct calendar years in which the contributor made at least one commit.</p>
-                <dl class="details">
-                    <dt>Example</dt>
-                    <dd>A developer active in 2012 and 2024 has tenure of <strong>2 years</strong>, not 12 years span.</dd>
-                    <dt>Why this matters</dt>
-                    <dd>Distinguishes sustained contributors from one-time contributors, regardless of calendar span.</dd>
-                </dl>
-            </div>
+                <div class="metric-card">
+                    <h4>Unique Contributors <span class="badge">KPI</span></h4>
+                    <p class="definition">The total count of distinct individuals who have authored commits to Bitcoin
+                        Core,
+                        with aliases unified into single identities.</p>
+                    <dl class="details">
+                        <dt>How it's calculated</dt>
+                        <dd>We build a graph where names and emails are nodes, connected when they appear in the same
+                            commit. Connected components represent one person. Known pseudonyms (e.g., "sipa" = Pieter
+                            Wuille) are manually linked.</dd>
+                        <dt>What it includes</dt>
+                        <dd>Any person who authored a commit, including documentation, tests, and typo fixes.</dd>
+                        <dt>What it excludes</dt>
+                        <dd>Reviewers who only ACK/NACK without authoring commits. Bot accounts are filtered out.</dd>
+                    </dl>
+                </div>
 
-            <div class="metric-card">
-                <h4>Contribution Tiers</h4>
-                <p class="definition">Percentile-based segmentation of contributors by commit volume.</p>
+                <div class="metric-card">
+                    <h4>Cohort Year</h4>
+                    <p class="definition">The year of a contributor's first commit to the repository.</p>
+                    <dl class="details">
+                        <dt>Use case</dt>
+                        <dd>Enables analysis of contributor retention and generational patterns. "Veterans" (first
+                            commit
+                            years ago) vs "Newcomers" (first commit this year).</dd>
+                    </dl>
+                </div>
+
+                <div class="metric-card">
+                    <h4>Tenure (Active Years)</h4>
+                    <p class="definition">The count of distinct calendar years in which the contributor made at least
+                        one
+                        commit.</p>
+                    <dl class="details">
+                        <dt>Example</dt>
+                        <dd>A developer active in 2012 and 2024 has tenure of <strong>2 years</strong>, not 12 years
+                            span.
+                        </dd>
+                        <dt>Why this matters</dt>
+                        <dd>Distinguishes sustained contributors from one-time contributors, regardless of calendar
+                            span.
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="metric-card">
+                    <h4>Contribution Tiers</h4>
+                    <p class="definition">Percentile-based segmentation of contributors by commit volume.</p>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tier</th>
+                                    <th>Percentile</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>👑 The Core</td>
+                                    <td>Top 1%</td>
+                                    <td>~12 people responsible for ~80% of commits</td>
+                                </tr>
+                                <tr>
+                                    <td>⭐ The Regulars</td>
+                                    <td>Top 10%</td>
+                                    <td>Consistent, active contributors</td>
+                                </tr>
+                                <tr>
+                                    <td>⚒️ The Sustainers</td>
+                                    <td>Top 25%</td>
+                                    <td>Periodic contributors with steady output</td>
+                                </tr>
+                                <tr>
+                                    <td>🔭 The Explorers</td>
+                                    <td>Top 50%</td>
+                                    <td>Occasional contributors</td>
+                                </tr>
+                                <tr>
+                                    <td>🧱 The Scouts</td>
+                                    <td>Bottom 50%</td>
+                                    <td>One-time or rare contributors</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="callout">
+                    <p><strong>Note:</strong> Commit count does not equal impact. A single consensus-critical change can
+                        be
+                        more significant than hundreds of documentation updates. The tier system reflects activity
+                        volume,
+                        not importance.</p>
+                </div>
+            </section>
+
+            <!-- Maintainers Section -->
+            <section id="maintainers">
+                <h2>Maintainers</h2>
+                <p>Maintainers are individuals who merge code into the repository. In Bitcoin Core's governance model,
+                    maintainers have commit access but decisions are made through rough consensus.</p>
+
+                <div class="metric-card">
+                    <h4>Total Maintainers</h4>
+                    <p class="definition">Count of distinct individuals who have ever merged commits into the
+                        repository.
+                    </p>
+                    <dl class="details">
+                        <dt>Technical basis</dt>
+                        <dd>Identified by the <code>committer_email</code> field on merge commits
+                            (<code>is_merge = True</code>).</dd>
+                        <dt>Caveat</dt>
+                        <dd>This is broader than current write access. It includes historical maintainers and may
+                            include
+                            some self-rebases.</dd>
+                    </dl>
+                </div>
+
+                <div class="metric-card">
+                    <h4>Active Maintainers</h4>
+                    <p class="definition">Maintainers with merge activity in the last 12 months.</p>
+                    <dl class="details">
+                        <dt>Current value</dt>
+                        <dd>Approximately 5 active maintainers, reflecting Bitcoin Core's small trusted group.</dd>
+                    </dl>
+                </div>
+
+                <div class="callout info">
+                    <p><strong>Context:</strong> Bitcoin Core has historically had a small group of maintainers (rarely
+                        more
+                        than 5-6 at a time). This is intentional — maintainer access is granted conservatively and
+                        requires
+                        significant trust from the community.</p>
+                </div>
+            </section>
+
+            <!-- Codebase Section -->
+            <section id="codebase">
+                <h2>Codebase & Lines of Code</h2>
+                <p>We measure codebase size using static analysis of the current repository, supplemented by historical
+                    churn data.</p>
+
+                <div class="metric-card">
+                    <h4>Current Codebase Size (LOC) <span class="badge">KPI</span></h4>
+                    <p class="definition">Total lines of code in source files, measured from the current repository
+                        state.
+                    </p>
+                    <dl class="details">
+                        <dt>What's included</dt>
+                        <dd>C++, Python, Shell, C, and other logic files.</dd>
+                        <dt>What's excluded</dt>
+                        <dd>Qt translations (.ts, .xlf), UI files, images, config files, build system files, and
+                            generated
+                            data.</dd>
+                        <dt>Current value</dt>
+                        <dd>~480,000 lines of logic code.</dd>
+                    </dl>
+                </div>
+
+                <div class="metric-card">
+                    <h4>Historical LOC Evolution</h4>
+                    <p class="definition">Cumulative lines of code over time, calculated by replaying commit additions
+                        and
+                        deletions.</p>
+                    <dl class="details">
+                        <dt>Methodology</dt>
+                        <dd>Commits are sorted chronologically. For each month, we sum (additions - deletions) to get
+                            net
+                            change, then apply cumulatively.</dd>
+                        <dt>Calibration</dt>
+                        <dd>A scaling factor is applied so the final historical value matches the static scan. This
+                            corrects
+                            for file moves, reformatting, and branch merge artifacts.</dd>
+                    </dl>
+                </div>
+
+                <div class="callout">
+                    <p><strong>Why churn ≠ static scan:</strong> Git records file moves as delete + add (inflating
+                        both).
+                        Reformatting commits change lines without adding logic. The static scan gives the "true" current
+                        size; historical evolution shows the trend.</p>
+                </div>
+            </section>
+
+            <!-- Categories Section -->
+            <section id="categories">
+                <h2>Categories (Architecture)</h2>
+                <p>Every file is assigned to a functional category based on its path. This reflects how Bitcoin Core
+                    developers conceptually organize the codebase.</p>
+
                 <div class="table-wrapper">
                     <table>
                         <thead>
                             <tr>
-                                <th>Tier</th>
-                                <th>Percentile</th>
+                                <th>Category</th>
+                                <th>Paths Matched</th>
                                 <th>Description</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>👑 The Core</td>
-                                <td>Top 1%</td>
-                                <td>~12 people responsible for ~80% of commits</td>
+                                <td><strong>Consensus</strong></td>
+                                <td><code>src/consensus/</code>, <code>src/script/</code>, <code>src/validation</code>
+                                </td>
+                                <td>The core rules of Bitcoin. Changes here are critical and require extreme scrutiny.
+                                </td>
                             </tr>
                             <tr>
-                                <td>⭐ The Regulars</td>
-                                <td>Top 10%</td>
-                                <td>Consistent, active contributors</td>
+                                <td><strong>Node & RPC</strong></td>
+                                <td><code>src/node/</code>, <code>src/rpc/</code></td>
+                                <td>Application layer — the bitcoind daemon and command-line interface.</td>
                             </tr>
                             <tr>
-                                <td>⚒️ The Sustainers</td>
-                                <td>Top 25%</td>
-                                <td>Periodic contributors with steady output</td>
+                                <td><strong>P2P Network</strong></td>
+                                <td><code>src/net</code>, <code>src/addrman</code></td>
+                                <td>Peer discovery, message handling, network protocol.</td>
                             </tr>
                             <tr>
-                                <td>🔭 The Explorers</td>
-                                <td>Top 50%</td>
-                                <td>Occasional contributors</td>
+                                <td><strong>Wallet</strong></td>
+                                <td><code>src/wallet/</code></td>
+                                <td>Internal wallet for key management and transaction creation.</td>
                             </tr>
                             <tr>
-                                <td>🧱 The Scouts</td>
-                                <td>Bottom 50%</td>
-                                <td>One-time or rare contributors</td>
+                                <td><strong>GUI</strong></td>
+                                <td><code>src/qt/</code></td>
+                                <td>The graphical interface (Bitcoin-Qt).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cryptography</strong></td>
+                                <td><code>src/crypto/</code>, <code>src/secp256k1/</code></td>
+                                <td>Cryptographic primitives and the secp256k1 elliptic curve library.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Database</strong></td>
+                                <td><code>src/leveldb/</code>, <code>src/dbwrapper</code></td>
+                                <td>Persistence layer for blockchain and wallet data.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Utilities</strong></td>
+                                <td><code>src/util/</code>, <code>src/support/</code></td>
+                                <td>Shared libraries, logging, and low-level support code.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tests</strong></td>
+                                <td><code>src/test/</code>, <code>test/</code></td>
+                                <td>Unit tests, functional tests, and benchmarks.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Build & CI</strong></td>
+                                <td><code>ci/</code>, <code>Makefile</code>, <code>CMakeLists</code></td>
+                                <td>Build system configuration and continuous integration.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Documentation</strong></td>
+                                <td><code>doc/</code>, <code>*.md</code></td>
+                                <td>Developer documentation and markdown files.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            <div class="callout">
-                <p><strong>Note:</strong> Commit count does not equal impact. A single consensus-critical change can be more significant than hundreds of documentation updates. The tier system reflects activity volume, not importance.</p>
-            </div>
-        </section>
+                <p>When a commit touches multiple categories, the category with the most changed lines is assigned as
+                    the
+                    primary category for that commit.</p>
+            </section>
 
-        <!-- Maintainers Section -->
-        <section id="maintainers">
-            <h2>Maintainers</h2>
-            <p>Maintainers are individuals who merge code into the repository. In Bitcoin Core's governance model, maintainers have commit access but decisions are made through rough consensus.</p>
+            <!-- Activity Section -->
+            <section id="activity">
+                <h2>Activity Patterns</h2>
 
-            <div class="metric-card">
-                <h4>Total Maintainers</h4>
-                <p class="definition">Count of distinct individuals who have ever merged commits into the repository.</p>
-                <dl class="details">
-                    <dt>Technical basis</dt>
-                    <dd>Identified by the <code>committer_email</code> field on merge commits (<code>is_merge = True</code>).</dd>
-                    <dt>Caveat</dt>
-                    <dd>This is broader than current write access. It includes historical maintainers and may include some self-rebases.</dd>
-                </dl>
-            </div>
+                <div class="metric-card">
+                    <h4>Heatmap (Hour × Year)</h4>
+                    <p class="definition">Commit count binned by UTC hour and year, showing when development happens
+                        globally.</p>
+                    <dl class="details">
+                        <dt>Insight</dt>
+                        <dd>Early development was concentrated in US timezones. Over time, activity spread across
+                            European
+                            and Asian hours as the project globalized.</dd>
+                    </dl>
+                </div>
 
-            <div class="metric-card">
-                <h4>Active Maintainers</h4>
-                <p class="definition">Maintainers with merge activity in the last 12 months.</p>
-                <dl class="details">
-                    <dt>Current value</dt>
-                    <dd>Approximately 5 active maintainers, reflecting Bitcoin Core's small trusted group.</dd>
-                </dl>
-            </div>
+                <div class="metric-card">
+                    <h4>Weekend Ratio</h4>
+                    <p class="definition">Percentage of commits made on Saturday or Sunday (UTC) per year.</p>
+                    <dl class="details">
+                        <dt>What it indicates</dt>
+                        <dd>Higher ratio suggests hobbyist/passion-driven development. Lower ratio suggests
+                            professionalization and sponsored work during business hours.</dd>
+                        <dt>Caveat</dt>
+                        <dd>UTC "weekend" may be Friday night or Monday morning in some timezones. This metric uses a
+                            Western work-week assumption.</dd>
+                    </dl>
+                </div>
+            </section>
 
-            <div class="callout info">
-                <p><strong>Context:</strong> Bitcoin Core has historically had a small group of maintainers (rarely more than 5-6 at a time). This is intentional — maintainer access is granted conservatively and requires significant trust from the community.</p>
-            </div>
-        </section>
+            <!-- Social Section -->
+            <section id="social">
+                <h2>Social & Sponsorship</h2>
 
-        <!-- Codebase Section -->
-        <section id="codebase">
-            <h2>Codebase & Lines of Code</h2>
-            <p>We measure codebase size using static analysis of the current repository, supplemented by historical churn data.</p>
+                <div class="metric-card">
+                    <h4>Stars & Forks</h4>
+                    <p class="definition">GitHub stars (interest) and forks (derivative work or contribution intent)
+                        over
+                        time.</p>
+                    <dl class="details">
+                        <dt>Data source</dt>
+                        <dd>GitHub API with pagination. Early data is complete; recent data is extrapolated linearly to
+                            current totals.</dd>
+                    </dl>
+                </div>
 
-            <div class="metric-card">
-                <h4>Current Codebase Size (LOC) <span class="badge">KPI</span></h4>
-                <p class="definition">Total lines of code in source files, measured from the current repository state.</p>
-                <dl class="details">
-                    <dt>What's included</dt>
-                    <dd>C++, Python, Shell, C, and other logic files.</dd>
-                    <dt>What's excluded</dt>
-                    <dd>Qt translations (.ts, .xlf), UI files, images, config files, build system files, and generated data.</dd>
-                    <dt>Current value</dt>
-                    <dd>~480,000 lines of logic code.</dd>
-                </dl>
-            </div>
+                <div class="metric-card">
+                    <h4>Corporate Era (Sponsorship %)</h4>
+                    <p class="definition">Approximate percentage of commits from developers with corporate/sponsored
+                        affiliations.</p>
+                    <dl class="details">
+                        <dt>Classification method</dt>
+                        <dd>
+                            <strong>Corporate:</strong> Developer has a company in GitHub profile, OR uses a corporate
+                            email
+                            domain (e.g., @chaincode.com, @blockstream.io).<br>
+                            <strong>Personal:</strong> Developer uses a personal email (gmail, hotmail, etc.) with no
+                            company affiliation.
+                        </dd>
+                        <dt>Accuracy</dt>
+                        <dd>This is a heuristic. Some sponsored developers use personal emails; some .edu emails are not
+                            sponsorship-related. The trend direction is reliable; exact percentages are approximate.
+                        </dd>
+                    </dl>
+                </div>
 
-            <div class="metric-card">
-                <h4>Historical LOC Evolution</h4>
-                <p class="definition">Cumulative lines of code over time, calculated by replaying commit additions and deletions.</p>
-                <dl class="details">
-                    <dt>Methodology</dt>
-                    <dd>Commits are sorted chronologically. For each month, we sum (additions - deletions) to get net change, then apply cumulatively.</dd>
-                    <dt>Calibration</dt>
-                    <dd>A scaling factor is applied so the final historical value matches the static scan. This corrects for file moves, reformatting, and branch merge artifacts.</dd>
-                </dl>
-            </div>
+                <div class="callout success">
+                    <p><strong>Known Sponsors:</strong> Chaincode Labs, Spiral (Block/Square), Blockstream, MIT Digital
+                        Currency Initiative, Brink, Human Rights Foundation, and individual patrons via GitHub Sponsors
+                        or
+                        grants.</p>
+                </div>
+            </section>
 
-            <div class="callout">
-                <p><strong>Why churn ≠ static scan:</strong> Git records file moves as delete + add (inflating both). Reformatting commits change lines without adding logic. The static scan gives the "true" current size; historical evolution shows the trend.</p>
-            </div>
-        </section>
+            <!-- Limitations Section -->
+            <section id="limitations">
+                <h2>Known Limitations</h2>
 
-        <!-- Categories Section -->
-        <section id="categories">
-            <h2>Categories (Architecture)</h2>
-            <p>Every file is assigned to a functional category based on its path. This reflects how Bitcoin Core developers conceptually organize the codebase.</p>
+                <div class="metric-card">
+                    <h4>What We Don't Capture</h4>
+                    <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
+                        <li><strong>Code Review:</strong> Reviewers who ACK/NACK without authoring commits are not
+                            tracked.
+                            In Bitcoin Core, review is as important as authorship.</li>
+                        <li><strong>Mailing List Contributions:</strong> Design discussions, BIP authorship, and concept
+                            development happen off-GitHub.</li>
+                        <li><strong>Testing Without Commits:</strong> Many contributors test releases without leaving a
+                            commit trail.</li>
+                        <li><strong>Pseudonymous Linking:</strong> Our alias list is incomplete. Some pseudonyms may be
+                            counted as separate people.</li>
+                    </ul>
+                </div>
 
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Paths Matched</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Consensus</strong></td>
-                            <td><code>src/consensus/</code>, <code>src/script/</code>, <code>src/validation</code></td>
-                            <td>The core rules of Bitcoin. Changes here are critical and require extreme scrutiny.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Node & RPC</strong></td>
-                            <td><code>src/node/</code>, <code>src/rpc/</code></td>
-                            <td>Application layer — the bitcoind daemon and command-line interface.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>P2P Network</strong></td>
-                            <td><code>src/net</code>, <code>src/addrman</code></td>
-                            <td>Peer discovery, message handling, network protocol.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Wallet</strong></td>
-                            <td><code>src/wallet/</code></td>
-                            <td>Internal wallet for key management and transaction creation.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>GUI</strong></td>
-                            <td><code>src/qt/</code></td>
-                            <td>The graphical interface (Bitcoin-Qt).</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Cryptography</strong></td>
-                            <td><code>src/crypto/</code>, <code>src/secp256k1/</code></td>
-                            <td>Cryptographic primitives and the secp256k1 elliptic curve library.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Database</strong></td>
-                            <td><code>src/leveldb/</code>, <code>src/dbwrapper</code></td>
-                            <td>Persistence layer for blockchain and wallet data.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Utilities</strong></td>
-                            <td><code>src/util/</code>, <code>src/support/</code></td>
-                            <td>Shared libraries, logging, and low-level support code.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Tests</strong></td>
-                            <td><code>src/test/</code>, <code>test/</code></td>
-                            <td>Unit tests, functional tests, and benchmarks.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Build & CI</strong></td>
-                            <td><code>ci/</code>, <code>Makefile</code>, <code>CMakeLists</code></td>
-                            <td>Build system configuration and continuous integration.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Documentation</strong></td>
-                            <td><code>doc/</code>, <code>*.md</code></td>
-                            <td>Developer documentation and markdown files.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <div class="metric-card">
+                    <h4>Data Freshness</h4>
+                    <dl class="details">
+                        <dt>Commit Data</dt>
+                        <dd>Refreshed monthly from the Bitcoin Core git repository.</dd>
+                        <dt>Enrichment Data</dt>
+                        <dd>GitHub profile information (company, location) is from a 2024 snapshot and may be stale.
+                        </dd>
+                        <dt>Social Data</dt>
+                        <dd>Stars/forks totals are live; historical curve is partially extrapolated.</dd>
+                    </dl>
+                </div>
+            </section>
 
-            <p>When a commit touches multiple categories, the category with the most changed lines is assigned as the primary category for that commit.</p>
-        </section>
+            <!-- Data Sources Section -->
+            <section id="data-sources">
+                <h2>Data Sources</h2>
 
-        <!-- Activity Section -->
-        <section id="activity">
-            <h2>Activity Patterns</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Source</th>
+                                <th>What We Extract</th>
+                                <th>Method</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Bitcoin Core Git Repository</td>
+                                <td>Commits, authors, timestamps, file changes</td>
+                                <td><code>git log --all --numstat</code></td>
+                            </tr>
+                            <tr>
+                                <td>Repository HEAD</td>
+                                <td>Current file count, lines of code</td>
+                                <td>Static file system scan</td>
+                            </tr>
+                            <tr>
+                                <td>GitHub API</td>
+                                <td>Stars, forks, watchers, user profiles</td>
+                                <td>REST API with pagination</td>
+                            </tr>
+                            <tr>
+                                <td>Legacy Snapshot (2024)</td>
+                                <td>Contributor GitHub profiles, locations, companies</td>
+                                <td>Historical data fusion</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            <div class="metric-card">
-                <h4>Heatmap (Hour × Year)</h4>
-                <p class="definition">Commit count binned by UTC hour and year, showing when development happens globally.</p>
-                <dl class="details">
-                    <dt>Insight</dt>
-                    <dd>Early development was concentrated in US timezones. Over time, activity spread across European and Asian hours as the project globalized.</dd>
-                </dl>
-            </div>
-
-            <div class="metric-card">
-                <h4>Weekend Ratio</h4>
-                <p class="definition">Percentage of commits made on Saturday or Sunday (UTC) per year.</p>
-                <dl class="details">
-                    <dt>What it indicates</dt>
-                    <dd>Higher ratio suggests hobbyist/passion-driven development. Lower ratio suggests professionalization and sponsored work during business hours.</dd>
-                    <dt>Caveat</dt>
-                    <dd>UTC "weekend" may be Friday night or Monday morning in some timezones. This metric uses a Western work-week assumption.</dd>
-                </dl>
-            </div>
-        </section>
-
-        <!-- Social Section -->
-        <section id="social">
-            <h2>Social & Sponsorship</h2>
-
-            <div class="metric-card">
-                <h4>Stars & Forks</h4>
-                <p class="definition">GitHub stars (interest) and forks (derivative work or contribution intent) over time.</p>
-                <dl class="details">
-                    <dt>Data source</dt>
-                    <dd>GitHub API with pagination. Early data is complete; recent data is extrapolated linearly to current totals.</dd>
-                </dl>
-            </div>
-
-            <div class="metric-card">
-                <h4>Corporate Era (Sponsorship %)</h4>
-                <p class="definition">Approximate percentage of commits from developers with corporate/sponsored affiliations.</p>
-                <dl class="details">
-                    <dt>Classification method</dt>
-                    <dd>
-                        <strong>Corporate:</strong> Developer has a company in GitHub profile, OR uses a corporate email domain (e.g., @chaincode.com, @blockstream.io).<br>
-                        <strong>Personal:</strong> Developer uses a personal email (gmail, hotmail, etc.) with no company affiliation.
-                    </dd>
-                    <dt>Accuracy</dt>
-                    <dd>This is a heuristic. Some sponsored developers use personal emails; some .edu emails are not sponsorship-related. The trend direction is reliable; exact percentages are approximate.</dd>
-                </dl>
-            </div>
-
-            <div class="callout success">
-                <p><strong>Known Sponsors:</strong> Chaincode Labs, Spiral (Block/Square), Blockstream, MIT Digital Currency Initiative, Brink, Human Rights Foundation, and individual patrons via GitHub Sponsors or grants.</p>
-            </div>
-        </section>
-
-        <!-- Limitations Section -->
-        <section id="limitations">
-            <h2>Known Limitations</h2>
-
-            <div class="metric-card">
-                <h4>What We Don't Capture</h4>
-                <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
-                    <li><strong>Code Review:</strong> Reviewers who ACK/NACK without authoring commits are not tracked. In Bitcoin Core, review is as important as authorship.</li>
-                    <li><strong>Mailing List Contributions:</strong> Design discussions, BIP authorship, and concept development happen off-GitHub.</li>
-                    <li><strong>Testing Without Commits:</strong> Many contributors test releases without leaving a commit trail.</li>
-                    <li><strong>Pseudonymous Linking:</strong> Our alias list is incomplete. Some pseudonyms may be counted as separate people.</li>
-                </ul>
-            </div>
-
-            <div class="metric-card">
-                <h4>Data Freshness</h4>
-                <dl class="details">
-                    <dt>Commit Data</dt>
-                    <dd>Refreshed monthly from the Bitcoin Core git repository.</dd>
-                    <dt>Enrichment Data</dt>
-                    <dd>GitHub profile information (company, location) is from a 2024 snapshot and may be stale.</dd>
-                    <dt>Social Data</dt>
-                    <dd>Stars/forks totals are live; historical curve is partially extrapolated.</dd>
-                </dl>
-            </div>
-        </section>
-
-        <!-- Data Sources Section -->
-        <section id="data-sources">
-            <h2>Data Sources</h2>
-
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Source</th>
-                            <th>What We Extract</th>
-                            <th>Method</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Bitcoin Core Git Repository</td>
-                            <td>Commits, authors, timestamps, file changes</td>
-                            <td><code>git log --all --numstat</code></td>
-                        </tr>
-                        <tr>
-                            <td>Repository HEAD</td>
-                            <td>Current file count, lines of code</td>
-                            <td>Static file system scan</td>
-                        </tr>
-                        <tr>
-                            <td>GitHub API</td>
-                            <td>Stars, forks, watchers, user profiles</td>
-                            <td>REST API with pagination</td>
-                        </tr>
-                        <tr>
-                            <td>Legacy Snapshot (2024)</td>
-                            <td>Contributor GitHub profiles, locations, companies</td>
-                            <td>Historical data fusion</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <h3>Technical Pipeline</h3>
-            <pre><code>1. ingest.py   → Parse git log → commits.parquet
+                <h3>Technical Pipeline</h3>
+                <pre><code>1. ingest.py   → Parse git log → commits.parquet
 2. social.py   → GitHub API   → social_history.parquet  
 3. clean.py    → Identity graph resolution
 4. enrich.py   → Profile fusion → contributors_enriched.parquet
 5. process.py  → Aggregation  → JSON artifacts for dashboard</code></pre>
 
-            <p style="margin-top: 1.5rem;">For technical details, see the <a href="https://github.com/example/orange-dev-tracker" target="_blank">source repository</a> and <code>docs/project_context/metric_logic_review.md</code>.</p>
-        </section>
+                <p style="margin-top: 1.5rem;">For technical details, see the <a
+                        href="https://github.com/example/orange-dev-tracker" target="_blank">source repository</a> and
+                    <code>docs/project_context/metric_logic_review.md</code>.
+                </p>
+            </section>
 
-    </main>
+    </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>Orange Dev Tracker — Open source analysis of Bitcoin Core development.</p>
-        <p><a href="dashboard.html">Dashboard</a> · <a href="contributors.html">Contributors</a> · <a href="methodology.html">Methodology</a></p>
-    </footer>
+    <div id="footer"></div>
 
+    <script src="https://sorukumar.github.io/Bitcoin-Data-Labs/components/app-components.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            BitcoinLabsAppComponents.init({
+                isApp: true,
+                appName: 'orange-dev-tracker',
+                appHomeUrl: 'dashboard.html'
+            });
+        });
+    </script>
 </body>
+
 </html>

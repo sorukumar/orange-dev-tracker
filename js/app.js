@@ -16,6 +16,19 @@ function getGhibliPalette() {
     ];
 }
 
+/**
+ * Shared helper for consistent percentage formatting
+ * @param {number} val - The numeric value
+ * @param {number} precision - Number of decimal places
+ * @param {boolean} isRatio - If true, multiplies by 100 (e.g. 0.15 -> 15%)
+ */
+function formatPct(val, precision = 0, isRatio = false) {
+    const num = isRatio ? val * 100 : val;
+    // Auto-precision: if value is small (<5%) and precision is 0, show 1 decimal
+    const p = (num > 0 && num < 5 && precision === 0) ? 1 : precision;
+    return num.toFixed(p) + '%';
+}
+
 const COLORS = {
     textPrimary: '#2D3748',
     textSecondary: '#4A5568',
@@ -60,15 +73,28 @@ const chartConfig = {
 };
 
 async function init() {
-    // Refresh palette from CSS variables just before initialization
+    console.log("Orange Dev Tracker: Initializing...");
+
+    // Refresh palette from CSS variables
     GHIBLI_PALETTE = getGhibliPalette();
 
     function initChart(id) {
         const el = document.getElementById(id);
-        return el ? echarts.init(el) : null;
+        if (!el) {
+            console.warn(`Chart container #${id} not found in this page.`);
+            return null;
+        }
+        try {
+            const instance = echarts.init(el);
+            console.log(`Initialized ECharts for #${id}`);
+            return instance;
+        } catch (e) {
+            console.error(`Failed to initialize ECharts for #${id}:`, e);
+            return null;
+        }
     }
 
-    // Vital Signs Snapshots (Reused)
+    // Vital Signs Snapshots
     charts.snapshotWork = initChart('chart-snapshot-work');
     charts.snapshotVolume = initChart('chart-snapshot-volume');
     charts.snapshotStack = initChart('chart-snapshot-stack');
@@ -76,9 +102,8 @@ async function init() {
     // Codebase New Charts
     charts.filesLang = initChart('chart-snapshot-files-lang');
     charts.filesCat = initChart('chart-snapshot-files-cat');
-    charts.filesCat = initChart('chart-snapshot-files-cat');
     charts.stackEvolution = initChart('chart-stack-evolution');
-    charts.streamgraph = initChart('chart-streamgraph'); // New
+    charts.streamgraph = initChart('chart-streamgraph');
     charts.catEvolution = initChart('chart-category-evolution');
 
     // Trends
@@ -86,7 +111,7 @@ async function init() {
     charts.weekend = initChart('chart-weekend');
     charts.category = initChart('chart-category');
     charts.growth = initChart('chart-growth');
-    charts.engagement = initChart('chart-engagement-tiers'); // New
+    charts.engagement = initChart('chart-engagement-tiers');
     charts.social = initChart('chart-social');
     charts.maintainers = initChart('chart-maintainers');
 
@@ -97,33 +122,31 @@ async function init() {
         Object.values(charts).forEach(c => c && c.resize());
     });
 
-    // Load data based on presence matches
-    // Common Snapshots
-    if (charts.snapshotWork || charts.snapshotVolume || charts.snapshotStack) await loadSnapshots();
+    // Load data
+    try {
+        if (charts.snapshotWork || charts.snapshotVolume || charts.snapshotStack) await loadSnapshots();
+        if (charts.streamgraph || charts.filesCat) await loadCodebaseSnapshots();
+        if (charts.streamgraph) await loadStreamgraph();
+        if (charts.catEvolution) await loadCategoryHistory();
+        if (document.getElementById('kpi-contributors')) await loadVitalSigns();
+        if (charts.category) await loadCategory();
+        if (charts.growth) await loadGrowth();
+        if (charts.engagement) await loadEngagementTiers();
+        if (charts.social) await loadSocial();
+        if (charts.maintainers) await loadMaintainers();
+        if (charts.heatmap) await loadStory();
+        if (document.getElementById('chart-corporate')) await loadCorporateEra();
+        if (document.getElementById('chart-geography')) await loadGeography();
+        if (document.getElementById('chart-maintainer-independence')) await loadMaintainerIndependence();
 
-    // Codebase Page
-    if (charts.streamgraph || charts.filesCat) {
-        await loadCodebaseSnapshots();
+        // Contributors Page specific
+        if (charts.landscape) {
+            console.log("Calling loadContributorLandscape...");
+            await loadContributorLandscape();
+        }
+    } catch (err) {
+        console.error("Initialization Error during data load:", err);
     }
-    if (charts.streamgraph) await loadStreamgraph();
-    if (charts.catEvolution) await loadCategoryHistory();
-
-    // Index Page
-    if (document.getElementById('kpi-contributors')) await loadVitalSigns();
-    if (charts.category) await loadCategory();
-    if (charts.growth) await loadGrowth();
-    if (charts.engagement) await loadEngagementTiers(); // New
-    if (charts.social) await loadSocial();
-
-    // Health Page
-    if (charts.maintainers) await loadMaintainers();
-    if (charts.heatmap) await loadStory();
-    if (document.getElementById('chart-corporate')) await loadCorporateEra();
-    if (document.getElementById('chart-geography')) await loadGeography();
-    if (document.getElementById('chart-maintainer-independence')) await loadMaintainerIndependence(); // New
-
-    // Contributors Page
-    if (charts.landscape) await loadContributorLandscape();
 }
 
 async function loadVitalSigns() {
@@ -324,7 +347,7 @@ async function loadCategory() {
 
                     sorted.forEach(p => {
                         const rawPct = total > 0 ? (p.value / total * 100) : 0;
-                        const pctStr = rawPct < 5 ? rawPct.toFixed(1) : rawPct.toFixed(0);
+                        const pctStr = formatPct(rawPct);
 
                         if (p.value > 0) {
                             tooltipHtml += `
@@ -452,7 +475,7 @@ async function loadEngagementTiers() {
                 formatter: (params) => {
                     const p = params[0];
                     const tier = tiers.find(t => t.name === p.name);
-                    const pct = (p.value / totalCommits * 100).toFixed(1);
+                    const pct = formatPct(p.value / totalCommits, 1, true);
                     return `
                         <div style="margin-bottom:4px; font-weight:bold;">${p.name}</div>
                         <div style="font-size:12px;">Contributors: <b>${tier ? tier.count : '-'}</b></div>
@@ -476,7 +499,7 @@ async function loadEngagementTiers() {
                 label: {
                     show: true,
                     position: 'right',
-                    formatter: (p) => (p.value / totalCommits * 100).toFixed(0) + "%",
+                    formatter: (p) => formatPct(p.value / totalCommits, 0, true),
                     color: COLORS.textSecondary,
                     fontSize: 11,
                     fontWeight: 'bold',
@@ -524,35 +547,101 @@ async function loadSocial() {
 
 async function loadMaintainers() {
     try {
-        const res = await fetch('data/stats_maintainers.json');
+        const res = await fetch('data/stats_maintainer_independence.json');
         const data = await res.json();
+        const maintainers = data.maintainers;
 
-        // Filter out 2026+
-        const validIndices = data.xAxis.map((x, i) => parseInt(x) <= 2025 ? i : -1).filter(i => i !== -1);
-        const filteredX = validIndices.map(i => data.xAxis[i]);
-        const filteredData = validIndices.map(i => data.series[0].data[i]);
+        // Sort by start year (earliest first)
+        maintainers.sort((a, b) => Math.min(...a.active_years) - Math.min(...b.active_years));
+
+        const names = maintainers.map(m => m.name);
+
+        const seriesData = maintainers.map((m, idx) => {
+            const start = Math.min(...m.active_years);
+            const end = Math.max(...m.active_years);
+            const isLatest = m.status === 'active';
+
+            return {
+                name: m.name,
+                value: [
+                    idx,
+                    new Date(start, 0, 1).getTime(),
+                    new Date(end, 11, 31).getTime(),
+                    m.status,
+                    m.sponsor,
+                    m.active_years.length // Years of service
+                ],
+                itemStyle: {
+                    // Active uses Leaf Green, Emeritus uses a soft slate/blue
+                    color: isLatest ? GHIBLI_PALETTE[2] : '#94A3B8',
+                    opacity: isLatest ? 0.9 : 0.6
+                }
+            };
+        });
 
         charts.maintainers.setOption({
             backgroundColor: 'transparent',
-            tooltip: { ...tooltipStyle, trigger: 'axis' },
-            grid: { left: '4%', right: '4%', bottom: '10%', containLabel: true },
-            xAxis: { ...axisStyle, type: 'category', data: filteredX },
-            yAxis: { ...axisStyle, type: 'value', name: 'Maintainers' },
+            tooltip: {
+                ...tooltipStyle,
+                formatter: function (params) {
+                    const status = params.value[3];
+                    const sponsor = params.value[4];
+                    const years = params.value[5];
+                    const start = new Date(params.value[1]).getFullYear();
+                    const end = new Date(params.value[2]).getFullYear();
+                    const statusColor = status === 'active' ? '#48BB78' : '#718096';
+
+                    return `
+                        <div style="font-weight:bold; font-size:14px; margin-bottom:4px;">${params.name}</div>
+                        <div style="color:${statusColor}; font-size:11px; font-weight:600; text-transform:uppercase; margin-bottom:8px;">${status}</div>
+                        <div style="display:grid; grid-template-columns: 1fr; gap:4px; font-size:12px;">
+                            <div>📅 <b>${start} — ${end}</b> (${years} years)</div>
+                            <div>🏢 Sponsored by <b>${sponsor}</b></div>
+                        </div>
+                    `;
+                }
+            },
+            grid: { left: '160', right: '40', bottom: '20', top: '10' },
+            xAxis: {
+                type: 'time',
+                min: new Date(2009, 0, 1).getTime(),
+                axisLabel: { ...axisStyle.axisLabel, fontSize: 10 },
+                axisLine: { show: false },
+                splitLine: { show: true, lineStyle: { type: 'dashed', opacity: 0.1 } }
+            },
+            yAxis: {
+                type: 'category',
+                data: names,
+                axisLabel: { ...axisStyle.axisLabel, fontSize: 11, fontWeight: 500, color: COLORS.textPrimary },
+                axisLine: { show: false },
+                axisTick: { show: false }
+            },
             series: [{
-                name: 'Active Maintainers',
-                type: 'line',
-                step: 'start',
-                data: filteredData,
-                areaStyle: {
-                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        { offset: 0, color: 'rgba(91, 130, 102, 0.3)' }, // Leaf
-                        { offset: 1, color: 'rgba(91, 130, 102, 0.05)' }
-                    ])
+                type: 'custom',
+                renderItem: function (params, api) {
+                    const categoryIndex = api.value(0);
+                    const start = api.coord([api.value(1), categoryIndex]);
+                    const end = api.coord([api.value(2), categoryIndex]);
+                    const height = api.size([0, 1])[1] * 0.5; // Bar thickness
+
+                    return {
+                        type: 'rect',
+                        shape: {
+                            x: start[0],
+                            y: start[1] - height / 2,
+                            width: Math.max(end[0] - start[0], 4),
+                            height: height,
+                            r: 4
+                        },
+                        style: api.style()
+                    };
                 },
-                itemStyle: { color: GHIBLI_PALETTE[2] }
+                itemStyle: { emphasis: { opacity: 1, shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.2)' } },
+                encode: { x: [1, 2], y: 0 },
+                data: seriesData
             }]
         });
-    } catch (e) { }
+    } catch (e) { console.error("Maintainer Legacy Error:", e); }
 }
 
 async function loadStory() {
@@ -609,10 +698,33 @@ async function loadStory() {
         charts.weekend.setOption({
             backgroundColor: 'transparent',
             title: { text: 'Weekend Coding Ratio', left: 'center', top: 0, textStyle: { color: COLORS.textLight, fontSize: 12, fontWeight: 500 } },
-            tooltip: { ...tooltipStyle, trigger: 'axis' },
+            tooltip: {
+                ...tooltipStyle,
+                trigger: 'axis',
+                formatter: function (params) {
+                    let html = `<div style="margin-bottom:5px; border-bottom:1px solid #eee;"><b>${params[0].axisValue}</b></div>`;
+                    params.forEach(p => {
+                        html += `
+                        <div style="display:flex; justify-content:space-between; gap:20px; font-size:12px;">
+                            <span>${p.marker} ${p.seriesName}</span>
+                            <span><b>${formatPct(p.value, 1, true)}</b></span>
+                        </div>`;
+                    });
+                    return html;
+                }
+            },
             grid: { left: '4%', right: '4%', bottom: '10%', containLabel: true },
             xAxis: { ...axisStyle, type: 'category', data: filteredXW },
-            yAxis: { ...axisStyle, type: 'value', max: 0.5, name: 'Ratio' },
+            yAxis: {
+                ...axisStyle,
+                type: 'value',
+                max: 0.5,
+                name: 'Ratio',
+                axisLabel: {
+                    ...axisStyle.axisLabel,
+                    formatter: (v) => formatPct(v, 0, true)
+                }
+            },
             series: filteredSeriesW,
             color: GHIBLI_PALETTE.slice(4)
         });
@@ -621,144 +733,216 @@ async function loadStory() {
 
 async function loadContributorLandscape() {
     try {
-        const res = await fetch('data/contributors_rich.json');
+        console.time("loadContributorLandscape");
+        if (!charts.landscape) {
+            console.error("No landscape chart instance found; skipping load.");
+            return;
+        }
+
+        const dataPath = 'data/contributors_rich.json';
+        console.log(`Fetching contributors from: ${dataPath}`);
+
+        const res = await fetch(dataPath);
+        if (!res.ok) {
+            throw new Error(`HTTP Error ${res.status}: ${res.statusText} at ${dataPath}`);
+        }
+
         const rawData = await res.json();
+        console.log(`Successfully fetched ${rawData.length} contributors.`);
 
-        // Prepare data series - Filter for contributors up to 2025
-        const seriesData = rawData
-            .filter(item => item.cohort_year <= 2025)
-            .map(item => {
-                return {
-                    // Dim 0: x (Year), Dim 1: y (Commits), Dim 2: size (Impact), Dim 3: Color (Last Active), Dim 4: Name
-                    value: [
-                        item.cohort_year,
-                        item.total_commits,
-                        item.impact,
-                        Math.min(item.last_active_year, 2025), // Cap visual color at 2025
-                        item.name
-                    ],
-                    raw: item
-                };
+        // Color mapping for ranks - Matching the Dashboard's Engagement Pyramid
+        const rankStyles = {
+            'The Core (Top 1%)': { color: '#E07A5F', priority: 1, opacity: 1, symbol: 'diamond' },
+            'The Regulars (Top 10%)': { color: '#F4A261', priority: 2, opacity: 0.9, symbol: 'circle' },
+            'The Sustainers (Top 25%)': { color: '#D4AF37', priority: 3, opacity: 0.8, symbol: 'circle' },
+            'The Explorers': { color: '#89B449', priority: 4, opacity: 0.7, symbol: 'circle' },
+            'The Scouts': { color: '#3182CE', priority: 5, opacity: 0.5, symbol: 'circle' }
+        };
+
+        const groupedSeries = {};
+        Object.keys(rankStyles).forEach(rank => groupedSeries[rank] = []);
+
+        const currentYear = new Date().getFullYear();
+        let processedCount = 0;
+
+        rawData.filter(item => item && item.cohort_year && item.cohort_year <= 2025).forEach(item => {
+            // Percentile-based categorization matching the Pyramid logic
+            const p = item.percentile_raw || 0;
+            let rank;
+            if (p >= 99) rank = 'The Core (Top 1%)';
+            else if (p >= 90) rank = 'The Regulars (Top 10%)';
+            else if (p >= 75) rank = 'The Sustainers (Top 25%)';
+            else if (p >= 50) rank = 'The Explorers';
+            else rank = 'The Scouts';
+
+            const style = rankStyles[rank];
+            const isActive = (item.last_active_year >= 2025); // Active in last ~1 year
+
+            // Map specific contributors to their premium portraits
+            const portraits = {
+                's_nakamoto': 'assets/satoshi.png',
+                '--author=Satoshi Nakamoto': 'assets/satoshi.png',
+                'Gavin Andresen': 'assets/gavin_andresen.png',
+                'Wladimir J. van der Laan': 'assets/wladimir.png',
+                'MarcoFalke': 'assets/marcofalke.png',
+                'Michael Ford': 'assets/michael_ford.png',
+                'Pieter Wuille': 'assets/pieter_wuille.png'
+            };
+
+            const portraitUrl = portraits[item.name];
+
+            // Explicitly cast to Number to avoid string concatenation issues
+            const baseYear = Number(item.cohort_year);
+            const valX = baseYear + (Math.random() - 0.5) * 0.7;
+
+            // LOG AXIS SAFETY: Force minimum value of 1 for logarithmic scale
+            let valY = Math.max(1, Number(item.total_commits) || 1);
+            if (valY <= 3) {
+                // Keep jittering within safe positive bounds (>= 1) for log axis
+                valY = Math.max(1, valY + (Math.random() - 0.5) * 0.6);
+            }
+
+            // Calculate natural size based on commits
+            const baseSize = Math.max(6, Math.log10(valY + 1) * 12 + 2);
+
+            groupedSeries[rank].push({
+                name: item.name,
+                value: [valX, valY, item.impact, item.name, rank],
+                raw: item,
+                // Use the standard ECharts image symbol - most reliable for loading
+                symbol: portraitUrl ? `image://${portraitUrl}` : style.symbol,
+                symbolSize: portraitUrl ? baseSize * 1.0 : baseSize,
+                itemStyle: {
+                    color: style.color,
+                    borderColor: (isActive || portraitUrl) ? '#fff' : 'transparent',
+                    borderWidth: (isActive || portraitUrl) ? 1.5 : 0,
+                    opacity: style.opacity
+                },
+                label: {
+                    show: false,
+                    position: 'top',
+                    formatter: (p) => {
+                        if (!p || !p.name) return '';
+                        if (p.name === 's_nakamoto' || p.name === '--author=Satoshi Nakamoto') return 'Satoshi Nakamoto';
+                        return p.name;
+                    },
+                    fontSize: 11,
+                    fontWeight: 'bold',
+                    color: '#fff',
+                    textBorderColor: 'rgba(0,0,0,0.8)',
+                    textBorderWidth: 2
+                }
             });
+            processedCount++;
+        });
 
-        // Dynamic Range for Years - Cap at 2025
-        const years = seriesData.map(i => i.value[3]);
-        const minYear = Math.min(...years);
-        const maxYear = 2025;
+
+        console.log(`Processed ${processedCount} valid contributors for the Galaxy.`);
+
+        const series = Object.keys(rankStyles).map(rank => {
+            const style = rankStyles[rank];
+            return {
+                name: rank,
+                type: 'scatter',
+                data: groupedSeries[rank],
+                itemStyle: {
+                    color: style.color
+                },
+                emphasis: {
+                    focus: 'self',
+                    label: { show: true, fontSize: 12, fontWeight: 'bold' },
+                    itemStyle: {
+                        borderColor: '#fff',
+                        borderWidth: 2,
+                        shadowBlur: 15,
+                        shadowColor: '#fff'
+                    }
+                }
+            };
+        });
 
         charts.landscape.setOption({
             backgroundColor: 'transparent',
-            grid: { top: 80, right: 140, bottom: 80, left: 80 },
-            title: {
-                text: 'Contributor Landscape',
-                subtext: `Bubble size = Total Commits • Color = Last Active Year`,
-                left: 'center',
-                top: 10,
-                textStyle: { color: COLORS.textPrimary, fontSize: 18, fontWeight: 'bold' },
-                subtextStyle: { color: COLORS.textLight, fontSize: 12 }
+            grid: { top: 30, right: 30, bottom: 100, left: 80 },
+            legend: {
+                data: Object.keys(rankStyles),
+                bottom: 10,
+                textStyle: { color: COLORS.textSecondary, fontSize: 11 },
+                itemGap: 20
             },
             tooltip: {
                 trigger: 'item',
-                padding: 0,
-                backgroundColor: '#1A202C', // Deep Navy/Charcoal
+                backgroundColor: '#1A202C',
                 borderColor: '#2D3748',
                 borderWidth: 1,
-                shadowBlur: 15,
-                shadowColor: 'rgba(0,0,0,0.4)',
+                padding: 0,
                 formatter: function (params) {
                     const r = params.data.raw;
-                    const loginPart = r.login && r.login !== "Anonymous" ? `<span style="color:#A0AEC0;">@${r.login}</span>` : "";
-                    const badge = r.rank_label ? `<span style="background:#4A5568; padding:2px 6px; border-radius:4px; font-size:10px; color:#EDF2F7; margin-left:8px;">${r.rank_label}</span>` : "";
-                    const company = r.company ? `🏢 ${r.company}` : "";
-                    const loc = r.location ? `📍 ${r.location}` : "";
-                    const metaRow = [company, loc].filter(x => x).join(" &nbsp; ");
+                    const login = r.login && r.login !== "Anonymous" ? `<span style="color:#A0AEC0;">@${r.login}</span>` : "";
+                    const rankLabel = params.seriesName.includes(' ') ? params.seriesName.split(' ').slice(1).join(' ') : params.seriesName;
+                    const badge = `<span style="background:${params.color}; color:#000; padding:2px 6px; border-radius:10px; font-size:10px; font-weight:bold; margin-left:8px;">${rankLabel}</span>`;
 
-                    const stats = `
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; font-size:11px; border-top: 1px solid #2D3748; padding-top:10px;">
-                            <div>📅 <b>${r.span}</b></div>
-                            <div>💻 <b>${r.total_commits.toLocaleString()}</b> commits</div>
-                            <div>📊 <b>${r.contribution_pct}%</b> share</div>
-                            <div>🏆 <b>Top ${(100 - r.percentile_raw + 0.1).toFixed(1)}%</b></div>
-                        </div>
-                    `;
+                    const isActive = (r.last_active_year >= 2025);
+                    const activeBadge = isActive ? `<div style="margin-top:4px;"><span style="background:#48BB78; color:#fff; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:bold; text-transform:uppercase;">● Active</span></div>` : "";
 
-                    let focusStr = "";
-                    const topFocus = Object.entries(r.focus_areas).sort((a, b) => b[1] - a[1]).slice(0, 3);
+                    // Adaptive precision for share display
+                    const shareVal = parseFloat(r.contribution_pct || 0);
+                    const shareStr = shareVal >= 1 ? shareVal.toFixed(1) : shareVal.toFixed(4);
+
+                    let focusHtml = "";
+                    const focusData = r.focus_areas || {};
+                    const topFocus = Object.entries(focusData).sort((a, b) => b[1] - a[1]).slice(0, 3);
                     if (topFocus.length > 0) {
-                        const badges = topFocus.map(([cat, pct]) => `<span style="color:#CBD5E0;">${cat} ${(pct * 100).toFixed(0)}%</span>`).join(" • ");
-                        focusStr = `<div style="margin-top:10px; border-top:1px solid #2D3748; padding-top:6px; font-size:10px;"><b>Active In:</b> ${badges}</div>`;
+                        focusHtml = `<div style="margin-top:12px; border-top:1px solid #2D3748; padding-top:8px; display:flex; flex-wrap:wrap; gap:5px;">` +
+                            topFocus.map(([cat]) => `<span style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; font-size:10px;">${cat}</span>`).join("") +
+                            `</div>`;
                     }
 
                     return `
-                        <div style="width:260px; padding:15px; font-family:Inter, sans-serif; color:#EDF2F7;">
-                            <div style="font-size:16px; font-weight:bold; color:#F6AD55; margin-bottom:2px;">${r.name}</div>
-                            <div style="font-size:12px; margin-bottom:8px;">${loginPart}${badge}</div>
-                            <div style="font-size:11px; color:#A0AEC0;">${metaRow}</div>
-                            ${stats}
-                            ${focusStr}
-                        </div>
-                    `;
+                        <div style="padding:15px; width:260px; font-family:Inter, sans-serif; color:#fff;">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                <div>
+                                    <div style="font-size:15px; font-weight:bold;">${r.name}</div>
+                                    <div style="font-size:11px; opacity:0.8;">${login}</div>
+                                    ${activeBadge}
+                                </div>
+                                ${badge}
+                            </div>
+                            <div style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:11px;">
+                                <div><span style="opacity:0.6;">Tenure:</span><br/><b>${r.span || 'N/A'}</b></div>
+                                <div><span style="opacity:0.6;">Commits:</span><br/><b>${(r.total_commits || 0).toLocaleString()}</b></div>
+                                <div><span style="opacity:0.6;">Share:</span><br/><b>${shareStr}%</b></div>
+                                ${params.seriesName.includes('Scouts') ? "" : `<div><span style="opacity:0.6;">Rank:</span><br/><b>Top ${(100 - (r.percentile_raw || 0) + 0.1).toFixed(1)}%</b></div>`}
+                            </div>
+                            ${focusHtml}
+                        </div>`;
                 }
             },
             xAxis: {
                 ...axisStyle,
                 type: 'value',
-                name: 'Cohort Year (First Commit)',
+                min: 2008.5,
+                max: 2025.5,
+                splitLine: { show: false },
+                name: 'Year Joined',
                 nameLocation: 'middle',
-                nameGap: 40,
-                min: 2008,
-                max: 2025,
-                axisLabel: { ...axisStyle.axisLabel, fontSize: 12 }
+                nameGap: 35
             },
             yAxis: {
                 ...axisStyle,
                 type: 'log',
-                name: 'Total Commits',
-                nameGap: 50,
+                name: 'Total Commits (Depth)',
                 nameLocation: 'middle',
-                axisLabel: { ...axisStyle.axisLabel, fontSize: 12 }
+                nameGap: 55,
+                axisLabel: { formatter: (v) => v >= 1 ? v.toLocaleString() : v }
             },
-            visualMap: {
-                type: 'continuous',
-                dimension: 3,
-                min: minYear,
-                max: maxYear,
-                text: ['Active', 'Retired'],
-                orient: 'vertical',
-                right: 10,
-                top: 'center',
-                textStyle: { color: COLORS.textSecondary, fontSize: 11 },
-                calculable: true,
-                inRange: {
-                    color: ['#3182CE', '#68D391', '#F6AD55'] // Blue -> Green -> Orange (Vibrant)
-                }
-            },
-            series: [{
-                type: 'scatter',
-                symbolSize: function (data) {
-                    return Math.max(6, Math.log10(data[1] + 1) * 10);
-                },
-                data: seriesData,
-                itemStyle: {
-                    shadowBlur: 5,
-                    shadowColor: 'rgba(0,0,0,0.2)',
-                    opacity: 0.7,
-                    borderColor: 'rgba(255,255,255,0.4)',
-                    borderWidth: 1
-                },
-                emphasis: {
-                    focus: 'self',
-                    itemStyle: {
-                        shadowBlur: 20,
-                        shadowColor: 'rgba(255,255,255,0.3)',
-                        borderColor: '#fff',
-                        borderWidth: 2,
-                        opacity: 1
-                    }
-                }
-            }]
+            series: series
         });
-    } catch (e) { console.error("Landscape Error:", e); }
+        console.timeEnd("loadContributorLandscape");
+    } catch (e) {
+        console.error("Galaxy Rendering Error:", e);
+        console.timeEnd("loadContributorLandscape");
+    }
 }
 
 async function loadCorporateEra() {
@@ -770,7 +954,21 @@ async function loadCorporateEra() {
         const chart = echarts.init(document.getElementById('chart-corporate'));
         chart.setOption({
             backgroundColor: 'transparent',
-            tooltip: { ...tooltipStyle, trigger: 'axis', axisPointer: { type: 'cross' } },
+            tooltip: {
+                ...tooltipStyle,
+                trigger: 'axis',
+                formatter: function (params) {
+                    let html = `<div style="margin-bottom:5px; border-bottom:1px solid #eee;"><b>${params[0].axisValue}</b></div>`;
+                    params.forEach(p => {
+                        html += `
+                        <div style="display:flex; justify-content:space-between; gap:20px; font-size:12px;">
+                            <span>${p.marker} ${p.seriesName}</span>
+                            <span><b>${formatPct(p.value)}</b></span>
+                        </div>`;
+                    });
+                    return html;
+                }
+            },
             legend: { ...legendStyle, bottom: 0 },
             grid: { left: '4%', right: '4%', bottom: '15%', containLabel: true },
             xAxis: {
@@ -779,13 +977,20 @@ async function loadCorporateEra() {
                 boundaryGap: false,
                 data: data.xAxis.filter(x => parseInt(x) <= 2025)
             },
-            yAxis: { ...axisStyle, type: 'value', max: 100, axisLabel: { ...axisStyle.axisLabel, formatter: '{value}%' } },
-            series: data.series.map(s => ({
-                ...s,
-                data: s.data.slice(0, data.xAxis.filter(x => parseInt(x) <= 2025).length),
-                smooth: true,
-                symbol: 'none'
-            }))
+            yAxis: { ...axisStyle, type: 'value', max: 100, axisLabel: { ...axisStyle.axisLabel, formatter: (v) => formatPct(v) } },
+            series: data.series.map(s => {
+                let name = s.name;
+                if (name.includes('Sponsor') || name.includes('Corporate')) name = 'Sponsored';
+                if (name.includes('Independent') || name.includes('Hobbyist')) name = 'Independent';
+
+                return {
+                    ...s,
+                    name: name,
+                    data: s.data.slice(0, data.xAxis.filter(x => parseInt(x) <= 2025).length),
+                    smooth: true,
+                    symbol: 'none'
+                };
+            })
         });
     } catch (e) { console.error(e); }
 }
@@ -798,12 +1003,8 @@ async function loadMaintainerIndependence() {
 
         const chartEl = document.getElementById('chart-maintainer-independence');
         if (!chartEl) return;
-
         const chart = echarts.init(chartEl);
-        
-        // Use active maintainers data for the pie chart
-        const activeData = data.active;
-        
+
         // Color mapping for sponsors
         const sponsorColors = {
             'Brink': GHIBLI_PALETTE[2],           // Green
@@ -813,90 +1014,143 @@ async function loadMaintainerIndependence() {
             'MIT Digital Currency Initiative': GHIBLI_PALETTE[6], // Gold
             'OpenSats': GHIBLI_PALETTE[8],        // Rose
             'Independent': GHIBLI_PALETTE[17],    // Earth/Brown
+            'Clearwing Software': GHIBLI_PALETTE[15], // Sakura/Pink ish
             'default': GHIBLI_PALETTE[19]         // Cloud
         };
 
-        const pieData = activeData.by_sponsor.map(item => ({
-            name: item.name,
-            value: item.value,
-            itemStyle: {
-                color: sponsorColors[item.name] || sponsorColors['default']
-            }
-        }));
+        function updateIndependenceChart(viewType) {
+            const viewData = data[viewType]; // 'active' or 'all_time'
 
-        chart.setOption({
-            backgroundColor: 'transparent',
-            tooltip: {
-                ...tooltipStyle,
-                trigger: 'item',
-                formatter: function(params) {
-                    const pct = (params.value / activeData.total * 100).toFixed(0);
-                    return `<b>${params.name}</b><br/>${params.value} maintainer${params.value > 1 ? 's' : ''} (${pct}%)`;
-                }
-            },
-            legend: {
-                ...legendStyle,
-                orient: 'vertical',
-                right: 10,
-                top: 'center',
-                data: pieData.map(d => d.name)
-            },
-            series: [{
-                type: 'pie',
-                radius: ['45%', '70%'],
-                center: ['35%', '50%'],
-                avoidLabelOverlap: true,
+            // Map maintainer names to sponsors for tooltip
+            const maintainersBySponsor = {};
+            data.maintainers.forEach(m => {
+                // For 'active' view, only show active maintainers
+                if (viewType === 'active' && m.status !== 'active') return;
+
+                if (!maintainersBySponsor[m.sponsor]) maintainersBySponsor[m.sponsor] = [];
+                maintainersBySponsor[m.sponsor].push(m.name);
+            });
+
+            const pieData = viewData.by_sponsor.map(item => ({
+                name: item.name,
+                value: item.value,
                 itemStyle: {
-                    borderRadius: 6,
-                    borderColor: '#fff',
-                    borderWidth: 2
+                    color: sponsorColors[item.name] || sponsorColors['default']
                 },
-                label: {
-                    show: false
-                },
-                emphasis: {
-                    label: {
-                        show: true,
-                        fontSize: 14,
-                        fontWeight: 'bold',
-                        formatter: '{b}\n{d}%'
-                    },
-                    itemStyle: {
-                        shadowBlur: 10,
-                        shadowColor: 'rgba(0,0,0,0.2)'
+                maintainers: maintainersBySponsor[item.name] || []
+            }));
+
+            chart.setOption({
+                backgroundColor: 'transparent',
+                tooltip: {
+                    ...tooltipStyle,
+                    trigger: 'item',
+                    formatter: function (params) {
+                        const pct = (params.value / viewData.total * 100).toFixed(0);
+                        const names = params.data.maintainers.map(n => `• ${n}`).join('<br/>');
+                        return `
+                            <div style="font-weight:bold; margin-bottom:4px; color:${params.color}">${params.name}</div>
+                            <div style="font-size:12px; margin-bottom:8px;"><b>${params.value}</b> maintainer${params.value > 1 ? 's' : ''} (${pct}%)</div>
+                            <div style="font-size:11px; color:${COLORS.textSecondary}; border-top:1px solid #eee; padding-top:6px;">
+                                ${names}
+                            </div>
+                        `;
                     }
                 },
-                data: pieData
-            }],
-            graphic: [{
-                type: 'text',
-                left: '35%',
-                top: '45%',
-                style: {
-                    text: activeData.total,
-                    fill: COLORS.textPrimary,
-                    fontSize: 28,
-                    fontWeight: 'bold',
-                    textAlign: 'center'
-                }
-            }, {
-                type: 'text',
-                left: '35%',
-                top: '55%',
-                style: {
-                    text: 'Active',
-                    fill: COLORS.textLight,
-                    fontSize: 11,
-                    textAlign: 'center'
-                }
-            }]
-        });
+                legend: {
+                    ...legendStyle,
+                    orient: 'horizontal',
+                    bottom: 0,
+                    left: 'center',
+                    type: 'scroll',
+                    data: pieData.map(d => d.name)
+                },
+                series: [{
+                    type: 'pie',
+                    radius: ['45%', '70%'],
+                    center: ['50%', '45%'],
+                    avoidLabelOverlap: true,
+                    itemStyle: {
+                        borderRadius: 6,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    label: { show: false },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: 14,
+                            fontWeight: 'bold',
+                            formatter: '{d}%'
+                        },
+                        itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.1)' }
+                    },
+                    data: pieData
+                }],
+                graphic: [{
+                    type: 'text',
+                    left: 'center',
+                    top: '40%',
+                    style: {
+                        text: viewData.total,
+                        fill: COLORS.textPrimary,
+                        fontSize: 28,
+                        fontWeight: 'bold',
+                        textAlign: 'center'
+                    }
+                }, {
+                    type: 'text',
+                    left: 'center',
+                    top: '52%',
+                    style: {
+                        text: viewType === 'active' ? 'Active' : 'Total',
+                        fill: COLORS.textLight,
+                        fontSize: 11,
+                        textAlign: 'center',
+                        textTransform: 'uppercase'
+                    }
+                }]
+            }, true); // Use true to replace all options
+        }
+
+        // Initialize with 'active'
+        updateIndependenceChart('active');
+
+        // Event Listeners for Toggles
+        const btnActive = document.getElementById('btn-maintainer-active');
+        const btnAll = document.getElementById('btn-maintainer-all');
+
+        if (btnActive && btnAll) {
+            btnActive.addEventListener('click', () => {
+                btnActive.classList.add('active');
+                btnAll.classList.remove('active');
+                btnActive.style.background = '#fff';
+                btnActive.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+                btnAll.style.background = 'transparent';
+                btnAll.style.boxShadow = 'none';
+                btnAll.style.color = '#718096';
+                btnActive.style.color = '#2D3748';
+                updateIndependenceChart('active');
+            });
+            btnAll.addEventListener('click', () => {
+                btnAll.classList.add('active');
+                btnActive.classList.remove('active');
+                btnAll.style.background = '#fff';
+                btnAll.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+                btnActive.style.background = 'transparent';
+                btnActive.style.boxShadow = 'none';
+                btnActive.style.color = '#718096';
+                btnAll.style.color = '#2D3748';
+                updateIndependenceChart('all_time');
+            });
+        }
 
         // Store for resize
         charts.maintainerIndependence = chart;
 
     } catch (e) { console.error("Maintainer Independence Error:", e); }
 }
+
 
 async function loadGeography() {
     try {
@@ -934,7 +1188,8 @@ async function loadGeography() {
     } catch (e) { console.error(e); }
 }
 
-init();
+// Initialized via DOMContentLoaded to ensure elements exist
+document.addEventListener('DOMContentLoaded', init);
 
 async function loadCodebaseSnapshots() {
     try {
