@@ -1,0 +1,143 @@
+{
+  "_comment": "Bitcoin Core maintainer whitelist. Updated manually when maintainers change.",
+  "_last_updated": "2026-01-27",
+  "_source": "https://github.com/bitcoin/bitcoin, historical git log analysis",
+  
+  "maintainers": [
+    {
+      "id": "laanwj",
+      "name": "Wladimir J. van der Laan",
+      "emails": ["laanwj@gmail.com", "laanwj@protonmail.com", "126646+laanwj@users.noreply.github.com"],
+      "github": "laanwj",
+      "status": "emeritus",
+      "active_years": [2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022],
+      "notes": "Lead maintainer 2014-2022"
+    },
+    {
+      "id": "fanquake",
+      "name": "Michael Ford",
+      "emails": ["fanquake@gmail.com"],
+      "github": "fanquake",
+      "status": "active",
+      "active_years": [2019, 2020, 2021, 2022, 2023, 2024, 2025],
+      "notes": "Build system, releases"
+    },
+    {
+      "id": "MarcoFalke",
+      "name": "MarcoFalke",
+      "emails": ["falke.marco@gmail.com", "*~=`'#}+{/-|&$^_@721217.xyz"],
+      "github": "MarcoFalke",
+      "status": "emeritus",
+      "active_years": [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
+      "notes": "Testing, CI"
+    },
+    {
+      "id": "achow101",
+      "name": "Andrew Chow",
+      "emails": ["github@achow101.com", "achow101-github@achow101.com", "achow101@gmail.com"],
+      "github": "achow101",
+      "status": "active",
+      "active_years": [2020, 2021, 2022, 2023, 2024, 2025],
+      "notes": "Wallet, descriptors"
+    },
+    {
+      "id": "glozow",
+      "name": "Gloria Zhao",
+      "emails": ["gloriajzhao@gmail.com"],
+      "github": "glozow",
+      "status": "active",
+      "active_years": [2023, 2024, 2025],
+      "notes": "Mempool, P2P"
+    },
+    {
+      "id": "hebasto",
+      "name": "Hennadii Stepanov",
+      "emails": ["32963518+hebasto@users.noreply.github.com", "hebasto@gmail.com"],
+      "github": "hebasto",
+      "status": "active",
+      "active_years": [2021, 2022, 2023, 2024, 2025],
+      "notes": "Build system, GUI"
+    },
+    {
+      "id": "theuni",
+      "name": "Cory Fields",
+      "emails": ["cory-nospam-@coryfields.com", "theuni-nospam-@xoom.com"],
+      "github": "theuni",
+      "status": "emeritus",
+      "active_years": [2014, 2015, 2016, 2017, 2018, 2019],
+      "notes": "Build system"
+    },
+    {
+      "id": "sipa",
+      "name": "Pieter Wuille",
+      "emails": ["pieter.wuille@gmail.com", "pieter@wuille.net"],
+      "github": "sipa",
+      "status": "emeritus",
+      "active_years": [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019],
+      "notes": "Consensus, cryptography"
+    },
+    {
+      "id": "jonasschnelli",
+      "name": "Jonas Schnelli",
+      "emails": ["dev@jonasschnelli.ch"],
+      "github": "jonasschnelli",
+      "status": "emeritus",
+      "active_years": [2015, 2016, 2017, 2018, 2019, 2020, 2021],
+      "notes": "GUI, hardware wallet"
+    },
+    {
+      "id": "gavinandresen",
+      "name": "Gavin Andresen",
+      "emails": ["gavinandresen@gmail.com"],
+      "github": "gavinandresen",
+      "status": "historical",
+      "active_years": [2010, 2011, 2012, 2013, 2014],
+      "notes": "Lead maintainer 2010-2014, post-Satoshi"
+    },
+    {
+      "id": "jgarzik",
+      "name": "Jeff Garzik",
+      "emails": ["jgarzik@exmulti.com", "jgarzik@bitpay.com", "jgarzik@pobox.com"],
+      "github": "jgarzik",
+      "status": "historical",
+      "active_years": [2010, 2011, 2012, 2013, 2014, 2015],
+      "notes": "Early core developer"
+    },
+    {
+      "id": "luke-jr",
+      "name": "Luke Dashjr",
+      "emails": ["luke-jr+git@utopios.org", "luke@dashjr.org"],
+      "github": "luke-jr",
+      "status": "emeritus",
+      "active_years": [2012, 2013, 2014, 2015, 2016, 2017, 2018],
+      "notes": "BIPs, consensus"
+    },
+    {
+      "id": "gmaxwell",
+      "name": "Gregory Maxwell",
+      "emails": ["gmaxwell@gmail.com", "greg@xiph.org"],
+      "github": "gmaxwell",
+      "status": "historical",
+      "active_years": [2011, 2012, 2013, 2014, 2015, 2016, 2017],
+      "notes": "Cryptography, consensus"
+    },
+    {
+      "id": "ryanofsky",
+      "name": "Ryan Ofsky",
+      "emails": ["ryan@ofsky.org"],
+      "github": "ryanofsky",
+      "status": "active",
+      "active_years": [2023, 2024, 2025],
+      "notes": "Multiprocess, IPC"
+    },
+    {
+      "id": "TheCharlatan",
+      "name": "TheCharlatan",
+      "emails": ["seb.kung@gmail.com"],
+      "github": "TheCharlatan",
+      "status": "active", 
+      "active_years": [2024, 2025],
+      "notes": "Build system, kernel"
+    }
+  ]
+}

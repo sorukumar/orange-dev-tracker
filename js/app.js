@@ -120,6 +120,7 @@ async function init() {
     if (charts.heatmap) await loadStory();
     if (document.getElementById('chart-corporate')) await loadCorporateEra();
     if (document.getElementById('chart-geography')) await loadGeography();
+    if (document.getElementById('chart-maintainer-independence')) await loadMaintainerIndependence(); // New
 
     // Contributors Page
     if (charts.landscape) await loadContributorLandscape();
@@ -787,6 +788,114 @@ async function loadCorporateEra() {
             }))
         });
     } catch (e) { console.error(e); }
+}
+
+async function loadMaintainerIndependence() {
+    try {
+        const response = await fetch('data/stats_maintainer_independence.json');
+        if (!response.ok) return;
+        const data = await response.json();
+
+        const chartEl = document.getElementById('chart-maintainer-independence');
+        if (!chartEl) return;
+
+        const chart = echarts.init(chartEl);
+        
+        // Use active maintainers data for the pie chart
+        const activeData = data.active;
+        
+        // Color mapping for sponsors
+        const sponsorColors = {
+            'Brink': GHIBLI_PALETTE[2],           // Green
+            'Chaincode Labs': GHIBLI_PALETTE[0],  // Blue
+            'Spiral (Block/Square)': GHIBLI_PALETTE[4], // Orange
+            'Blockstream': GHIBLI_PALETTE[10],    // Ocean
+            'MIT Digital Currency Initiative': GHIBLI_PALETTE[6], // Gold
+            'OpenSats': GHIBLI_PALETTE[8],        // Rose
+            'Independent': GHIBLI_PALETTE[17],    // Earth/Brown
+            'default': GHIBLI_PALETTE[19]         // Cloud
+        };
+
+        const pieData = activeData.by_sponsor.map(item => ({
+            name: item.name,
+            value: item.value,
+            itemStyle: {
+                color: sponsorColors[item.name] || sponsorColors['default']
+            }
+        }));
+
+        chart.setOption({
+            backgroundColor: 'transparent',
+            tooltip: {
+                ...tooltipStyle,
+                trigger: 'item',
+                formatter: function(params) {
+                    const pct = (params.value / activeData.total * 100).toFixed(0);
+                    return `<b>${params.name}</b><br/>${params.value} maintainer${params.value > 1 ? 's' : ''} (${pct}%)`;
+                }
+            },
+            legend: {
+                ...legendStyle,
+                orient: 'vertical',
+                right: 10,
+                top: 'center',
+                data: pieData.map(d => d.name)
+            },
+            series: [{
+                type: 'pie',
+                radius: ['45%', '70%'],
+                center: ['35%', '50%'],
+                avoidLabelOverlap: true,
+                itemStyle: {
+                    borderRadius: 6,
+                    borderColor: '#fff',
+                    borderWidth: 2
+                },
+                label: {
+                    show: false
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                        formatter: '{b}\n{d}%'
+                    },
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowColor: 'rgba(0,0,0,0.2)'
+                    }
+                },
+                data: pieData
+            }],
+            graphic: [{
+                type: 'text',
+                left: '35%',
+                top: '45%',
+                style: {
+                    text: activeData.total,
+                    fill: COLORS.textPrimary,
+                    fontSize: 28,
+                    fontWeight: 'bold',
+                    textAlign: 'center'
+                }
+            }, {
+                type: 'text',
+                left: '35%',
+                top: '55%',
+                style: {
+                    text: 'Active',
+                    fill: COLORS.textLight,
+                    fontSize: 11,
+                    textAlign: 'center'
+                }
+            }]
+        });
+
+        // Store for resize
+        charts.maintainerIndependence = chart;
+
+    } catch (e) { console.error("Maintainer Independence Error:", e); }
 }
 
 async function loadGeography() {

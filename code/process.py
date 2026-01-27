@@ -15,6 +15,8 @@ class Config:
     SOCIAL_FILE = f"{DATA_DIR}/social_history.parquet"
     METADATA_FILE = f"{DATA_DIR}/social_metadata.json"
     ENRICHED_FILE = f"{DATA_DIR}/contributors_enriched.parquet"
+    MAINTAINERS_FILE = f"{DATA_DIR}/maintainers_lookup.json"
+    SPONSORS_FILE = f"{DATA_DIR}/sponsors_lookup.json"
 
     # Map output filenames
     FILES = {
@@ -32,6 +34,165 @@ class Config:
         "meta_geography": f"{OUTPUT_DIR}/stats_geography.json", # New
         "contributors_rich": f"{OUTPUT_DIR}/contributors_rich.json" # For bubble chart
     }
+
+# --- Maintainer Lookup ---
+class MaintainerLookup:
+    """
+    Uses a curated whitelist of known Bitcoin Core maintainers.
+    This provides accurate counts vs. naive committer_email counting.
+    """
+    _instance = None
+    _email_to_id = {}
+    _maintainers = []
+    
+    @classmethod
+    def load(cls):
+        if cls._instance is not None:
+            return cls._instance
+        
+        cls._instance = cls()
+        
+        if not os.path.exists(Config.MAINTAINERS_FILE):
+            print(f"Warning: {Config.MAINTAINERS_FILE} not found. Using fallback logic.")
+            return cls._instance
+        
+        with open(Config.MAINTAINERS_FILE, "r") as f:
+            data = json.load(f)
+        
+        cls._maintainers = data.get("maintainers", [])
+        
+        # Build email -> maintainer_id lookup
+        for m in cls._maintainers:
+            for email in m.get("emails", []):
+                cls._email_to_id[email.lower()] = m["id"]
+        
+        print(f"Loaded {len(cls._maintainers)} maintainers with {len(cls._email_to_id)} email aliases.")
+        return cls._instance
+    
+    @classmethod
+    def get_maintainer_id(cls, email):
+        """Returns maintainer ID if email belongs to a known maintainer, else None."""
+        return cls._email_to_id.get(email.lower())
+    
+    @classmethod
+    def is_maintainer(cls, email):
+        """Check if email belongs to a known maintainer."""
+        return email.lower() in cls._email_to_id
+    
+    @classmethod
+    def get_all_maintainers(cls):
+        """Returns list of all maintainer records."""
+        return cls._maintainers
+    
+    @classmethod
+    def get_active_maintainers(cls, year=None):
+        """Returns maintainers active in a given year (or currently active if year is None)."""
+        if year is None:
+            return [m for m in cls._maintainers if m.get("status") == "active"]
+        return [m for m in cls._maintainers if year in m.get("active_years", [])]
+    
+    @classmethod
+    def count_total(cls):
+        """Total unique maintainers (all time)."""
+        return len(cls._maintainers)
+    
+    @classmethod
+    def count_active(cls):
+        """Currently active maintainers."""
+        return len([m for m in cls._maintainers if m.get("status") == "active"])
+
+# --- Sponsor Lookup ---
+class SponsorLookup:
+    """
+    Uses a curated list of known Bitcoin Core sponsors and their funded developers.
+    Provides accurate corporate/sponsored classification vs. naive domain heuristics.
+    """
+    _instance = None
+    _email_to_sponsor = {}  # email -> sponsor_id
+    _sponsors = {}          # sponsor_id -> sponsor info
+    _rules = {}             # classification_rules
+    
+    @classmethod
+    def load(cls):
+        if cls._instance is not None:
+            return cls._instance
+        
+        cls._instance = cls()
+        
+        if not os.path.exists(Config.SPONSORS_FILE):
+            print(f"Warning: {Config.SPONSORS_FILE} not found. Using fallback heuristics.")
+            return cls._instance
+        
+        with open(Config.SPONSORS_FILE, "r") as f:
+            data = json.load(f)
+        
+        # Load sponsors
+        for s in data.get("sponsors", []):
+            cls._sponsors[s["id"]] = s
+        
+        # Build email -> sponsor lookup from sponsored_developers
+        for dev in data.get("sponsored_developers", []):
+            sponsor_id = dev.get("sponsor_id")
+            for email in dev.get("emails", []):
+                cls._email_to_sponsor[email.lower()] = sponsor_id
+        
+        # Load fallback rules
+        cls._rules = data.get("classification_rules", {})
+        
+        print(f"Loaded {len(cls._sponsors)} sponsors, {len(cls._email_to_sponsor)} sponsored developer emails.")
+        return cls._instance
+    
+    @classmethod
+    def classify(cls, email, canonical_name=None, enrich_company=None):
+        """
+        Classifies an author as 'Sponsored', 'Corporate', or 'Personal'.
+        
+        Priority:
+        1. Known sponsored developer (email match) → 'Sponsored'
+        2. Enriched company field exists → 'Corporate'
+        3. Corporate domain (chaincode.com, etc.) → 'Corporate'
+        4. Personal domain (gmail, etc.) → 'Personal'
+        5. Unknown custom domain → 'Unknown' (conservative)
+        """
+        email_lower = email.lower() if email else ""
+        domain = email_lower.split('@')[-1] if '@' in email_lower else ""
+        
+        # 1. Check if known sponsored developer
+        if email_lower in cls._email_to_sponsor:
+            return "Sponsored"
+        
+        # 2. Check enriched company field
+        if enrich_company and isinstance(enrich_company, str) and len(enrich_company.strip()) > 1:
+            return "Corporate"
+        
+        # 3. Check corporate domains from rules
+        corporate_domains = cls._rules.get("corporate_domains", [])
+        if domain in corporate_domains:
+            return "Sponsored"  # Known Bitcoin sponsor domain
+        
+        # 4. Check academic domains (treat as Corporate/Institutional)
+        academic_domains = cls._rules.get("academic_domains", [])
+        if domain in academic_domains:
+            return "Corporate"  # Academic institution
+        
+        # 5. Check personal domains
+        personal_domains = cls._rules.get("personal_domains", [])
+        if domain in personal_domains:
+            return "Personal"
+        
+        # 6. Unknown domain - be conservative, mark as Personal
+        # (Previously we assumed custom domain = Corporate, which caused false positives)
+        return "Personal"
+    
+    @classmethod
+    def get_sponsor_name(cls, email):
+        """Returns sponsor name if email belongs to a sponsored developer."""
+        email_lower = email.lower() if email else ""
+        sponsor_id = cls._email_to_sponsor.get(email_lower)
+        if sponsor_id and sponsor_id in cls._sponsors:
+            return cls._sponsors[sponsor_id].get("name")
+        return None
+
 
 # --- Data Factory ---
 class DataFactory:
@@ -100,20 +261,29 @@ class MetricGenerators:
         """
         print("Generating Vital Signs...")
         
+        # Load maintainer lookup
+        MaintainerLookup.load()
+        
         # 1. Unique Contributors (Canonical)
         unique_contributors = commits['canonical_id'].nunique()
         
         # 1.5 Total Commits (Simulated SHA count if available, else row count)
         total_commits = commits['hash'].nunique()
 
-        # 2. Maintainers (Active in last year)
-        # Use dataset max date, not system time
-        max_date = commits['date_utc'].max()
-        last_year = commits[commits['date_utc'] > (max_date - pd.Timedelta(days=365))]
-        unique_maintainers_active = last_year[last_year['is_merge'] == True]['committer_email'].nunique()
+        # 2. Maintainers - USE WHITELIST for accurate counts
+        # Active = status == "active" in lookup
+        # Total = all maintainers in lookup
         
-        # 2.1 Total Maintainers (All Time)
-        unique_maintainers_total = commits[commits['is_merge'] == True]['committer_email'].nunique()
+        if MaintainerLookup.count_total() > 0:
+            # Use curated whitelist
+            unique_maintainers_active = MaintainerLookup.count_active()
+            unique_maintainers_total = MaintainerLookup.count_total()
+        else:
+            # Fallback to old logic if no lookup file
+            max_date = commits['date_utc'].max()
+            last_year = commits[commits['date_utc'] > (max_date - pd.Timedelta(days=365))]
+            unique_maintainers_active = last_year[last_year['is_merge'] == True]['committer_email'].nunique()
+            unique_maintainers_total = commits[commits['is_merge'] == True]['committer_email'].nunique()
         
         # 3. Current Codebase Size (True Static LOC)
         # We prefer the actual scan data over historical net churn
@@ -485,26 +655,35 @@ class MetricGenerators:
         # Maintainers, Heatmap, Weekend
         print("Generating Common Metrics...")
         
-        # Maintainers
+        # Load maintainer lookup
+        MaintainerLookup.load()
+        
+        # Maintainers Trend - Use whitelist if available
         merges = commits[commits['is_merge'] == True].copy()
         if merges.empty: merges = commits.copy()
         
         merges['date'] = merges['date_utc']
         merges = merges.set_index('date').sort_index()
         
-        # Rolling 12m distinct maintainers
-        # Resample first to reduce loop size?
-        # No, rolling on dates is easiest manually
         dates = []
         counts = []
         periods = pd.date_range(start=commits['date_utc'].min(), end=commits['date_utc'].max(), freq='M')
         
-        for p in periods:
-            start_date = p - pd.DateOffset(months=12)
-            mask = (merges.index > start_date) & (merges.index <= p)
-            n = merges.loc[mask, 'committer_email'].nunique()
-            dates.append(p.strftime("%Y-%m"))
-            counts.append(int(n))
+        if MaintainerLookup.count_total() > 0:
+            # Use whitelist: count maintainers active in each year based on active_years field
+            for p in periods:
+                year = p.year
+                active_in_year = MaintainerLookup.get_active_maintainers(year)
+                dates.append(p.strftime("%Y-%m"))
+                counts.append(len(active_in_year))
+        else:
+            # Fallback: Rolling 12m distinct committer_email
+            for p in periods:
+                start_date = p - pd.DateOffset(months=12)
+                mask = (merges.index > start_date) & (merges.index <= p)
+                n = merges.loc[mask, 'committer_email'].nunique()
+                dates.append(p.strftime("%Y-%m"))
+                counts.append(int(n))
             
         with open(Config.FILES["trend_maintainers"], "w") as f:
             json.dump({"xAxis": dates, "series": [{"name": "Active Maintainers", "type": "line", "step": "start", "data": counts}]}, f)
@@ -616,7 +795,16 @@ class MetricGenerators:
 
     @staticmethod
     def generate_corporate_era(commits):
-        print("Generating Corporate Era...")
+        """
+        Generates TWO datasets:
+        1. stats_corporate.json - Contributor commits by sponsorship status (% over time)
+        2. stats_maintainer_independence.json - Maintainer diversity by sponsor
+        """
+        print("Generating Corporate Era & Maintainer Independence...")
+        
+        # Load lookups
+        SponsorLookup.load()
+        MaintainerLookup.load()
         
         # Load Enriched Data for Company/Email info
         enrich_map = {}
@@ -624,68 +812,143 @@ class MetricGenerators:
              enriched_df = pd.read_parquet(Config.ENRICHED_FILE)
              enrich_map = enriched_df.set_index('canonical_id').to_dict(orient='index')
         
-        # We need to map every commit to (Corporate, Personal)
-        # 1. Get Canonical ID for every commit (already there)
-        # 2. Check Enriched Company
-        # 3. If None, Check Email Domain
-        
-        # Personal Domains List (common ones)
-        personal_domains = ['gmail.com', 'hotmail.com', 'yahoo.com', 'outlook.com', 
-                            'protonmail.com', 'me.com', 'icloud.com', 'aol.com', 'users.noreply.github.com']
-        
-        results = []
-        
         commits['year'] = commits['date_utc'].dt.year
         
-        # Helper to classify a single author
-        def classify_author(cid, email):
-            # Check Enriched
-            if cid in enrich_map:
-                comp = enrich_map[cid].get('company')
-                if comp and isinstance(comp, str) and len(comp) > 1:
-                    return "Corporate"
-            
-            # Check Email
-            domain = str(email).split('@')[-1].lower()
-            if domain in personal_domains:
-                return "Personal"
-            
-            # If domain is not personal, is it corporate?
-            # e.g. 'mit.edu', 'chaincode.com', 'blockstream.io' -> Corporate
-            if '.' in domain and domain != "unknown" and domain != "none":
-                 return "Corporate" # Assume custom domain is pro/corp
-            
-            return "Personal" # Default to personal/hobbyist if unknown
-            
-        # Build a map of cid -> type to speed up
-        # Get unique authors
+        # ========================================
+        # PART 1: Contributor Commits by Sponsorship
+        # ========================================
+        
+        # Build a map of cid -> classification
         authors = commits[['canonical_id', 'author_email']].drop_duplicates('canonical_id')
         author_types = {}
+        
         for _, row in authors.iterrows():
-            author_types[row['canonical_id']] = classify_author(row['canonical_id'], row['author_email'])
+            cid = row['canonical_id']
+            email = row['author_email']
+            enrich_company = enrich_map.get(cid, {}).get('company')
+            classification = SponsorLookup.classify(email, enrich_company=enrich_company)
             
+            # Map Sponsored -> Corporate for the chart (simpler 2-way split)
+            if classification == "Sponsored":
+                author_types[cid] = "Sponsored"
+            else:
+                author_types[cid] = classification  # "Corporate" or "Personal"
+        
         # Apply to commits
         commits['author_type'] = commits['canonical_id'].map(author_types)
         
-        # Aggregate by Year
+        # Aggregate by Year - COUNT COMMITS
         stats = commits.groupby(['year', 'author_type']).size().unstack(fill_value=0)
         
         # Normalize to %
         stats_pct = stats.div(stats.sum(axis=1), axis=0).round(4) * 100
         
-        # Output JSON
         years = stats.index.tolist()
+        
+        # Combine Sponsored + Corporate into one "Sponsored/Corporate" bucket for cleaner chart
+        sponsored_pct = stats_pct.get('Sponsored', pd.Series([0]*len(years), index=years)).fillna(0)
+        corporate_pct = stats_pct.get('Corporate', pd.Series([0]*len(years), index=years)).fillna(0)
+        personal_pct = stats_pct.get('Personal', pd.Series([0]*len(years), index=years)).fillna(0)
+        
+        combined_corp = (sponsored_pct + corporate_pct).tolist()
+        
         data = {
+            "title": "Contributor Activity by Sponsorship",
+            "subtitle": "% of commits from sponsored vs independent developers",
             "xAxis": [str(y) for y in years],
             "series": [
-                {"name": "Personal/Hobbyist", "type": "line", "stack": "Total", "areaStyle": {}, "data": stats_pct.get('Personal', [0]*len(years)).tolist()},
-                {"name": "Corporate/Sponsor", "type": "line", "stack": "Total", "areaStyle": {}, "data": stats_pct.get('Corporate', [0]*len(years)).tolist()}
+                {"name": "Independent/Hobbyist", "type": "line", "stack": "Total", "areaStyle": {}, "data": personal_pct.tolist()},
+                {"name": "Sponsored/Corporate", "type": "line", "stack": "Total", "areaStyle": {}, "data": combined_corp}
             ]
         }
         
         with open(Config.FILES["trend_corporate"], "w") as f:
             json.dump(data, f)
+        
+        # ========================================
+        # PART 2: Maintainer Independence
+        # ========================================
+        
+        maintainers = MaintainerLookup.get_all_maintainers()
+        
+        if not maintainers:
+            print("  Skipping Maintainer Independence (no maintainer data)")
+            return
+        
+        # For each maintainer, determine their sponsor (if any)
+        maintainer_sponsors = []
+        
+        for m in maintainers:
+            m_id = m.get("id")
+            m_name = m.get("name", m_id)
+            m_status = m.get("status", "unknown")
+            emails = m.get("emails", [])
             
+            # Check if any email matches a sponsor
+            sponsor_name = None
+            for email in emails:
+                sponsor_name = SponsorLookup.get_sponsor_name(email)
+                if sponsor_name:
+                    break
+            
+            # If no sponsor found, check enrichment data
+            if not sponsor_name:
+                # Try to find canonical_id for this maintainer
+                for email in emails:
+                    email_lower = email.lower()
+                    # Search commits for matching email
+                    match = commits[commits['author_email'].str.lower() == email_lower]
+                    if not match.empty:
+                        cid = match.iloc[0]['canonical_id']
+                        company = enrich_map.get(cid, {}).get('company')
+                        if company and len(str(company).strip()) > 1:
+                            sponsor_name = company
+                            break
+            
+            maintainer_sponsors.append({
+                "id": m_id,
+                "name": m_name,
+                "status": m_status,
+                "sponsor": sponsor_name if sponsor_name else "Independent",
+                "active_years": m.get("active_years", [])
+            })
+        
+        # Summary: Count by Sponsor (for current/active maintainers)
+        active_maintainers = [m for m in maintainer_sponsors if m["status"] == "active"]
+        all_maintainers = maintainer_sponsors
+        
+        # Count sponsors for active maintainers
+        sponsor_counts_active = {}
+        for m in active_maintainers:
+            s = m["sponsor"]
+            sponsor_counts_active[s] = sponsor_counts_active.get(s, 0) + 1
+        
+        # Count sponsors for all maintainers (historical)
+        sponsor_counts_all = {}
+        for m in all_maintainers:
+            s = m["sponsor"]
+            sponsor_counts_all[s] = sponsor_counts_all.get(s, 0) + 1
+        
+        # Format for chart (horizontal bar or pie)
+        independence_data = {
+            "title": "Maintainer Independence",
+            "subtitle": "Who funds the gatekeepers?",
+            "active": {
+                "total": len(active_maintainers),
+                "by_sponsor": [{"name": k, "value": v} for k, v in sorted(sponsor_counts_active.items(), key=lambda x: -x[1])]
+            },
+            "all_time": {
+                "total": len(all_maintainers),
+                "by_sponsor": [{"name": k, "value": v} for k, v in sorted(sponsor_counts_all.items(), key=lambda x: -x[1])]
+            },
+            "maintainers": maintainer_sponsors  # Full list for detailed view
+        }
+        
+        with open(os.path.join(Config.OUTPUT_DIR, "stats_maintainer_independence.json"), "w") as f:
+            json.dump(independence_data, f)
+        
+        print(f"  Generated: {len(active_maintainers)} active maintainers, {len(all_maintainers)} total")
+
     @staticmethod
     def generate_geography(commits):
         print("Generating Geography...")
@@ -706,7 +969,7 @@ class MetricGenerators:
             loc = str(loc).lower()
             if "united states" in loc or "usa" in loc or "u.s." in loc or "san francisco" in loc or "new york" in loc: return "USA"
             if "germany" in loc or "berlin" in loc: return "Germany"
-            if "united kingdom" in loc or "london" in loc or "uk" in loc: return "UK"
+            if "united kingdom" in loc or "london" in loc: return "UK"
             if "canada" in loc: return "Canada"
             if "china" in loc: return "China"
             if "france" in loc or "paris" in loc: return "France"

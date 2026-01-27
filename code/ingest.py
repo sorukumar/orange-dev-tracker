@@ -9,6 +9,7 @@ import json
 # --- Configuration ---
 REPO_PATH = "code/bitcoin"
 OUTPUT_PATH = "data/commits.parquet"
+MESSAGES_OUTPUT_PATH = "data/commit_messages.parquet"  # NEW: For reviewer extraction
 
 # --- Categorization Logic ---
 CATEGORY_RULES = {
@@ -80,6 +81,30 @@ def get_git_log(repo_path):
     # We yield stdout line by line, but if it finishes, we check stderr
     return process
 
+def get_git_log_with_messages(repo_path):
+    """
+    NEW: Extracts git log with full commit body for ACK/reviewer parsing.
+    This is a separate pass to avoid complicating the main numstat parsing.
+    
+    Format: hash, subject, body (includes trailers like ACK, Tested-by, etc.)
+    
+    NOTE: Future Enhancement - Consider hybrid approach with GitHub PR API
+    for more complete reviewer data (includes non-merged PRs, review comments).
+    See: https://docs.github.com/en/rest/pulls/reviews
+    """
+    cmd = [
+        "git",
+        "-C", repo_path,
+        "log",
+        "--all",
+        "--format=MESSAGE_START^|^%H^|^%s^|^%b^|^MESSAGE_END",
+    ]
+    
+    print(f"Extracting commit messages for reviewer parsing...")
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, errors='replace', bufsize=10*1024*1024)
+    
+    return process
+
 def parse_log(process):
     stream = process.stdout
     commits = []
@@ -149,6 +174,64 @@ def parse_log(process):
         print(f"Git log stderr (warning): {stderr[:200]}...")
         
     return commits
+
+def parse_messages(process):
+    """
+    Parse commit messages to extract hash, subject, and body.
+    Body contains ACK/NACK trailers we'll parse later.
+    """
+    stream = process.stdout
+    messages = []
+    seen_hashes = set()
+    
+    current_hash = None
+    current_subject = None
+    current_body_lines = []
+    in_message = False
+    
+    for line in stream:
+        line = line.rstrip('\n\r')
+        
+        if line.startswith("MESSAGE_START^|^"):
+            # Save previous message if exists
+            if current_hash and current_hash not in seen_hashes:
+                messages.append({
+                    "hash": current_hash,
+                    "subject": current_subject,
+                    "body": "\n".join(current_body_lines)
+                })
+                seen_hashes.add(current_hash)
+            
+            # Parse new message header
+            parts = line.split("^|^")
+            current_hash = parts[1] if len(parts) > 1 else None
+            current_subject = parts[2] if len(parts) > 2 else ""
+            # Body starts after subject, may span multiple lines until MESSAGE_END
+            body_start = parts[3] if len(parts) > 3 else ""
+            current_body_lines = [body_start] if body_start else []
+            in_message = True
+            
+        elif "^|^MESSAGE_END" in line or line.strip() == "MESSAGE_END":
+            # End of this message's body
+            in_message = False
+            
+        elif in_message and current_hash:
+            # Continuation of body
+            current_body_lines.append(line)
+    
+    # Save last message
+    if current_hash and current_hash not in seen_hashes:
+        messages.append({
+            "hash": current_hash,
+            "subject": current_subject,
+            "body": "\n".join(current_body_lines)
+        })
+    
+    stderr = process.stderr.read()
+    if process.wait() != 0:
+        print(f"Git command failed: {stderr}")
+    
+    return messages
 
 def categorize_file(path):
     for category, regexes in CATEGORY_RULES.items():
@@ -269,26 +352,31 @@ def main():
         return
 
     print("Reading git log...")
-    # NOTE: Modified command to get timezone offset if I were to re-write get_git_log. 
-    # For this script, I'm sticking to the defined function to ensure it runs, 
-    # but I acknowledge the timezone limitation (will default to UTC).
     
-    # Actual run
+    # Actual run - commits with numstat
     process = get_git_log(REPO_PATH)
     commits = parse_log(process)
     
     print(f"Parsed {len(commits)} commits.")
     
     df = pd.DataFrame(commits)
-    
 
-
-    # Save
+    # Save commits
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
     df.to_parquet(OUTPUT_PATH, index=False)
     print(f"Saved to {OUTPUT_PATH}")
     
-    # --- New: Static Analysis ---
+    # --- NEW: Extract commit messages for reviewer parsing ---
+    print("\nExtracting commit messages for reviewer analysis...")
+    msg_process = get_git_log_with_messages(REPO_PATH)
+    messages = parse_messages(msg_process)
+    print(f"Extracted {len(messages)} commit messages.")
+    
+    messages_df = pd.DataFrame(messages)
+    messages_df.to_parquet(MESSAGES_OUTPUT_PATH, index=False)
+    print(f"Saved messages to {MESSAGES_OUTPUT_PATH}")
+    
+    # --- Static Analysis ---
     scan_repository(REPO_PATH)
 
 def scan_repository(repo_path):

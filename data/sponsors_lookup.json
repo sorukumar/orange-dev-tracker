@@ -1,0 +1,243 @@
+{
+  "_comment": "Bitcoin Core development sponsors and their known developers. Updated manually.",
+  "_last_updated": "2026-01-27",
+  "_methodology": "Classification: 'sponsored' = actively funded for Bitcoin Core work. 'affiliated' = works at company but funding unclear.",
+  
+  "sponsors": [
+    {
+      "id": "chaincode",
+      "name": "Chaincode Labs",
+      "type": "nonprofit",
+      "domains": ["chaincode.com"],
+      "website": "https://chaincode.com"
+    },
+    {
+      "id": "spiral",
+      "name": "Spiral (Block/Square)",
+      "type": "corporate",
+      "domains": ["spiral.xyz", "block.xyz", "squareup.com"],
+      "website": "https://spiral.xyz"
+    },
+    {
+      "id": "blockstream",
+      "name": "Blockstream",
+      "type": "corporate",
+      "domains": ["blockstream.com", "blockstream.io"],
+      "website": "https://blockstream.com"
+    },
+    {
+      "id": "brink",
+      "name": "Brink",
+      "type": "nonprofit",
+      "domains": ["brink.dev"],
+      "website": "https://brink.dev"
+    },
+    {
+      "id": "mit_dci",
+      "name": "MIT Digital Currency Initiative",
+      "type": "academic",
+      "domains": ["mit.edu", "media.mit.edu"],
+      "website": "https://dci.mit.edu"
+    },
+    {
+      "id": "hrf",
+      "name": "Human Rights Foundation",
+      "type": "nonprofit",
+      "domains": ["hrf.org"],
+      "website": "https://hrf.org/devfund"
+    },
+    {
+      "id": "okcoin",
+      "name": "OKCoin",
+      "type": "corporate", 
+      "domains": ["okcoin.com"],
+      "website": "https://okcoin.com"
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini",
+      "type": "corporate",
+      "domains": ["gemini.com"],
+      "website": "https://gemini.com"
+    },
+    {
+      "id": "opensats",
+      "name": "OpenSats",
+      "type": "nonprofit",
+      "domains": ["opensats.org"],
+      "website": "https://opensats.org"
+    }
+  ],
+  
+  "sponsored_developers": [
+    {
+      "canonical_name": "Gloria Zhao",
+      "github": "glozow",
+      "emails": ["gloriajzhao@gmail.com"],
+      "sponsor_id": "brink",
+      "status": "active",
+      "notes": "Mempool/P2P focus"
+    },
+    {
+      "canonical_name": "Andrew Chow", 
+      "github": "achow101",
+      "emails": ["github@achow101.com", "achow101-github@achow101.com"],
+      "sponsor_id": "blockstream",
+      "status": "active",
+      "notes": "Wallet maintainer"
+    },
+    {
+      "canonical_name": "Pieter Wuille",
+      "github": "sipa",
+      "emails": ["pieter.wuille@gmail.com", "pieter@wuille.net"],
+      "sponsor_id": "chaincode",
+      "status": "active",
+      "notes": "Consensus, cryptography"
+    },
+    {
+      "canonical_name": "Suhas Daftuar",
+      "github": "sdaftuar",
+      "emails": ["sdaftuar@gmail.com", "sdaftuar@chaincode.com"],
+      "sponsor_id": "chaincode",
+      "status": "active",
+      "notes": "P2P, mempool"
+    },
+    {
+      "canonical_name": "John Newbery",
+      "github": "jnewbery",
+      "emails": ["john@johnnewbery.com"],
+      "sponsor_id": "brink",
+      "status": "active",
+      "notes": "Brink co-founder"
+    },
+    {
+      "canonical_name": "Marco Falke",
+      "github": "MarcoFalke",
+      "emails": ["falke.marco@gmail.com", "*~=`'#}+{/-|&$^_@721217.xyz"],
+      "sponsor_id": "chaincode",
+      "status": "emeritus",
+      "notes": "Former testing maintainer"
+    },
+    {
+      "canonical_name": "Wladimir van der Laan",
+      "github": "laanwj",
+      "emails": ["laanwj@gmail.com", "laanwj@protonmail.com"],
+      "sponsor_id": "mit_dci",
+      "status": "emeritus",
+      "notes": "Former lead maintainer"
+    },
+    {
+      "canonical_name": "Cory Fields",
+      "github": "theuni",
+      "emails": ["cory-nospam-@coryfields.com"],
+      "sponsor_id": "mit_dci",
+      "status": "emeritus",
+      "notes": "Build system"
+    },
+    {
+      "canonical_name": "Matt Corallo",
+      "github": "TheBlueMatt",
+      "emails": ["matt@bluematt.me", "bitcoindev@bluematt.me"],
+      "sponsor_id": "spiral",
+      "status": "active",
+      "notes": "LDK, formerly Core"
+    },
+    {
+      "canonical_name": "Michael Ford",
+      "github": "fanquake",
+      "emails": ["fanquake@gmail.com"],
+      "sponsor_id": "brink",
+      "status": "active",
+      "notes": "Build/release maintainer"
+    },
+    {
+      "canonical_name": "Hennadii Stepanov",
+      "github": "hebasto",
+      "emails": ["32963518+hebasto@users.noreply.github.com", "hebasto@gmail.com"],
+      "sponsor_id": "brink",
+      "status": "active",
+      "notes": "GUI, build system"
+    },
+    {
+      "canonical_name": "Ryan Ofsky",
+      "github": "ryanofsky",
+      "emails": ["ryan@ofsky.org"],
+      "sponsor_id": "chaincode",
+      "status": "active",
+      "notes": "Multiprocess"
+    },
+    {
+      "canonical_name": "Sjors Provoost",
+      "github": "Sjors",
+      "emails": ["sjors@sprovoost.nl"],
+      "sponsor_id": "spiral",
+      "status": "active",
+      "notes": "Wallet, Stratum v2"
+    },
+    {
+      "canonical_name": "Antoine Poinsot",
+      "github": "darosior",
+      "emails": ["darosior@protonmail.com"],
+      "sponsor_id": "chaincode",
+      "status": "active",
+      "notes": "Miniscript"
+    },
+    {
+      "canonical_name": "Sebastian Falbesoner",
+      "github": "theStack",
+      "emails": ["sebastian.falbesoner@gmail.com"],
+      "sponsor_id": "brink",
+      "status": "active",
+      "notes": "Various contributions"
+    },
+    {
+      "canonical_name": "Fabian Jahr",
+      "github": "fjahr",
+      "emails": ["fjahr@protonmail.com"],
+      "sponsor_id": "brink",
+      "status": "active",
+      "notes": "Coinstats, UTXO"
+    },
+    {
+      "canonical_name": "Jon Atack",
+      "github": "jonatack",
+      "emails": ["jon@atack.com"],
+      "sponsor_id": "opensats",
+      "status": "active",
+      "notes": "Review, P2P"
+    },
+    {
+      "canonical_name": "Antoine Riard",
+      "github": "ariard",
+      "emails": ["antoine.riard@gmail.com"],
+      "sponsor_id": "chaincode",
+      "status": "emeritus",
+      "notes": "Lightning, mempool"
+    },
+    {
+      "canonical_name": "Greg Sanders",
+      "github": "instagibbs",
+      "emails": ["gsanders87@gmail.com"],
+      "sponsor_id": "spiral",
+      "status": "active",
+      "notes": "Mempool, wallet"
+    }
+  ],
+  
+  "classification_rules": {
+    "_comment": "Fallback rules when developer is not in sponsored_developers list",
+    "corporate_domains": [
+      "chaincode.com", "blockstream.com", "blockstream.io", "spiral.xyz",
+      "block.xyz", "brink.dev", "okcoin.com", "gemini.com", "kraken.com",
+      "coinbase.com", "bitpay.com", "bitgo.com", "river.com"
+    ],
+    "academic_domains": [
+      "mit.edu", "stanford.edu", "berkeley.edu", "cornell.edu"
+    ],
+    "personal_domains": [
+      "gmail.com", "hotmail.com", "yahoo.com", "outlook.com",
+      "protonmail.com", "proton.me", "pm.me", "me.com", "icloud.com", 
+      "aol.com", "users.noreply.github.com", "gmx.com", "tutanota.com"
+    ]
+  }
+}

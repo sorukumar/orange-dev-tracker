@@ -29,18 +29,42 @@
         <section class="slide">
             <div class="card">
                 <h3>The Keepers (Maintainers)</h3>
-                <p>The "Bus Factor" over time.</p>
-                <div id="chart-maintainers" style="height: 400px;"></div>
+                <p>The "Bus Factor" over time — how many people can merge code?</p>
+                <div id="chart-maintainers" style="height: 350px;"></div>
             </div>
         </section>
 
-        <!-- Story Section: Corporate Era -->
+        <!-- Story Section: Corporate Era - Now with TWO charts -->
         <section class="story-section">
             <div class="card">
                 <h2>The Corporate Era</h2>
-                <p class="narrative">From cypherpunks to corporate labs. Tracking the shift from personal emails to
-                    corporate domains.</p>
-                <div id="chart-corporate" style="height: 400px;"></div>
+                <p class="narrative">From cypherpunks to corporate labs. Tracking the shift from hobbyist to sponsored development.</p>
+                
+                <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-top: 20px;">
+                    <!-- Chart 1: Contributor Sponsorship (Commits over time) -->
+                    <div style="flex: 2; min-width: 450px;">
+                        <h4 style="margin-bottom: 10px; color: #4A5568; font-size: 14px;">
+                            <i class="fas fa-users" style="margin-right: 8px; opacity: 0.7;"></i>
+                            Contributor Activity by Sponsorship
+                        </h4>
+                        <p style="font-size: 12px; color: #718096; margin-bottom: 15px;">
+                            % of commits from sponsored vs independent developers
+                        </p>
+                        <div id="chart-corporate" style="height: 350px;"></div>
+                    </div>
+                    
+                    <!-- Chart 2: Maintainer Independence (Pie/Bar) -->
+                    <div style="flex: 1; min-width: 300px;">
+                        <h4 style="margin-bottom: 10px; color: #4A5568; font-size: 14px;">
+                            <i class="fas fa-shield-alt" style="margin-right: 8px; opacity: 0.7;"></i>
+                            Maintainer Independence
+                        </h4>
+                        <p style="font-size: 12px; color: #718096; margin-bottom: 15px;">
+                            Who funds the gatekeepers?
+                        </p>
+                        <div id="chart-maintainer-independence" style="height: 350px;"></div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -61,7 +85,7 @@
     <div id="footer"></div>
 
     <script src="https://sorukumar.github.io/Bitcoin-Data-Labs/components/app-components.js"></script>
-    <script src="js/app.js?v=2"></script>
+    <script src="js/app.js?v=3"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             BitcoinLabsAppComponents.init({
@@ -72,8 +96,5 @@
         });
     </script>
 </body>
-
-</html>
-
 
 </html>
