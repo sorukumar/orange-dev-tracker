@@ -16,19 +16,6 @@ function getGhibliPalette() {
     ];
 }
 
-/**
- * Shared helper for consistent percentage formatting
- * @param {number} val - The numeric value
- * @param {number} precision - Number of decimal places
- * @param {boolean} isRatio - If true, multiplies by 100 (e.g. 0.15 -> 15%)
- */
-function formatPct(val, precision = 0, isRatio = false) {
-    const num = isRatio ? val * 100 : val;
-    // Auto-precision: if value is small (<5%) and precision is 0, show 1 decimal
-    const p = (num > 0 && num < 5 && precision === 0) ? 1 : precision;
-    return num.toFixed(p) + '%';
-}
-
 const COLORS = {
     textPrimary: '#2D3748',
     textSecondary: '#4A5568',
@@ -213,8 +200,7 @@ async function loadSnapshots() {
                     formatter: function (p) {
                         const pct = p.percent;
                         const strat = pct < 5 ? 1 : 0;
-                        let valStr = p.value > 1000 ? (p.value / 1000).toFixed(1) + "k" : p.value;
-                        return `<b>${p.name}</b><br/>Commits: <b>${valStr}</b> (${pct.toFixed(strat)}%)`;
+                        return `<b>${p.name}</b><br/>Commits: <b>${formatCount(p.value)}</b> (${pct.toFixed(strat)}%)`;
                     }
                 },
                 legend: { show: false },
@@ -288,7 +274,7 @@ async function loadSnapshots() {
         try {
             const resStack = await fetch('data/stats_tech_stack.json');
             const dataStack = await resStack.json();
-            const pieData = dataStack.data.slice(0, 8);
+            const pieData = dataStack.data;
 
             charts.snapshotStack.setOption({
                 backgroundColor: 'transparent',
@@ -300,7 +286,11 @@ async function loadSnapshots() {
                         const pctStrat = pct < 5 ? 1 : 0;
                         const valK = p.value / 1000;
                         const valStrat = valK < 5 ? 1 : 0;
-                        return `<b>${p.name}</b><br/>Lines: <b>${valK.toFixed(valStrat)}k</b> (${pct.toFixed(pctStrat)}%)`;
+                        let html = `<b>${p.name}</b><br/>Lines: <b>${valK.toFixed(valStrat)}k</b> (${pct.toFixed(pctStrat)}%)`;
+                        if (p.data.details) {
+                            html += `<div style="font-size:10px; color:#718096; margin-top:4px; max-width:200px;">Includes: ${p.data.details}</div>`;
+                        }
+                        return html;
                     }
                 },
                 series: [{
@@ -350,7 +340,7 @@ async function loadCategory() {
                     params.forEach(p => total += p.value[1]);
 
                     let html = `<div style="margin-bottom:8px; border-bottom:1px solid ${COLORS.border}; padding-bottom:4px;"><b>Year: ${year}</b></div>`;
-                    html += `<div style="font-size:11px; color:${COLORS.textLight}; margin-bottom:8px;">Total Activity: <b>${total.toLocaleString()}</b> Commits</div>`;
+                    html += `<div style="font-size:11px; color:${COLORS.textLight}; margin-bottom:8px;">Total Activity: <b>${formatCount(total)}</b> Commits</div>`;
 
                     const sorted = [...params].sort((a, b) => b.value[1] - a.value[1]);
 
@@ -361,7 +351,7 @@ async function loadCategory() {
                         html += `
                         <div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; margin-bottom:2px;">
                             <span>${p.marker} ${name}</span>
-                            <span><b>${pct}%</b> <span style="color:${COLORS.textLight}; font-size:10px;">(${val.toLocaleString()})</span></span>
+                            <span><b>${pct}%</b> <span style="color:${COLORS.textLight}; font-size:10px;">(${formatCount(val)})</span></span>
                         </div>`;
                     });
                     return html;
@@ -489,7 +479,7 @@ async function loadEngagementTiers() {
                     return `
                         <div style="margin-bottom:4px; font-weight:bold;">${p.name}</div>
                         <div style="font-size:12px;">Contributors: <b>${tier ? tier.count : '-'}</b></div>
-                        <div style="font-size:12px;">Commits: <b>${p.value.toLocaleString()}</b> (${pct}%)</div>
+                        <div style="font-size:12px;">Commits: <b>${formatCount(p.value)}</b> (${pct}%)</div>
                     `;
                 }
             },
@@ -539,13 +529,27 @@ async function loadSocial() {
 
         charts.social.setOption({
             backgroundColor: 'transparent',
-            tooltip: { ...tooltipStyle, trigger: 'axis' },
+            tooltip: {
+                ...tooltipStyle,
+                trigger: 'axis',
+                formatter: function (params) {
+                    let html = `<div style="margin-bottom:5px; border-bottom:1px solid #eee;"><b>${params[0].axisValue}</b></div>`;
+                    params.forEach(p => {
+                        html += `
+                        <div style="display:flex; justify-content:space-between; gap:20px; font-size:12px;">
+                            <span>${p.marker} ${p.seriesName}</span>
+                            <span><b>${formatCount(p.value)}</b></span>
+                        </div>`;
+                    });
+                    return html;
+                }
+            },
             legend: { ...legendStyle, bottom: 0 },
             grid: { left: '4%', right: '4%', bottom: '15%', containLabel: true },
             xAxis: { ...axisStyle, type: 'category', data: filteredX },
             yAxis: [
-                { ...axisStyle, type: 'value', name: 'Stars', position: 'left' },
-                { ...axisStyle, type: 'value', name: 'Forks', position: 'right', splitLine: { show: false } }
+                { ...axisStyle, type: 'value', name: 'Stars', position: 'left', axisLabel: { formatter: (v) => formatCount(v, 0) } },
+                { ...axisStyle, type: 'value', name: 'Forks', position: 'right', splitLine: { show: false }, axisLabel: { formatter: (v) => formatCount(v, 0) } }
             ],
             series: [
                 { name: 'Stars', type: 'line', data: filteredStars, yAxisIndex: 0, showSymbol: false, itemStyle: { color: GHIBLI_PALETTE[4] }, smooth: true },
@@ -920,7 +924,7 @@ async function loadContributorLandscape() {
                             </div>
                             <div style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:11px;">
                                 <div><span style="opacity:0.6;">Tenure:</span><br/><b>${r.span || 'N/A'}</b></div>
-                                <div><span style="opacity:0.6;">Commits:</span><br/><b>${(r.total_commits || 0).toLocaleString()}</b></div>
+                                <div><span style="opacity:0.6;">Commits:</span><br/><b>${formatCount(r.total_commits || 0)}</b></div>
                                 <div><span style="opacity:0.6;">Share:</span><br/><b>${shareStr}%</b></div>
                                 ${params.seriesName.includes('Scouts') ? "" : `<div><span style="opacity:0.6;">Rank:</span><br/><b>Top ${(100 - (r.percentile_raw || 0) + 0.1).toFixed(1)}%</b></div>`}
                             </div>
@@ -1238,7 +1242,11 @@ async function loadCodebaseSnapshots() {
                         const item = params[0];
                         const val = item.value / totalFiles * 100;
                         const pct = val < 5 ? val.toFixed(1) : val.toFixed(0);
-                        return `<b>${item.name}</b><br/><b>${item.value.toLocaleString()} Files</b> (${pct}%)`;
+                        let html = `<b>${item.name}</b><br/><b>${formatCount(item.value)} Files</b> (${pct}%)`;
+                        if (item.data && item.data.details) {
+                            html += `<div style="font-size:10px; color:#718096; margin-top:4px; max-width:200px;">Includes: ${item.data.details}</div>`;
+                        }
+                        return html;
                     }
                 },
                 grid: { left: '4%', right: '10%', bottom: '3%', containLabel: true },
@@ -1247,7 +1255,7 @@ async function loadCodebaseSnapshots() {
                 series: [{
                     name: 'Files',
                     type: 'bar',
-                    data: slice.map(x => x.value),
+                    data: slice.map(x => ({ value: x.value, details: x.details })),
                     itemStyle: { color: GHIBLI_PALETTE[2], borderRadius: [0, 4, 4, 0] },
                     label: { show: true, position: 'right', color: COLORS.textSecondary, fontSize: 10, fontWeight: 'bold' }
                 }]
@@ -1266,7 +1274,7 @@ async function loadCodebaseSnapshots() {
                         const item = params[0];
                         const val = item.value / totalFiles * 100;
                         const pct = val < 5 ? val.toFixed(1) : val.toFixed(0);
-                        return `<b>${item.name}</b><br/><b>${item.value.toLocaleString()} Files</b> (${pct}%)`;
+                        return `<b>${item.name}</b><br/><b>${formatCount(item.value)} Files</b> (${pct}%)`;
                     }
                 },
                 grid: { left: '4%', right: '10%', bottom: '3%', containLabel: true },
@@ -1301,8 +1309,6 @@ async function loadStreamgraph() {
         const riverData = [];
         data.series.forEach(s => {
             validIndices.forEach(idx => {
-                // ECharts ThemeRiver needs exact date strings, usually YYYY-MM-DD
-                // Our xAxis is YYYY-MM. Let's append -01
                 const date = data.xAxis[idx] + "-01";
                 const val = s.data[idx];
                 if (val > 0) {
@@ -1317,14 +1323,9 @@ async function loadStreamgraph() {
                 trigger: 'axis',
                 axisPointer: { type: 'line', lineStyle: { color: 'rgba(0,0,0,0.2)', width: 1, type: 'solid' } },
                 formatter: function (params) {
-                    // ThemeRiver tooltip params is just the single point if trigger item, 
-                    // or array if trigger axis? ThemeRiver axis trigger is tricky.
-                    // Actually usually 'axis' works but it gives all points at that time.
-
                     if (!params || !params.length) return "";
 
-                    const dateStr = params[0].axisValue; // "2024-12-01"
-                    // Format date to "Dec 2024"
+                    const dateStr = params[0].axisValue;
                     const dateObj = new Date(dateStr);
                     const formattedDate = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
 
@@ -1332,20 +1333,38 @@ async function loadStreamgraph() {
                     params.forEach(p => total += p.value[1]);
 
                     let html = `<div style="margin-bottom:5px; border-bottom:1px solid #eee;"><b>${formattedDate}</b></div>`;
-                    html += `<div style="margin-bottom:5px; font-size:11px;">Total: <b>${(total / 1000).toFixed(0)}k</b> Lines</div>`;
+                    html += `<div style="margin-bottom:5px; font-size:11px;">Total: <b>${formatCount(total)}</b> Lines</div>`;
 
-                    // Sort descending
                     const sorted = [...params].sort((a, b) => b.value[1] - a.value[1]);
 
                     sorted.forEach(p => {
                         const val = p.value[1];
                         const name = p.value[2];
                         const pct = (val / total * 100).toFixed(1);
+
+                        // Find details from series if it's "Other"
+                        const series = data.series.find(s => s.name === name);
+                        let details = series ? series.details : null;
+
+                        // Handle dynamic details (array) for streamgraph
+                        if (Array.isArray(details)) {
+                            const year = dateObj.getFullYear();
+                            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                            const dateKey = `${year}-${month}`;
+                            const dateIdx = data.xAxis.indexOf(dateKey);
+                            details = details[dateIdx] || null;
+                        }
+
                         html += `
-                        <div style="display:flex; justify-content:space-between; gap:15px; font-size:12px;">
-                            <span>${p.marker} ${name}</span>
-                            <span><b>${pct}%</b> <span style="opacity:0.7">(${(val / 1000).toFixed(1)}k)</span></span>
-                        </div>`;
+                        <div style="display:flex; flex-direction:column; margin-bottom:4px;">
+                            <div style="display:flex; justify-content:space-between; gap:15px; font-size:12px;">
+                                <span>${p.marker} ${name}</span>
+                                <span><b>${pct}%</b> <span style="opacity:0.7">(${formatCount(val)})</span></span>
+                            </div>`;
+                        if (details) {
+                            html += `<div style="font-size:10px; color:#718096; margin-left:18px;">Includes: ${details}</div>`;
+                        }
+                        html += `</div>`;
                     });
 
                     return html;
@@ -1373,13 +1392,13 @@ async function loadStreamgraph() {
                 type: 'themeRiver',
                 emphasis: { itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0, 0, 0, 0.8)' } },
                 data: riverData,
-                label: { show: false },  // Too cluttered usually
+                label: { show: false },
                 itemStyle: {
                     shadowBlur: 2,
                     shadowColor: 'rgba(0,0,0,0.3)'
                 }
             }],
-            color: GHIBLI_PALETTE.slice(2) // Match stack colors roughly
+            color: GHIBLI_PALETTE.slice(2)
         });
 
     } catch (e) { console.error("Streamgraph Error", e); }
@@ -1422,7 +1441,7 @@ async function loadCategoryHistory() {
                     params.forEach(p => total += p.value[1]);
 
                     let html = `<div style="margin-bottom:5px; border-bottom:1px solid #eee;"><b>${formattedDate}</b></div>`;
-                    html += `<div style="margin-bottom:5px; font-size:11px;">Total: <b>${(total / 1000).toFixed(0)}k</b> Lines</div>`;
+                    html += `<div style="margin-bottom:5px; font-size:11px;">Total: <b>${formatCount(total)}</b> Lines</div>`;
 
                     const sorted = [...params].sort((a, b) => b.value[1] - a.value[1]);
 
@@ -1433,7 +1452,7 @@ async function loadCategoryHistory() {
                         html += `
                         <div style="display:flex; justify-content:space-between; gap:15px; font-size:12px;">
                             <span>${p.marker} ${name}</span>
-                            <span><b>${pct}%</b> <span style="opacity:0.7">(${(val / 1000).toFixed(1)}k)</span></span>
+                            <span><b>${pct}%</b> <span style="opacity:0.7">(${formatCount(val)})</span></span>
                         </div>`;
                     });
 

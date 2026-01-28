@@ -228,7 +228,7 @@ class CodeClassifier:
         if ext in ['.ts', '.xlf']: return "Qt Translation"
         if ext in ['.ui', '.qrc']: return "Qt UI"
         if ext in ['.json', '.hex', '.raw', '.csv', '.xml']: return "Data"
-        if ext in ['.cmake', '.m4', '.in', '.am', '.ac', '.mk', '.dockerfile', '.supp', '.patch']: return "Build System"
+        if ext in ['.cmake', '.m4', '.in', '.am', '.ac', '.mk', '.dockerfile', '.supp', '.patch', '.rs']: return "Build System"
         if ext in ['.yml', '.yaml', '.conf', '.cfg', '.ini', '.toml', '.lock']: return "Config"
         if ext in ['.png', '.svg', '.ico', '.jpg', '.bmp', '.xpm', '.icns', '.ttf']: return "Assets"
         if 'makefile' in ext: return "Build System"
@@ -240,15 +240,19 @@ class CodeClassifier:
             ".md": "Markdown", ".txt": "Text", ".rst": "Documentation",
             ".sh": "Shell", ".bash": "Shell",
             ".java": "Java", ".go": "Go", ".js": "JavaScript", 
-            ".html": "Web", ".css": "Web"
+            ".html": "Web", ".css": "Web",
+            ".s": "Assembly", ".asm": "Assembly"
         }
-        return mapping.get(ext, "Other")
+        return mapping.get(ext, "Unknown")
 
     @staticmethod
     def is_logic_code(lang_name):
         # We exclude Markdown/Text/Docs, Build, Data, Config, Assets, Translation, UI
         # Logic = The core programming languages
-        allowed = {"C++", "C", "Python", "Shell", "Java", "Go", "JavaScript", "TypeScript", "Web"}
+        allowed = {
+            "C++", "C", "Python", "Shell", "Java", "Go", 
+            "JavaScript", "TypeScript", "Web", "Assembly"
+        }
         return lang_name in allowed
 
 # --- Metric Generators ---
@@ -448,15 +452,26 @@ class MetricGenerators:
         final_stack = {}
         for ext, count in global_langs.items():
             name = CodeClassifier.get_lang_name(ext)
-            # Filter: Only Logic Code
             if CodeClassifier.is_logic_code(name):
                 final_stack[name] = final_stack.get(name, 0) + count
-            
-        stack_out = [{"name": k, "value": v} for k, v in final_stack.items() if v > 1000]
-        stack_out.sort(key=lambda x: x['value'], reverse=True)
+
+        # Use LOC to determine the "Main" languages for the whole site
+        sorted_by_loc = sorted([{"name": k, "value": v} for k, v in final_stack.items() if v > 0], key=lambda x: x['value'], reverse=True)
+        top_5_names = [x['name'] for x in sorted_by_loc[:5]]
+        
+        # Build snapshot_stack output
+        stack_out = sorted_by_loc[:5]
+        remaining = sorted_by_loc[5:]
+        if remaining:
+            other_val = sum(r['value'] for r in remaining)
+            def fmt_loc(n):
+                if n >= 1000: return f"{n/1000:.1f}k LOC".replace(".0k", "k")
+                return f"{n} LOC"
+            other_names = ", ".join([f"{r['name']} ({fmt_loc(r['value'])})" for r in remaining])
+            stack_out.append({"name": "Other", "value": other_val, "details": other_names})
             
         with open(Config.FILES["snapshot_stack"], "w") as f:
-            json.dump({"data": stack_out}, f)
+            json.dump({"data": stack_out, "metadata": {"top_languages": top_5_names}}, f)
 
     @staticmethod
     def generate_category_evolution(commits):
@@ -1015,10 +1030,34 @@ class MetricGenerators:
                     if name not in files_by_lang: files_by_lang[name] = 0
                     files_by_lang[name] += lstats.get("files", 0)
 
-        # Output Snapshot
+        # Load the "Main Languages" list from snapshot_stack for consistency
+        main_langs = []
+        try:
+            with open(Config.FILES["snapshot_stack"], "r") as f:
+                lres = json.load(f)
+                main_langs = lres.get("metadata", {}).get("top_languages", [])
+        except: pass
+
+        # Files by Lang Snapshot
+        langs_final = []
+        remaining_langs = []
+        for name, val in sorted(files_by_lang.items(), key=lambda x: x[1], reverse=True):
+            if name in main_langs:
+                langs_final.append({"name": name, "value": val})
+            else:
+                remaining_langs.append({"name": name, "value": val})
+                
+        # Sort langs_final to match main_langs order
+        langs_final.sort(key=lambda x: main_langs.index(x['name']))
+        
+        if remaining_langs:
+            other_val = sum(r['value'] for r in remaining_langs)
+            other_names = ", ".join([f"{r['name']} ({r['value']} files)" for r in remaining_langs])
+            langs_final.append({"name": "Other", "value": other_val, "details": other_names})
+
         snapshot_data = {
             "files_by_cat": sorted(files_by_cat, key=lambda x: x['value'], reverse=True),
-            "files_by_lang": sorted([{"name": k, "value": v} for k,v in files_by_lang.items() if v > 0], key=lambda x: x['value'], reverse=True)
+            "files_by_lang": langs_final
         }
         
         with open(os.path.join(Config.OUTPUT_DIR, "stats_codebase_snapshots.json"), "w") as f:
@@ -1111,12 +1150,26 @@ class MetricGenerators:
         periods = [h['period'] for h in history]
         series = []
         
-        # Filter top languages to avoid noise
-        # Sort by final volume
+        # Filter noise to avoid cluttering the chart, but keep integrity via Other
+        # Use the same main_langs for consistency
+        main_langs = []
+        try:
+            with open(Config.FILES["snapshot_stack"], "r") as f:
+                lres = json.load(f)
+                main_langs = lres.get("metadata", {}).get("top_languages", [])
+        except: pass
+
         final_vol = history[-1] if history else {}
-        sorted_langs = sorted(list(all_langs), key=lambda l: final_vol.get(l, 0), reverse=True)
-        top_langs = sorted_langs[:8] # Top 8
-        other_langs = sorted_langs[8:]
+        # If main_langs not available yet, fall back to top 5
+        if not main_langs:
+            sorted_langs = sorted(list(all_langs), key=lambda l: final_vol.get(l, 0), reverse=True)
+            main_langs = sorted_langs[:5]
+            
+        top_langs = [l for l in main_langs if l in all_langs]
+        other_langs = [l for l in all_langs if l not in top_langs]
+        
+        # Meta-information for Other series
+        other_details = ", ".join(other_langs) if other_langs else ""
         
         # Build Series
         for lang in top_langs:
@@ -1130,12 +1183,35 @@ class MetricGenerators:
                 "data": data_points
             })
             
+        # Load static scan for final period filtering
+        static_langs = set()
+        try:
+            with open(Config.FILES["snapshot_stack"], "r") as f:
+                sres = json.load(f)
+                static_langs = {d['name'] for d in sres['data']}
+                # Also include names from details if other
+                for d in sres['data']:
+                    if d['name'] == 'Other' and 'details' in d:
+                        # Extract names from "Name (Count), Name (Count)"
+                        import re
+                        details_names = re.findall(r'([^,(\s]+) \(', d['details'])
+                        static_langs.update(details_names)
+        except: pass
+
         # Other
         if other_langs:
             other_data = []
-            for h in history:
+            detailed_history = []
+            for i, h in enumerate(history):
+                # For later periods (last 3 years), ensure we only show what's actually in the static scan
+                is_recent = (len(history) - i) <= 3 
+                active_others = [l for l in other_langs if h.get(l, 0) > 0]
+                if is_recent and static_langs:
+                    active_others = [l for l in active_others if l in static_langs]
+                
                 val = sum(h.get(l, 0) for l in other_langs)
                 other_data.append(max(0, val) * scale_factor)
+                detailed_history.append(", ".join(active_others))
             
             series.append({
                 "name": "Other",
@@ -1144,7 +1220,8 @@ class MetricGenerators:
                 "areaStyle": {},
                 "symbol": "none",
                 "color": "#444",
-                "data": other_data
+                "data": other_data,
+                "details": detailed_history
             })
             
         with open(os.path.join(Config.OUTPUT_DIR, "stats_stack_evolution.json"), "w") as f:

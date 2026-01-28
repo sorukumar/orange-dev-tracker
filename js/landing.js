@@ -100,12 +100,20 @@ async function loadData() {
         dataCache.processed.years = years;
         dataCache.processed.totalLoc = totalLoc;
 
-        // Process Tech Stack 2025
+        // Process Tech Stack 2025 (Top 5)
         const lastIdx = years.length - 1;
-        dataCache.processed.stack2025 = stackRes.series.map(s => ({
-            name: s.name,
-            value: s.data[lastIdx]
-        })).sort((a, b) => b.value - a.value);
+        dataCache.processed.stack2025 = stackRes.series
+            .map(s => {
+                let details = s.details;
+                if (Array.isArray(details)) details = details[lastIdx];
+                return {
+                    name: s.name,
+                    value: s.data[lastIdx],
+                    details: details
+                };
+            })
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 6); // Top 5 + Other
 
         // Process Contributor Pyramid (The Engagement Tiers Logic)
         processPyramid(contribRes);
@@ -229,7 +237,7 @@ function renderCodebaseHistory(startIndex, endIndex) {
         yAxis: {
             type: 'value',
             splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } },
-            axisLabel: { color: VISUAL_OPTS.textColor, formatter: (v) => (v / 1000).toFixed(0) + 'k' }
+            axisLabel: { color: VISUAL_OPTS.textColor, formatter: (v) => formatCount(v, 0) }
         },
         series: [{
             type: 'line',
@@ -279,7 +287,7 @@ function renderArmyGrowth() {
         yAxis: {
             type: 'value',
             splitLine: { lineStyle: { color: '#1e293b' } },
-            axisLabel: { color: VISUAL_OPTS.textColor }
+            axisLabel: { color: VISUAL_OPTS.textColor, formatter: (v) => formatCount(v, 0) }
         },
         series: [
             {
@@ -314,7 +322,10 @@ function renderArmyPyramid() {
             left: 'center', top: '15%',
             textStyle: { color: VISUAL_OPTS.textColor }
         },
-        tooltip: { trigger: 'item' },
+        tooltip: {
+            trigger: 'item',
+            formatter: (p) => `<b>${p.name}</b><br/>Contributors: <b>${formatCount(p.value, 0)}</b>`
+        },
         series: [{
             type: 'funnel',
             left: 'center',
@@ -326,7 +337,7 @@ function renderArmyPyramid() {
             label: {
                 show: true,
                 position: 'right',
-                formatter: '{b}: {c} Devs',
+                formatter: (p) => `${p.name}: ${formatCount(p.value, 0)} Devs`,
                 color: VISUAL_OPTS.textColor
             },
             data: finalData
@@ -366,7 +377,16 @@ function renderTechStack(mode) {
             left: 'center', top: '15%',
             textStyle: { color: VISUAL_OPTS.textColor }
         },
-        tooltip: { trigger: 'item' },
+        tooltip: {
+            trigger: 'item',
+            formatter: (p) => {
+                let html = `<b>${p.name}</b><br/>Lines: <b>${formatCount(p.value)}</b> (${p.percent}%)`;
+                if (p.data.details) {
+                    html += `<div style="font-size:10px; color:#94a3b8; margin-top:4px; max-width:180px;">Includes: ${p.data.details}</div>`;
+                }
+                return html;
+            }
+        },
         series: [{
             type: 'pie',
             radius: ['40%', '65%'],
@@ -404,7 +424,10 @@ function renderGlobalHeatmap() {
             axisLabel: { color: '#64748b' }
         },
         radiusAxis: { type: 'value', show: false },
-        tooltip: { trigger: 'item' },
+        tooltip: {
+            trigger: 'item',
+            formatter: (p) => `<b>${p.name}</b><br/>Commits: <b>${formatCount(p.value)}</b>`
+        },
         series: [{
             type: 'bar',
             data: hourCounts,
