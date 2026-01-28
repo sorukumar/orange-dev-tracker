@@ -794,8 +794,7 @@ async function loadContributorLandscape() {
 
             // Map specific contributors to their premium portraits
             const portraits = {
-                's_nakamoto': 'assets/satoshi.png',
-                '--author=Satoshi Nakamoto': 'assets/satoshi.png',
+                'Satoshi Nakamoto': 'assets/satoshi.png',
                 'Gavin Andresen': 'assets/gavin_andresen.png',
                 'Wladimir J. van der Laan': 'assets/wladimir.png',
                 'MarcoFalke': 'assets/marcofalke.png',
@@ -823,9 +822,9 @@ async function loadContributorLandscape() {
                 name: item.name,
                 value: [valX, valY, item.impact, item.name, rank],
                 raw: item,
-                // Use the standard ECharts image symbol - most reliable for loading
+                // Use the circular PNGs directly as symbols
                 symbol: portraitUrl ? `image://${portraitUrl}` : style.symbol,
-                symbolSize: portraitUrl ? baseSize * 1.0 : baseSize,
+                symbolSize: portraitUrl ? baseSize * 1 : baseSize,
                 itemStyle: {
                     color: style.color,
                     borderColor: (isActive || portraitUrl) ? '#fff' : 'transparent',
@@ -837,7 +836,6 @@ async function loadContributorLandscape() {
                     position: 'top',
                     formatter: (p) => {
                         if (!p || !p.name) return '';
-                        if (p.name === 's_nakamoto' || p.name === '--author=Satoshi Nakamoto') return 'Satoshi Nakamoto';
                         return p.name;
                     },
                     fontSize: 11,
