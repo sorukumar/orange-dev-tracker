@@ -270,24 +270,18 @@ async function loadEngagementTiers() {
         const count = data.length;
 
         const i1 = Math.ceil(count * 0.01);
-        const i10 = Math.ceil(count * 0.10);
-        const i25 = Math.ceil(count * 0.25);
-        const i50 = Math.ceil(count * 0.50);
+        const i20 = Math.ceil(count * 0.20);
 
         const group1 = data.slice(0, i1);
-        const group2 = data.slice(i1, i10);
-        const group3 = data.slice(i10, i25);
-        const group4 = data.slice(i25, i50);
-        const group5 = data.slice(i50);
+        const group2 = data.slice(i1, i20);
+        const group3 = data.slice(i20);
 
         const sumC = (arr) => arr.reduce((s, c) => s + c.total_commits, 0);
 
         const tiers = [
             { name: "👑 The Core (Top 1%)", val: sumC(group1), count: group1.length, color: GHIBLI_PALETTE[4] },
-            { name: "⭐ The Regulars (Top 10%)", val: sumC(group2), count: group2.length, color: GHIBLI_PALETTE[5] },
-            { name: "⚒️ The Sustainers (Top 25%)", val: sumC(group3), count: group3.length, color: GHIBLI_PALETTE[7] },
-            { name: "🔭 The Explorers (Top 50%)", val: sumC(group4), count: group4.length, color: GHIBLI_PALETTE[3] },
-            { name: "🧱 The Scouts (Bottom 50%)", val: sumC(group5), count: group5.length, color: GHIBLI_PALETTE[19] }
+            { name: "⭐ The Contributors (Top 20%)", val: sumC(group2), count: group2.length, color: GHIBLI_PALETTE[5] },
+            { name: "🌱 The Prospects (Bottom 80%)", val: sumC(group3), count: group3.length, color: GHIBLI_PALETTE[12] }
         ];
 
         charts.engagement.setOption({

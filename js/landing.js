@@ -130,25 +130,21 @@ function processPyramid(data) {
     data.sort((a, b) => b.total_commits - a.total_commits);
     const count = data.length;
 
-    // Tiers: 1%, 9% (Top 10%), 15% (Top 25%), 25% (Top 50%), 50% (Bottom 50%)
+    // Tiers: 1%, 19% (Top 20%), 80% (Bottom 80%)
     const i1 = Math.ceil(count * 0.01);
-    const i10 = Math.ceil(count * 0.10);
-    const i25 = Math.ceil(count * 0.25);
+    const i20 = Math.ceil(count * 0.20);
 
     // Group 1: 0 to i1
     const group1 = data.slice(0, i1);
-    // Group 2: i1 to i10
-    const group2 = data.slice(i1, i10);
-    // Group 3: i10 to i25
-    const group3 = data.slice(i10, i25);
-    // Group 4: i25 to end
-    const groupRest = data.slice(i25);
+    // Group 2: i1 to i20
+    const group2 = data.slice(i1, i20);
+    // Group 3: i20 to end
+    const group3 = data.slice(i20);
 
     dataCache.processed.pyramid = [
         { value: group1.length, name: `The Core (Top 1%)`, itemStyle: { color: VISUAL_OPTS.accentColor } },
-        { value: group2.length, name: `The Regulars (Top 10%)`, itemStyle: { color: '#3b82f6' } },
-        { value: group3.length, name: `The Sustainers (Top 25%)`, itemStyle: { color: '#64748b' } },
-        { value: groupRest.length, name: `The Community`, itemStyle: { color: '#334155' } }
+        { value: group2.length, name: `The Contributors (Top 20%)`, itemStyle: { color: '#3b82f6' } },
+        { value: group3.length, name: `🌱 The Prospects (Bottom 80%)`, itemStyle: { color: '#334155' } }
     ];
 }
 

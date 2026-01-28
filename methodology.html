@@ -375,16 +375,17 @@
 
         <!-- Main Content -->
         <main>
-            <header class="page-header">
-                <h1>Methodology</h1>
+            <!-- <header class="page-header">
+                
                 <p class="subtitle">How we measure Bitcoin Core development — definitions, sources, and limitations.</p>
-            </header>
+            </header> -->
 
             <!-- Table of Contents -->
             <div class="toc">
                 <h3>On This Page</h3>
                 <ul>
                     <li><a href="#contributors"><i class="fas fa-chevron-right"></i> Contributors</a></li>
+                    <li><a href="#components"><i class="fas fa-chevron-right"></i> Bitcoin Core Components</a></li>
                     <li><a href="#maintainers"><i class="fas fa-chevron-right"></i> Maintainers</a></li>
                     <li><a href="#codebase"><i class="fas fa-chevron-right"></i> Codebase & LOC</a></li>
                     <li><a href="#categories"><i class="fas fa-chevron-right"></i> Categories</a></li>
@@ -463,8 +464,7 @@
                             <tbody>
                                 <tr>
                                     <td>👑 The Core</td>
-                                    <td>Top 1%</td>
-                                    <td>~12 people responsible for ~80% of commits</td>
+                                    <td>Top 1%</                                    <td>~12 people responsible for ~80% of commits</td>
                                 </tr>
                                 <tr>
                                     <td>⭐ The Regulars</td>
@@ -498,6 +498,36 @@
                         volume,
                         not importance.</p>
                 </div>
+            </section>
+
+            <!-- Bitcoin Core Components Section -->
+            <section id="components">
+                <h2>Bitcoin Core Components</h2>
+                <p>Bitcoin Core consists of several key components that work together to run the network and provide user interfaces.</p>
+
+                <div class="metric-card">
+                    <h4>bitcoind (Daemon)</h4>
+                    <p class="definition">The core engine that validates transactions, maintains the blockchain, and communicates with peers.</p>
+                    <dl class="details">
+                        <dt>What it does</dt>
+                        <dd>Runs the Bitcoin protocol, manages the UTXO set, and provides RPC interfaces for automation.</dd>
+                        <dt>Categories involved</dt>
+                        <dd>Consensus, Node & RPC, P2P Network, Database, Cryptography, Utilities.</dd>
+                    </dl>
+                </div>
+
+                <div class="metric-card">
+                    <h4>bitcoin-qt (GUI)</h4>
+                    <p class="definition">The graphical user interface for wallet management and node operation.</p>
+                    <dl class="details">
+                        <dt>What it does</dt>
+                        <dd>Provides a desktop app for sending/receiving Bitcoin, viewing transactions, and configuring the node.</dd>
+                        <dt>Categories involved</dt>
+                        <dd>GUI, Wallet.</dd>
+                    </dl>
+                </div>
+
+                <p>These components share underlying libraries for consensus rules, cryptography, and utilities, ensuring consistency across implementations.</p>
             </section>
 
             <!-- Maintainers Section -->
@@ -591,8 +621,7 @@
             <!-- Categories Section -->
             <section id="categories">
                 <h2>Categories (Architecture)</h2>
-                <p>Every file is assigned to a functional category based on its path. This reflects how Bitcoin Core
-                    developers conceptually organize the codebase.</p>
+                <p>Every file is assigned to a functional category based on its path. This segmentation reflects Bitcoin Core's architecture, grouping related functionality to track development focus. Categories with consensus-critical code require higher scrutiny than user-facing features.</p>
 
                 <div class="table-wrapper">
                     <table>
@@ -605,54 +634,54 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>Consensus</strong></td>
+                                <td><strong>Consensus (Domain Logic)</strong></td>
                                 <td><code>src/consensus/</code>, <code>src/script/</code>, <code>src/validation</code>
                                 </td>
                                 <td>The core rules of Bitcoin. Changes here are critical and require extreme scrutiny.
                                 </td>
                             </tr>
                             <tr>
-                                <td><strong>Node & RPC</strong></td>
+                                <td><strong>Node & RPC (App/Interface)</strong></td>
                                 <td><code>src/node/</code>, <code>src/rpc/</code></td>
                                 <td>Application layer — the bitcoind daemon and command-line interface.</td>
                             </tr>
                             <tr>
-                                <td><strong>P2P Network</strong></td>
+                                <td><strong>P2P Network (Infrastructure)</strong></td>
                                 <td><code>src/net</code>, <code>src/addrman</code></td>
                                 <td>Peer discovery, message handling, network protocol.</td>
                             </tr>
                             <tr>
-                                <td><strong>Wallet</strong></td>
+                                <td><strong>Wallet (Client App)</strong></td>
                                 <td><code>src/wallet/</code></td>
                                 <td>Internal wallet for key management and transaction creation.</td>
                             </tr>
                             <tr>
-                                <td><strong>GUI</strong></td>
+                                <td><strong>GUI (Presentation Layer)</strong></td>
                                 <td><code>src/qt/</code></td>
                                 <td>The graphical interface (Bitcoin-Qt).</td>
                             </tr>
                             <tr>
-                                <td><strong>Cryptography</strong></td>
+                                <td><strong>Cryptography (Primitives)</strong></td>
                                 <td><code>src/crypto/</code>, <code>src/secp256k1/</code></td>
                                 <td>Cryptographic primitives and the secp256k1 elliptic curve library.</td>
                             </tr>
                             <tr>
-                                <td><strong>Database</strong></td>
+                                <td><strong>Database (Persistence)</strong></td>
                                 <td><code>src/leveldb/</code>, <code>src/dbwrapper</code></td>
                                 <td>Persistence layer for blockchain and wallet data.</td>
                             </tr>
                             <tr>
-                                <td><strong>Utilities</strong></td>
+                                <td><strong>Utilities (Shared Libs)</strong></td>
                                 <td><code>src/util/</code>, <code>src/support/</code></td>
                                 <td>Shared libraries, logging, and low-level support code.</td>
                             </tr>
                             <tr>
-                                <td><strong>Tests</strong></td>
+                                <td><strong>Tests (QA)</strong></td>
                                 <td><code>src/test/</code>, <code>test/</code></td>
                                 <td>Unit tests, functional tests, and benchmarks.</td>
                             </tr>
                             <tr>
-                                <td><strong>Build & CI</strong></td>
+                                <td><strong>Build & CI (DevOps)</strong></td>
                                 <td><code>ci/</code>, <code>Makefile</code>, <code>CMakeLists</code></td>
                                 <td>Build system configuration and continuous integration.</td>
                             </tr>
@@ -660,6 +689,11 @@
                                 <td><strong>Documentation</strong></td>
                                 <td><code>doc/</code>, <code>*.md</code></td>
                                 <td>Developer documentation and markdown files.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Core Libs</strong></td>
+                                <td><code>src/</code> (misc)</td>
+                                <td>Core libraries and dependencies not fitting other categories.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -751,9 +785,6 @@
                 <div class="metric-card">
                     <h4>What We Don't Capture</h4>
                     <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
-                        <li><strong>Code Review:</strong> Reviewers who ACK/NACK without authoring commits are not
-                            tracked.
-                            In Bitcoin Core, review is as important as authorship.</li>
                         <li><strong>Mailing List Contributions:</strong> Design discussions, BIP authorship, and concept
                             development happen off-GitHub.</li>
                         <li><strong>Testing Without Commits:</strong> Many contributors test releases without leaving a

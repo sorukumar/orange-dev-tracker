@@ -12,10 +12,8 @@ async function loadContributorLandscape() {
 
         const rankStyles = {
             'The Core (Top 1%)': { color: '#E07A5F', priority: 1, opacity: 1, symbol: 'diamond' },
-            'The Regulars (Top 10%)': { color: '#F4A261', priority: 2, opacity: 0.9, symbol: 'circle' },
-            'The Sustainers (Top 25%)': { color: '#D4AF37', priority: 3, opacity: 0.8, symbol: 'circle' },
-            'The Explorers': { color: '#89B449', priority: 4, opacity: 0.7, symbol: 'circle' },
-            'The Scouts': { color: '#3182CE', priority: 5, opacity: 0.5, symbol: 'circle' }
+            'The Contributors (Top 20%)': { color: '#F4A261', priority: 2, opacity: 0.9, symbol: 'circle' },
+            'The Prospects (Bottom 80%)': { color: '#89B449', priority: 3, opacity: 0.7, symbol: 'circle' }
         };
 
         const portraits = {
@@ -24,7 +22,20 @@ async function loadContributorLandscape() {
             'Wladimir J. van der Laan': 'assets/wladimir.png',
             'MarcoFalke': 'assets/marcofalke.png',
             'Michael Ford': 'assets/michael_ford.png',
-            'Pieter Wuille': 'assets/pieter_wuille.png'
+            'Pieter Wuille': 'assets/pieter_wuille.png',
+            'Hal Finney': 'assets/hal_finney.png'
+        };
+
+        const historicalNotes = {
+            "Satoshi Nakamoto": "Creator of Bitcoin and the original protocol designer.",
+            "Gavin Andresen": "Early lead maintainer and first Bitcoin Core maintainer.",
+            "Wladimir J. van der Laan": "Current lead maintainer of Bitcoin Core.",
+            "Pieter Wuille": "Co-creator of SegWit and key consensus developer.",
+            "MarcoFalke": "Lead maintainer and testing expert.",
+            "Michael Ford": "Early contributor and developer.",
+            "Hal Finney": "Second Bitcoin user and early advocate.",
+            "sirius-m": "Martti Malmi, one of the first contributors and early website developer.",
+            "Luke Dashjr": "Maintainer of Bitcoin Knots and early consensus developer."
         };
 
         const groupedSeries = {};
@@ -34,10 +45,8 @@ async function loadContributorLandscape() {
             const p = item.percentile_raw || 0;
             let rank;
             if (p >= 99) rank = 'The Core (Top 1%)';
-            else if (p >= 90) rank = 'The Regulars (Top 10%)';
-            else if (p >= 75) rank = 'The Sustainers (Top 25%)';
-            else if (p >= 50) rank = 'The Explorers';
-            else rank = 'The Scouts';
+            else if (p >= 80) rank = 'The Contributors (Top 20%)';
+            else rank = 'The Prospects (Bottom 80%)';
 
             const style = rankStyles[rank];
             const isActive = (item.last_active_year >= 2025);
@@ -121,6 +130,7 @@ async function loadContributorLandscape() {
                                 ${params.seriesName.includes('Scouts') ? "" : `<div><span style="opacity:0.6;">Rank:</span><br/><b>Top ${(100 - (r.percentile_raw || 0) + 0.1).toFixed(1)}%</b></div>`}
                             </div>
                             ${focusHtml}
+                            ${historicalNotes[r.name] ? `<div style="margin-top:8px; font-size:11px; color:#94a3b8; font-style:italic;">${historicalNotes[r.name]}</div>` : ''}
                         </div>`;
                 }
             },

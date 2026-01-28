@@ -57,7 +57,7 @@ body {
     z-index: 10;
     /* Move visualization behind content visually by using transparent spacers or padding */
     margin-top: -100vh; 
-    padding-bottom: 50vh; /* Extra space at bottom */
+    padding-bottom: 0; /* Extra space at bottom */
     pointer-events: none; /* Let clicks pass through to chart if hitting empty space */
 }
 
