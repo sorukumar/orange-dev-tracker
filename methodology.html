@@ -389,6 +389,7 @@
                     <li><a href="#maintainers"><i class="fas fa-chevron-right"></i> Maintainers</a></li>
                     <li><a href="#codebase"><i class="fas fa-chevron-right"></i> Codebase & LOC</a></li>
                     <li><a href="#categories"><i class="fas fa-chevron-right"></i> Categories</a></li>
+                    <li><a href="#criticality"><i class="fas fa-chevron-right"></i> 5 Dimensions of Criticality</a></li>
                     <li><a href="#activity"><i class="fas fa-chevron-right"></i> Activity Patterns</a></li>
                     <li><a href="#social"><i class="fas fa-chevron-right"></i> Social & Sponsorship</a></li>
                     <li><a href="#limitations"><i class="fas fa-chevron-right"></i> Limitations</a></li>
@@ -464,7 +465,7 @@
                             <tbody>
                                 <tr>
                                     <td>👑 The Core</td>
-                                    <td>Top 1%</                                    <td>~12 people responsible for ~80% of commits</td>
+                                    <td>Top 1%</ <td>~12 people responsible for ~80% of commits</td>
                                 </tr>
                                 <tr>
                                     <td>⭐ The Regulars</td>
@@ -503,14 +504,17 @@
             <!-- Bitcoin Core Components Section -->
             <section id="components">
                 <h2>Bitcoin Core Components</h2>
-                <p>Bitcoin Core consists of several key components that work together to run the network and provide user interfaces.</p>
+                <p>Bitcoin Core consists of several key components that work together to run the network and provide
+                    user interfaces.</p>
 
                 <div class="metric-card">
                     <h4>bitcoind (Daemon)</h4>
-                    <p class="definition">The core engine that validates transactions, maintains the blockchain, and communicates with peers.</p>
+                    <p class="definition">The core engine that validates transactions, maintains the blockchain, and
+                        communicates with peers.</p>
                     <dl class="details">
                         <dt>What it does</dt>
-                        <dd>Runs the Bitcoin protocol, manages the UTXO set, and provides RPC interfaces for automation.</dd>
+                        <dd>Runs the Bitcoin protocol, manages the UTXO set, and provides RPC interfaces for automation.
+                        </dd>
                         <dt>Categories involved</dt>
                         <dd>Consensus, Node & RPC, P2P Network, Database, Cryptography, Utilities.</dd>
                     </dl>
@@ -521,13 +525,15 @@
                     <p class="definition">The graphical user interface for wallet management and node operation.</p>
                     <dl class="details">
                         <dt>What it does</dt>
-                        <dd>Provides a desktop app for sending/receiving Bitcoin, viewing transactions, and configuring the node.</dd>
+                        <dd>Provides a desktop app for sending/receiving Bitcoin, viewing transactions, and configuring
+                            the node.</dd>
                         <dt>Categories involved</dt>
                         <dd>GUI, Wallet.</dd>
                     </dl>
                 </div>
 
-                <p>These components share underlying libraries for consensus rules, cryptography, and utilities, ensuring consistency across implementations.</p>
+                <p>These components share underlying libraries for consensus rules, cryptography, and utilities,
+                    ensuring consistency across implementations.</p>
             </section>
 
             <!-- Maintainers Section -->
@@ -621,7 +627,9 @@
             <!-- Categories Section -->
             <section id="categories">
                 <h2>Categories (Architecture)</h2>
-                <p>Every file is assigned to a functional category based on its path. This segmentation reflects Bitcoin Core's architecture, grouping related functionality to track development focus. Categories with consensus-critical code require higher scrutiny than user-facing features.</p>
+                <p>Every file is assigned to a functional category based on its path. This segmentation reflects Bitcoin
+                    Core's architecture, grouping related functionality to track development focus. Categories with
+                    consensus-critical code require higher scrutiny than user-facing features.</p>
 
                 <div class="table-wrapper">
                     <table>
@@ -702,6 +710,144 @@
                 <p>When a commit touches multiple categories, the category with the most changed lines is assigned as
                     the
                     primary category for that commit.</p>
+            </section>
+
+            <!-- 5 Dimensions of Criticality -->
+            <section id="criticality">
+                <h2>The 5 Dimensions of Criticality</h2>
+                <p>Not all code is equal. A one-line change to consensus rules carries significantly more risk (and
+                    value) than a 500-line documentation update. To visualize this, we use a <strong>Risk-Weighted
+                        Impact Model</strong> that groups categories into 5 qualitative dimensions.</p>
+
+                <div class="metric-card">
+                    <h4>1. Security (The Guard Rails)</h4>
+                    <p class="definition">The "Nuclear Core" of Bitcoin. Changes here are existential.</p>
+                    <dl class="details">
+                        <dt>Risk Weight</dt>
+                        <dd><span class="badge" style="background:#FED7D7; color:#C53030;">100x - 50x</span></dd>
+                        <dt>Categories</dt>
+                        <dd><strong>Consensus</strong>, <strong>Cryptography</strong>, <strong>Core Libs</strong>.</dd>
+                        <dt>Rationale</dt>
+                        <dd>Bugs in these areas can cause chain splits, inflation events, or key leakage. The highest
+                            standard of review is required.</dd>
+                    </dl>
+                </div>
+
+                <div class="metric-card">
+                    <h4>2. Resilience (The Fabric)</h4>
+                    <p class="definition">The networking and validation infrastructure that keeps the system alive.</p>
+                    <dl class="details">
+                        <dt>Risk Weight</dt>
+                        <dd><span class="badge" style="background:#FEEBC8; color:#C05621;">50x - 30x</span></dd>
+                        <dt>Categories</dt>
+                        <dd><strong>P2P Network</strong>, <strong>Utilities</strong>, <strong>Database</strong>.</dd>
+                        <dt>Rationale</dt>
+                        <dd>Failure here can lead to eclipse attacks, peer bans, or data corruption. Critical for
+                            network health.</dd>
+                    </dl>
+                </div>
+
+                <div class="metric-card">
+                    <h4>3. Usability (The Interface)</h4>
+                    <p class="definition">How humans and software interact with the node.</p>
+                    <dl class="details">
+                        <dt>Risk Weight</dt>
+                        <dd><span class="badge" style="background:#FEFCBF; color:#B7791F;">20x - 10x</span></dd>
+                        <dt>Categories</dt>
+                        <dd><strong>Wallet</strong>, <strong>Node & RPC</strong>, <strong>GUI</strong>.</dd>
+                        <dt>Rationale</dt>
+                        <dd>Wallet bugs can lose user funds (local risk). RPC/GUI bugs break integration but don't
+                            threaten the network globally.</dd>
+                    </dl>
+                </div>
+
+                <div class="metric-card">
+                    <h4>4. Quality (The Safety Net)</h4>
+                    <p class="definition">Ensuring correctness and stability.</p>
+                    <dl class="details">
+                        <dt>Risk Weight</dt>
+                        <dd><span class="badge" style="background:#C6F6D5; color:#2F855A;">5x</span></dd>
+                        <dt>Categories</dt>
+                        <dd><strong>Tests (QA)</strong>, <strong>Build & CI</strong>.</dd>
+                        <dt>Rationale</dt>
+                        <dd>Vital for long-term velocity and safety, but do not affect the mainnet runtime directly.
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="metric-card">
+                    <h4>5. Education (The Knowledge Base)</h4>
+                    <p class="definition">Onboarding and explaining the system.</p>
+                    <dl class="details">
+                        <dt>Risk Weight</dt>
+                        <dd><span class="badge" style="background:#E2E8F0; color:#4A5568;">1x</span></dd>
+                        <dt>Categories</dt>
+                        <dd><strong>Documentation</strong>.</dd>
+                        <dt>Rationale</dt>
+                        <dd>Important for the ecosystem, but carries near-zero risk to the protocol's operation.</dd>
+                    </dl>
+                </div>
+
+                <div class="metric-card">
+                    <h4>Calculation Logic</h4>
+                    <p class="definition">How we compute the "Impact Score" for the Radar Chart.</p>
+                    <pre><code class="language-python">Impact Score = Σ (Commit × Weight × Fractional_Factor)</code></pre>
+                    <dl class="details">
+                        <dt>Variables</dt>
+                        <dd>
+                            <ul>
+                                <li><strong>Commit</strong>: 1 for each commit authored.</li>
+                                <li><strong>Weight</strong>: The Risk Weight of the primary category (e.g., 50 for
+                                    Consensus).</li>
+                                <li><strong>Fractional_Factor</strong>: <code>1 / N</code>, where N is the number of
+                                    categories touched by that commit.</li>
+                            </ul>
+                        </dd>
+                        <dt>Example</dt>
+                        <dd>A commit that touches <strong>Consensus (50x)</strong> and <strong>Tests (5x)</strong>:
+                            <br>
+                            <code>Score = (1 * 50 * 0.5) + (1 * 5 * 0.5) = 25 + 2.5 = 27.5</code>
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="metric-card">
+                    <h4>Model Analysis: Interpreting the Data</h4>
+                    <p class="definition">How to read the "Impact Score" and understand its trade-offs.</p>
+
+                    <h5 style="font-size: 0.95rem; color: #2D3748; margin: 1rem 0 0.5rem;">How to Interpret</h5>
+                    <ul style="list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; color: #4A5568;">
+                        <li><strong>Shape > Size:</strong> Focus on the <em>direction</em> of the chart. A skew toward
+                            "Security" indicates a Protocol Engineer. A skew toward "Usability" indicates a Product
+                            Engineer.</li>
+                        <li><strong>No "Best" Shape:</strong> A "Generalist" (circular shape) is not necessarily better
+                            than a "Specialist" (spiky shape). Bitcoin needs both.</li>
+                    </ul>
+
+                    <h5 style="font-size: 0.95rem; color: #2D3748; margin: 1rem 0 0.5rem;">Trade-offs (Pros & Cons)</h5>
+                    <dl class="details">
+                        <dt style="color: #38A169;">✅ Pros (Why we use it)</dt>
+                        <dd>
+                            <ul>
+                                <li><strong>Risk Awareness:</strong> Correctly identifies that a 1-line Consensus fix is
+                                    more critical than a 100-line documentation update.</li>
+                                <li><strong>Refactor Dampening:</strong> "Fractional Attribution" prevents score
+                                    inflation from scripts or refactors that touch hundreds of files (their weight is
+                                    diluted by 1/N).</li>
+                            </ul>
+                        </dd>
+                        <dt style="color: #E53E3E;">⚠️ Cons (Limitations)</dt>
+                        <dd>
+                            <ul>
+                                <li><strong>Subjective Weights:</strong> The choice of "50x" vs "20x" is a heuristic
+                                    judgment, not a law of physics.</li>
+                                <li><strong>Atomic Commit Sensitivity:</strong> Theoretically, score inflation is
+                                    possible by making many tiny, separate commits to critical files. (However, this is
+                                    rare and usually caught by maintainers).</li>
+                            </ul>
+                        </dd>
+                    </dl>
+                </div>
             </section>
 
             <!-- Activity Section -->

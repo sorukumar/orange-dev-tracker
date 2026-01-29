@@ -598,6 +598,95 @@ class MetricGenerators:
         # Merge
         df = g1.join(cat_pct) # Adds category columns
         
+        # --- NEW: Risk & Radar Profile ---
+        # 1. Define Weights & Mapping
+        RISK_WEIGHTS = {
+            "Core Libs": 50,                 # Security / Crypto
+            "Utilities (Shared Libs)": 30,   # Resilience / Base
+            "Node & RPC (App/Interface)": 10,# Usability
+            "GUI (Presentation Layer)": 10,  # Usability
+            "Wallet": 20,                    # Usability (Funds)
+            "Tests (QA)": 5,                 # Quality
+            "Build & CI (DevOps)": 5,        # Quality
+            "Documentation": 1               # Education
+        }
+        
+        RADAR_AXES = {
+            "Security": ["Core Libs"],
+            "Resilience": ["Utilities (Shared Libs)"],
+            "Usability": ["GUI (Presentation Layer)", "Node & RPC (App/Interface)", "Wallet"],
+            "Quality": ["Tests (QA)", "Build & CI (DevOps)"],
+            "Education": ["Documentation"]
+        }
+        
+        # 2. Calculate Aggregated Risk Score per Author
+        # Formula: Sum(Commit_Weight * Category_Risk)
+        # We need to iterate carefully. We have 'commits_w' from Fractional Attribution step below.
+        # But we haven't computed commits_w yet in this flow (it's in the next block). 
+        # So I will move the Fractional Attribution block UP or compute it here.
+        
+        # --- NEW: Fractional Attribution (History by Year & Category) ---
+        # 1. Calculate how many categories each commit touches (N)
+        # Calculate N: distinct categories per hash
+        commit_cats = commits.groupby('hash')['category'].nunique().reset_index().rename(columns={'category': 'n_cats'})
+        # Merge N back to commits
+        commits_w = commits.merge(commit_cats, on='hash')
+        # Calculate Weight: 1/N
+        commits_w['weight'] = 1.0 / commits_w['n_cats']
+        
+        # Calculate Risk Score
+        # Map category to weight
+        commits_w['risk_val'] = commits_w['category'].map(RISK_WEIGHTS).fillna(1)
+        # Commit Risk Score = Weight * Risk_Val
+        commits_w['commit_score'] = commits_w['weight'] * commits_w['risk_val']
+        
+        # Aggregates by ID
+        risk_agg = commits_w.groupby('canonical_id')['commit_score'].sum()
+        df['risk_score'] = df.index.map(risk_agg).fillna(0)
+        
+        # Calculate Radar Profile (Score per Axis)
+        # We need Score per Category per ID
+        cat_scores = commits_w.groupby(['canonical_id', 'category'])['commit_score'].sum().unstack(fill_value=0)
+        
+        radar_profiles = {}
+        for cid, row in cat_scores.iterrows():
+            profile = {}
+            for axis, cats in RADAR_AXES.items():
+                # Sum scores of categories belonging to this axis
+                val = 0
+                for c in cats:
+                    if c in row: val += row[c]
+                profile[axis] = round(val, 2)
+            radar_profiles[cid] = profile
+
+        # Now continue with History agg...
+        # Now agg: Group by Canonical ID, Year, Category -> Sum of Weights
+        hist = commits_w.groupby(['canonical_id', 'year', 'category'])['weight'].sum().unstack(fill_value=0)
+
+        
+        # hist is MultiIndex (canonical_id, year) with columns=Categories, values=Fractional Sums
+        
+        # Convert to dictionary map: { canonical_id: { year: { cat: count, ... }, ... } }
+        history_map = {}
+        
+        hist_reset = hist.reset_index()
+        cat_cols = [c for c in hist_reset.columns if c not in ['canonical_id', 'year']]
+        
+        for _, row in hist_reset.iterrows():
+            cid = row['canonical_id']
+            y = int(row['year'])
+            
+            if cid not in history_map: history_map[cid] = {}
+            
+            stats = {}
+            for c in cat_cols:
+                val = float(row[c])
+                if val > 0:
+                    stats[c] = round(val, 2) # Round to 2 decimals
+            
+            if stats:
+                history_map[cid][y] = stats
+
         # --- ENRICHMENT METRICS ---
         total_project_commits = commits.shape[0]
         
@@ -659,7 +748,12 @@ class MetricGenerators:
                  "focus_areas": focus_map,
                  "contribution_pct": round(contribution_pct, 4),
                  "rank_label": rank_label,
-                 "percentile_raw": round(row['percentile'] * 100, 1) # e.g. 99.5
+                 "contribution_pct": round(contribution_pct, 4),
+                 "rank_label": rank_label,
+                 "percentile_raw": round(row['percentile'] * 100, 1), # e.g. 99.5
+                 "history": history_map.get(cid, {}),
+                 "risk_score": int(row['risk_score']),
+                 "radar_profile": radar_profiles.get(cid, {})
              })
              
         with open(Config.FILES["contributors_rich"], "w") as f:

@@ -10,6 +10,28 @@ const COLORS = {
     gridLine: 'rgba(226, 232, 240, 0.6)'
 };
 
+const categoryColors = {
+    // Security & Core (Warm spectrum)
+    'Consensus (Domain Logic)': '#E07A5F',
+    'Cryptography (Primitives)': '#C53030',
+    'Core Libs': '#F6AD55',
+
+    // Usability & App (Amber spectrum)
+    'Node & RPC (App/Interface)': '#ED8936',
+    'GUI (Presentation Layer)': '#F4A261',
+    'Wallet (Client App)': '#D69E2E',
+
+    // Resilience & Infrastructure (Cool spectrum)
+    'P2P Network (Infrastructure)': '#2B6CB0',
+    'Database (Persistence)': '#4A5568',
+    'Utilities (Shared Libs)': '#9F86C0',
+
+    // Quality & Education (Natural spectrum)
+    'Tests (QA)': '#81B29A',
+    'Build & CI (DevOps)': '#3D405B',
+    'Documentation': '#F2CC8F'
+};
+
 const charts = {};
 function getGhibliPalette() {
     const style = getComputedStyle(document.documentElement);

@@ -144,8 +144,212 @@ async function loadContributorLandscape() {
             },
             series: series
         });
+        charts.landscape.on('click', function (params) {
+            if (params.componentType === 'series') {
+                renderContributorHistory(params.data.raw);
+            }
+        });
+
         console.timeEnd("loadContributorLandscape");
     } catch (e) {
         console.error("Galaxy Rendering Error:", e);
     }
+}
+
+function renderContributorHistory(contributor) {
+    const historySection = document.getElementById('contributor-history-section');
+    const historyTitle = document.getElementById('history-title');
+    const chartContainer = document.getElementById('chart-contributor-history');
+
+    if (!historySection || !chartContainer) return;
+
+    historySection.style.display = 'block';
+
+    // Format total commits with commas
+    const totalCommits = contributor.total_commits ? contributor.total_commits.toLocaleString() : "0";
+    historyTitle.innerText = `Contributor History: ${contributor.name} (${totalCommits} Commits)`;
+
+    // Scroll to history
+    historySection.scrollIntoView({ behavior: 'smooth' });
+
+    if (charts.history) {
+        charts.history.dispose();
+    }
+    charts.history = echarts.init(chartContainer);
+
+    const historyData = contributor.history || {};
+    const years = Object.keys(historyData).sort();
+
+    // Get all unique categories
+    const categories = new Set();
+    Object.values(historyData).forEach(yearData => {
+        Object.keys(yearData).forEach(cat => categories.add(cat));
+    });
+    const categoryList = Array.from(categories);
+
+    const series = categoryList.map(cat => {
+        return {
+            name: cat,
+            type: 'bar',
+            stack: 'total',
+            emphasis: { focus: 'series' },
+            data: years.map(y => historyData[y][cat] || 0),
+            itemStyle: {
+                color: (categoryColors && categoryColors[cat]) ? categoryColors[cat] : null
+            }
+        };
+    });
+
+    const option = {
+        backgroundColor: 'transparent',
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: { type: 'shadow' },
+            backgroundColor: '#1A202C',
+            borderColor: '#2D3748',
+            textStyle: { color: '#fff' },
+            valueFormatter: (value) => value > 0 ? value.toFixed(1) : value
+        },
+        legend: {
+            data: categoryList,
+            bottom: 5,
+            textStyle: { color: '#718096', fontSize: 11 },
+            itemGap: 15
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '100px',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: years,
+            axisLine: { lineStyle: { color: '#E2E8F0' } },
+            axisLabel: { color: '#718096' }
+        },
+        yAxis: {
+            type: 'value',
+            splitLine: { lineStyle: { type: 'dashed', color: '#E2E8F0' } },
+            axisLabel: { color: '#718096' }
+        },
+        series: series
+    };
+
+    charts.history.setOption(option);
+
+    // --- Render Radar Chart ---
+    renderContributorRadarChart(contributor);
+}
+
+function renderContributorRadarChart(contributor) {
+    const radarContainer = document.getElementById('chart-contributor-radar');
+    if (!radarContainer) return;
+
+    if (charts.radar) {
+        charts.radar.dispose();
+    }
+    charts.radar = echarts.init(radarContainer);
+
+    const profile = contributor.radar_profile || { "Security": 0, "Resilience": 0, "Usability": 0, "Quality": 0, "Education": 0 };
+
+    // Normalize logic? Ideally we'd compare against cohort max, but for now let's use a log-ish scale or just raw if they are comparable.
+    // The "Risk Score" is unbounded. Radar charts need a max.
+    // Let's create a synthesized max based on the highest value in this profile + buffer, or a fixed "Hero" scale if we knew it.
+    // For now, let's use [0, Max(Profile) * 1.2] to make the shape visible.
+
+    const values = [
+        profile.Security || 0,
+        profile.Resilience || 0,
+        profile.Usability || 0,
+        profile.Quality || 0,
+        profile.Education || 0
+    ];
+
+    const maxVal = Math.max(...values, 10); // Minimum 10 to avoid flat lines for 0
+
+    // Indicators
+    // Indicators with specific colors matching the theme
+    const indicators = [
+        { name: 'Security', max: maxVal * 1.2, color: '#E07A5F' },    // Matches "The Core"
+        { name: 'Resilience', max: maxVal * 1.2, color: '#3D405B' },  // Matches Infrastructure
+        { name: 'Usability', max: maxVal * 1.2, color: '#F4A261' },   // Matches "The Contributor"
+        { name: 'Quality', max: maxVal * 1.2, color: '#81B29A' },     // Matches "The Prospect"
+        { name: 'Education', max: maxVal * 1.2, color: '#D4AF37' }    // Gold for knowledge
+    ];
+
+    const option = {
+        backgroundColor: 'transparent',
+        tooltip: {
+            trigger: 'item',
+            backgroundColor: '#1A202C',
+            borderColor: '#2D3748',
+            textStyle: { color: '#fff' },
+            formatter: (p) => {
+                const formatNum = (val) => Math.round(val).toLocaleString();
+                return `<div style="padding:5px; min-width:140px;">
+                    <div style="font-weight:bold; border-bottom:1px solid #2D3748; margin-bottom:8px; padding-bottom:4px;">${contributor.name} Impact</div>
+                    <div style="display:grid; grid-template-columns:1fr auto; gap:10px; font-size:12px;">
+                        <span style="color:#E07A5F;">Security:</span> <b>${formatNum(values[0])}</b>
+                        <span style="color:#3D405B;">Resilience:</span> <b>${formatNum(values[1])}</b>
+                        <span style="color:#F4A261;">Usability:</span> <b>${formatNum(values[2])}</b>
+                        <span style="color:#81B29A;">Quality:</span> <b>${formatNum(values[3])}</b>
+                        <span style="color:#D4AF37;">Education:</span> <b>${formatNum(values[4])}</b>
+                    </div>
+                </div>`
+            }
+        },
+        radar: {
+            indicator: indicators,
+            shape: 'circle',
+            radius: '62%',
+            center: ['50%', '50%'],
+            splitNumber: 4,
+            axisName: {
+                fontFamily: 'Inter',
+                fontSize: 12,
+                fontWeight: 'bold',
+                padding: [5, 5]
+            },
+            splitLine: {
+                lineStyle: {
+                    color: [
+                        'rgba(226, 232, 240, 0.1)',
+                        'rgba(226, 232, 240, 0.2)',
+                        'rgba(226, 232, 240, 0.4)',
+                        'rgba(226, 232, 240, 0.6)'
+                    ].reverse()
+                }
+            },
+            splitArea: {
+                show: false
+            },
+            axisLine: {
+                lineStyle: {
+                    color: 'rgba(226, 232, 240, 0.5)'
+                }
+            }
+        },
+        series: [{
+            name: 'Risk Profile',
+            type: 'radar',
+            data: [{
+                value: values,
+                name: contributor.name,
+                symbol: 'none',
+                lineStyle: {
+                    width: 2,
+                    color: '#E07A5F'
+                },
+                areaStyle: {
+                    color: new echarts.graphic.RadialGradient(0.5, 0.5, 1, [
+                        { offset: 0, color: 'rgba(224, 122, 95, 0.1)' },
+                        { offset: 1, color: 'rgba(224, 122, 95, 0.5)' }
+                    ])
+                }
+            }]
+        }]
+    };
+
+    charts.radar.setOption(option);
 }
