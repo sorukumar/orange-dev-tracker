@@ -68,6 +68,7 @@ async function init() {
         if (document.getElementById('chart-corporate')) await loadCorporateEra();
         if (document.getElementById('chart-geography')) await loadGeography();
         if (document.getElementById('chart-maintainer-independence')) await loadMaintainerIndependence();
+        if (document.getElementById('chart-regional-evolution')) await loadRegionalEvolution();
 
         // Contributors specific
         if (charts.landscape) await loadContributorLandscape();

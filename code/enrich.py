@@ -160,10 +160,18 @@ class Enricher:
                 entry["is_enriched"] = True
 
             # --- STRATEGY 3: API FALLBACK ---
-            # Condition: Login is missing OR "Anonymous"
-            needs_api = (entry["login"] is None or str(entry["login"]).lower() == "anonymous")
+            # Condition: Login is missing OR Location is missing (to reduce 'Undisclosed')
+            needs_api = (entry["login"] is None or 
+                         str(entry["login"]).lower() == "anonymous" or 
+                         entry["location"] is None)
             
             if needs_api and not rate_limit_hit:
+                if not GitHubAPI.TOKEN:
+                    # One-time warning if tokens are missing
+                    if api_calls_made == 0:
+                        print("  Warning: GITHUB_TOKEN not found. Skipping API lookups for missing locations.")
+                    rate_limit_hit = True # Effectively stop trying
+                
                 # Check Cache First
                 cached_data = None
                 cache_key = None
@@ -199,7 +207,7 @@ class Enricher:
                             
                         # Try Name (if no email match)
                         if not result and not rate_limit_hit:
-                             result = GitHubAPI.search_user(canonical_name, "user") # 'user' param logic in search_user varies, using fullname as q
+                             result = GitHubAPI.search_user(canonical_name, "user")
                              if result == "RATE_LIMIT":
                                  rate_limit_hit = True
                         

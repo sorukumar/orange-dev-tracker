@@ -143,3 +143,136 @@ async function loadGeography() {
         });
     } catch (e) { }
 }
+
+async function loadEmergingRegions() {
+    try {
+        const response = await fetch('data/stats_emerging_regions.json');
+        if (!response.ok) return;
+        const data = await response.json();
+        const chart = echarts.init(document.getElementById('chart-emerging-regions'));
+
+        chart.setOption({
+            backgroundColor: 'transparent',
+            tooltip: {
+                ...tooltipStyle,
+                trigger: 'axis'
+            },
+            legend: {
+                ...legendStyle,
+                bottom: 0
+            },
+            grid: {
+                left: '4%',
+                right: '4%',
+                bottom: '15%',
+                containLabel: true
+            },
+            xAxis: {
+                ...axisStyle,
+                type: 'category',
+                data: data.xAxis
+            },
+            yAxis: {
+                ...axisStyle,
+                type: 'value',
+                splitLine: { show: true, lineStyle: { type: 'dashed', opacity: 0.1 } }
+            },
+            series: data.series.map((s, idx) => ({
+                ...s,
+                color: idx === 0 ? GHIBLI_PALETTE[3] : GHIBLI_PALETTE[12],
+                barMaxWidth: 30,
+                itemStyle: {
+                    borderRadius: [4, 4, 0, 0]
+                }
+            }))
+        });
+        charts.emergingRegions = chart;
+    } catch (e) { }
+}
+
+async function loadRegionalEvolution() {
+    try {
+        const response = await fetch('data/stats_regional_evolution.json');
+        if (!response.ok) return;
+        const data = await response.json();
+        const chart = echarts.init(document.getElementById('chart-regional-evolution'));
+
+        // Vibrant for emerging, subtle for established
+        const regionColors = {
+            'Africa': GHIBLI_PALETTE[4],           // Salmon/Orange
+            'Latin America': GHIBLI_PALETTE[2],    // Green
+            'Asia Pacific': GHIBLI_PALETTE[6],     // Blue
+            'North America': '#718096',            // Slate
+            'Europe': '#A0AEC0',                   // Grey-Blue
+            'Undisclosed': '#EDF2F7'               // Very Light
+        };
+
+        chart.setOption({
+            backgroundColor: 'transparent',
+            tooltip: {
+                ...tooltipStyle,
+                trigger: 'axis',
+                axisPointer: { type: 'line', lineStyle: { opacity: 0.5 } },
+                formatter: function (params) {
+                    let total = 0;
+                    params.forEach(p => total += p.value);
+                    let html = `<div style="margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:4px;"><b>Cohort Year: ${params[0].axisValue}</b></div>`;
+                    html += `<div style="font-size:11px; color:#718096; margin-bottom:8px;">Total New Devs: <b>${total}</b></div>`;
+
+                    // Sort by value to show largest contributors at top of tooltip
+                    const sorted = [...params].sort((a, b) => b.value - a.value);
+                    sorted.forEach(p => {
+                        if (p.value > 0) {
+                            const pct = ((p.value / total) * 100).toFixed(1);
+                            html += `<div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; margin-bottom:2px;">
+                                <span>${p.marker} ${p.seriesName}</span>
+                                <span><b>${p.value}</b> <span style="font-size:10px; opacity:0.7;">(${pct}%)</span></span>
+                            </div>`;
+                        }
+                    });
+                    return html;
+                }
+            },
+            legend: {
+                ...legendStyle,
+                bottom: 0,
+                icon: 'circle',
+                selected: {
+                    'Undisclosed': false
+                }
+            },
+            grid: {
+                left: '4%',
+                right: '4%',
+                bottom: '15%',
+                containLabel: true
+            },
+            xAxis: {
+                ...axisStyle,
+                type: 'category',
+                boundaryGap: false,
+                data: data.xAxis
+            },
+            yAxis: {
+                ...axisStyle,
+                type: 'value',
+                name: 'New Devs',
+                splitLine: { show: true, lineStyle: { type: 'dashed', opacity: 0.1 } }
+            },
+            series: data.series.map(s => ({
+                ...s,
+                type: 'line',
+                stack: 'total',
+                smooth: true,
+                symbol: 'none',
+                areaStyle: {
+                    opacity: 0.8
+                },
+                lineStyle: { width: 0 },
+                color: regionColors[s.name] || '#CBD5E0',
+                emphasis: { focus: 'series' }
+            }))
+        });
+        charts.regionalEvolution = chart;
+    } catch (e) { }
+}
