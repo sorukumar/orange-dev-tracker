@@ -34,7 +34,10 @@ def main():
     # 1. Enrich/Refresh Metadata
     run("python code/enrich.py")
     
-    # 2. Main Processing Pipeline
+    # 1.5 Extract Reviewers (needed for process.py)
+    run("python code/extract_reviewers.py")
+    
+    # 2. Main Processing Pipeline (generates most stats_*.json)
     run("python code/process.py")
     
     # 3. Specific Insight Generators

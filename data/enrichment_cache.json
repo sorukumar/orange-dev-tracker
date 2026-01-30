@@ -1330,5 +1330,104 @@
     "company": "Personal/Independent",
     "followers": 11,
     "verified_at": 1769802126.874583
+  },
+  "jrn@jrn.me.uk": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769804986.958747
+  },
+  "dan@soundradix.com": {
+    "login": "danra",
+    "location": "Undisclosed",
+    "company": "Sound Radix",
+    "followers": 22,
+    "verified_at": 1769804988.950526
+  },
+  "yuri.zhykin@gmail.com": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769804993.0984561
+  },
+  "me@n-thumann.de": {
+    "login": "n-thumann",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 32,
+    "verified_at": 1769804995.112349
+  },
+  "akx20000@protonmail.com": {
+    "login": "Anonymous",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 0,
+    "verified_at": 1769804997.169033
+  },
+  "jaejoon@gmail.com": {
+    "login": "jimmysong",
+    "location": "Beijing, China",
+    "company": "@dynamia-ai",
+    "followers": 1078,
+    "verified_at": 1769804999.288298
+  },
+  "rcorreia@wizy.org": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769805001.915265
+  },
+  "marco@agner.io": {
+    "login": "marcoagner",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 63,
+    "verified_at": 1769805004.0121212
+  },
+  "pitwuu@gmail.com": {
+    "login": "SmartAttendanceDevice",
+    "location": "Bangladesh",
+    "company": "Personal/Independent",
+    "followers": 0,
+    "verified_at": 1769805006.1014242
+  },
+  "mastergizmo@arcor.de": {
+    "login": "nomnombtc",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 9,
+    "verified_at": 1769805007.846045
+  },
+  "james.chiangwu@gmail.com": {
+    "login": "jchiang87",
+    "location": "Menlo Park CA",
+    "company": "SLAC National Accelerator Laboratory",
+    "followers": 7,
+    "verified_at": 1769805009.590443
+  },
+  "pavel@vasin.nl": {
+    "login": "Anonymous",
+    "location": "Moscow",
+    "company": "Personal/Independent",
+    "followers": 0,
+    "verified_at": 1769805012.631041
+  },
+  "svangani239@gmail.com": {
+    "login": "shaavan",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 25,
+    "verified_at": 1769805014.371881
+  },
+  "pedrobrancolcc@gmail.com": {
+    "login": "Anonymous",
+    "location": "Braga, Portugal",
+    "company": "@uphold ",
+    "followers": 19,
+    "verified_at": 1769805014.874499
+  },
+  "pierre@rochard.org": {
+    "login": "Anonymous",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 0,
+    "verified_at": 1769805015.357454
   }
 }
