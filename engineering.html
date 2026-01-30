@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineering | Orange Dev Tracker | Bitcoin Data Labs</title>
+    <meta name="description"
+        content="Deep dive into the engineering rigor of Bitcoin Core. Analysis of churn, refactoring discipline, reviewer activity, and contributor retention.">
+    <link rel="canonical" href="https://sorukumar.github.io/orange-dev-tracker/engineering.html">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://sorukumar.github.io/Bitcoin-Data-Labs/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="https://sorukumar.github.io/Bitcoin-Data-Labs/favicon.png">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Engineering | Orange Dev Tracker | Bitcoin Data Labs">
+    <meta property="og:description"
+        content="Analysis of churn, refactoring discipline, and reviewer activity in Bitcoin Core.">
+    <meta property="og:image" content="https://sorukumar.github.io/orange-dev-tracker/assets/og-image.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="header"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header id="main-nav" style="margin-bottom: 20px;"></header>
+
+        <!-- Engineering Efficiency: Churn vs Net -->
+        <section class="card" style="margin-top: 30px;">
+            <h3>Engineering Efficiency: Historical Churn vs. Net Change</h3>
+            <p class="narrative">Bitcoin Core is famous for "refactoring" (making it smaller). Highlighting weeks where
+                net LOC went down but churn was high shows high-quality engineering.</p>
+            <div id="chart-churn" style="height: 500px; width: 100%;"></div>
+
+            <!-- Explanatory Text Footer -->
+            <div
+                style="margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 8px; border-left: 4px solid var(--primary); font-size: 0.95em; line-height: 1.6; color: var(--text-secondary);">
+                <h4 style="margin-top: 0; color: var(--secondary); display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-microscope"></i> How to Analyze this Data
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div>
+                        <strong style="color: var(--text-primary);">Total Effort (Churn Intensity)</strong><br>
+                        The grey bars represent the <b>total volume of activity</b> (adds + deletes). Large bars mean
+                        the code was heavily modified, even if the final size didn't change much.
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-primary);">Footprint (Net Change)</strong><br>
+                        The solid line shows <b>system growth or shrinkage</b>. If the line dips below zero while churn
+                        is
+                        high, it indicates a "Refactoring Week" where code was improved and simplified.
+                    </div>
+                    <div>
+                        <strong style="color: var(--text-primary);">Refactoring Discipline</strong><br>
+                        High churn paired with negative net change is the hallmark of engineering discipline.
+                        These "Net-Negative" sprints prove that developers are simplifying the system rather than just
+                        adding complexity
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Peer Review: The Unsung Work -->
+        <section class="story-section" style="margin-top: 30px;">
+            <div class="card">
+                <h3>The Review Gap: Peer Review Analysis</h3>
+                <p class="narrative">Commits are only half the story. In Bitcoin Core, the peer review process is
+                    where the real engineering rigor happens. This analysis tracks the distributed effort of verifying
+                    code quality (ACK/NACK), highlighting the collaborative volume required to move the protocol
+                    forward safely.</p>
+
+                <div class="wip-placeholder"
+                    style="height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f8fafc; border: 2px dashed #e2e8f0; border-radius: 12px; color: #94a3b8; margin-top: 20px;">
+                    <i class="fas fa-microscope" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                    <h4 style="margin: 0; color: #64748b;">VALIDATION IN PROGRESS</h4>
+                    <p style="font-size: 0.9rem; margin-top: 10px; max-width: 400px; text-align: center;">
+                        Review scoring models are currently being calibrated to better distinguish between trivial
+                        ACKs and deep technical audits.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Velocity: PR Lead Time (WIP) -->
+        <section class="story-section" style="margin-top: 30px; margin-bottom: 50px;">
+            <div class="card">
+                <h3>Velocity: PR Lead Time Analysis</h3>
+                <p class="narrative">Understanding the friction in the code review pipeline. We are mapping the
+                    journey from first commit to final merge to identify bottlenecks in the engineering flow.</p>
+
+                <div class="wip-placeholder"
+                    style="height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f8fafc; border: 2px dashed #e2e8f0; border-radius: 12px; color: #94a3b8; margin-top: 20px;">
+                    <i class="fas fa-hourglass-half" style="font-size: 2.5rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                    <h4 style="margin: 0; color: #64748b;">WIP: RESEARCH PHASE</h4>
+                    <p style="font-size: 0.9rem; margin-top: 10px;">
+                        Mapping the temporal lifecycle of Bitcoin Core contributions.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="footer"></div>
+
+    <script src="https://sorukumar.github.io/Bitcoin-Data-Labs/components/app-components.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/charts-dashboard.js"></script>
+    <script src="js/charts-codebase.js"></script>
+    <script src="js/charts-advanced.js"></script>
+    <script src="js/app.js?v=4"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            BitcoinLabsAppComponents.init({
+                isApp: true,
+                appName: 'orange-dev-tracker',
+                appHomeUrl: 'dashboard.html'
+            });
+        });
+    </script>
+</body>
+
+</html>

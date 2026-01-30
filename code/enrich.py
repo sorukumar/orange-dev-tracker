@@ -15,14 +15,19 @@ class EnrichmentCache:
             try:
                 with open(EnrichmentCache.CACHE_FILE, "r") as f:
                     return json.load(f)
-            except:
+            except Exception as e:
+                print(f"Error loading cache: {e}")
                 return {}
         return {}
         
     @staticmethod
     def save(cache):
+        # Merge with existing file to avoid racing or losing data if multiple processes run
+        # Though currently it's sequential, it's safer.
+        existing = EnrichmentCache.load()
+        existing.update(cache)
         with open(EnrichmentCache.CACHE_FILE, "w") as f:
-            json.dump(cache, f, indent=2)
+            json.dump(existing, f, indent=2)
 
 class GitHubAPI:
     TOKEN = os.environ.get("GITHUB_TOKEN")
@@ -57,6 +62,7 @@ class GitHubAPI:
 
     @staticmethod
     def get_user_details(username):
+        if not username: return None
         url = f"https://api.github.com/users/{username}"
         try:
             resp = requests.get(url, headers=GitHubAPI.HEADERS)
@@ -86,7 +92,7 @@ class Enricher:
         if legacy_df is None:
             return None
 
-        # 1. Build Lookup Maps (Normalization is key)
+        # 1. Build Lookup Maps
         email_map = {}
         name_map = {}
         
@@ -102,34 +108,35 @@ class Enricher:
                     
         print(f"Legacy Index: {len(email_map)} emails, {len(name_map)} names.")
 
-        # 2. Iterate Canonical Groups
+        # 2. Iterate Canonical Groups (PRIORITIZED BY IMPACT)
         contributors = []
-        grouped = commits.groupby('canonical_id')
+        id_counts = commits['canonical_id'].value_counts()
+        sorted_ids = id_counts.index.tolist()
         
         api_calls_made = 0
-        MAX_API_CALLS = 50 # safety limit per run
+        MAX_API_CALLS = 100 
         rate_limit_hit = False
-
         count_mapped = 0
         
-        for cid, group in grouped:
+        grouped = commits.groupby('canonical_id')
+        
+        # Load Whitelists once
+        maintainers = []
+        if os.path.exists("data/maintainers_lookup.json"):
+            with open("data/maintainers_lookup.json", "r") as f:
+                maintainers = json.load(f).get("maintainers", [])
+        
+        sponsored = []
+        if os.path.exists("data/sponsors_lookup.json"):
+            with open("data/sponsors_lookup.json", "r") as f:
+                sponsored = json.load(f).get("sponsored_developers", [])
+
+        for cid in sorted_ids:
+            group = grouped.get_group(cid)
             c_emails = set(group['author_email'].str.lower().dropna())
             c_names = set(group['author_name'].str.lower().dropna())
             canonical_name = group.iloc[0]['canonical_name']
             
-            # --- STRATEGY 1: LEGACY DATA ---
-            match_row = None
-            for e in c_emails:
-                if e in email_map:
-                    match_row = email_map[e]
-                    break
-            if match_row is None:
-                for n in c_names:
-                    if n in name_map:
-                        match_row = name_map[n]
-                        break
-                        
-            # Base Data Object
             entry = {
                 "canonical_id": cid,
                 "name": canonical_name,
@@ -140,6 +147,14 @@ class Enricher:
                 "is_enriched": False
             }
             
+            # --- STRATEGY 1: LEGACY DATA ---
+            match_row = None
+            for e in c_emails:
+                if e in email_map: match_row = email_map[e]; break
+            if match_row is None:
+                for n in c_names:
+                    if n in name_map: match_row = name_map[n]; break
+                        
             if match_row is not None:
                 entry["login"] = match_row.get("Login")
                 entry["location"] = match_row.get("Location")
@@ -147,92 +162,84 @@ class Enricher:
                 entry["followers"] = int(match_row.get("Followers", 0)) if pd.notna(match_row.get("Followers")) else 0
                 entry["is_enriched"] = True
                 
-            # --- STRATEGY 2: MANUAL OVERRIDES ---
+            # --- STRATEGY 2: WHITELISTS ---
+            for m in maintainers:
+                if m.get("name") == canonical_name or any(e in c_emails for e in m.get("emails", [])):
+                    entry["login"] = entry["login"] or m.get("github")
+                    entry["is_enriched"] = True
+            
+            for s in sponsored:
+                if s.get("canonical_name") == canonical_name or any(e in c_emails for e in s.get("emails", [])):
+                    entry["login"] = entry["login"] or s.get("github")
+                    entry["is_enriched"] = True
+
+            # --- STRATEGY 3: MANUAL OVERRIDES ---
             MANUAL_OVERRIDES = {
-                "MacrabFalke": {"login": "MarcoFalke", "name": "MarcoFalke"},
-                "MarcoFalke": {"login": "MarcoFalke", "name": "MarcoFalke"},
-                "Marco Falke": {"login": "MarcoFalke", "name": "MarcoFalke"}
+                "Wladimir J. van der Laan": {"login": "laanwj", "location": "Netherlands"},
+                "Wladimir van der Laan": {"login": "laanwj", "location": "Netherlands"},
+                "Marco Falke": {"login": "MarcoFalke"},
+                "Satoshi Nakamoto": {"login": "satoshi", "location": "P2P Space"}
             }
             if canonical_name in MANUAL_OVERRIDES:
                 ov = MANUAL_OVERRIDES[canonical_name]
-                entry["login"] = ov.get("login", entry["login"])
-                entry["name"] = ov.get("name", entry["name"])
+                for k, v in ov.items(): entry[k] = v
                 entry["is_enriched"] = True
 
-            # --- STRATEGY 3: API FALLBACK ---
-            # Condition: Login is missing OR Location is missing (to reduce 'Undisclosed')
-            needs_api = (entry["login"] is None or 
-                         str(entry["login"]).lower() == "anonymous" or 
-                         entry["location"] is None)
+            # --- STRATEGY 4: API FALLBACK ---
+            needs_api = (entry["login"] is None or entry["location"] is None)
             
-            if needs_api and not rate_limit_hit:
-                if not GitHubAPI.TOKEN:
-                    # One-time warning if tokens are missing
-                    if api_calls_made == 0:
-                        print("  Warning: GITHUB_TOKEN not found. Skipping API lookups for missing locations.")
-                    rate_limit_hit = True # Effectively stop trying
-                
-                # Check Cache First
+            if needs_api:
                 cached_data = None
-                cache_key = None
-                
-                # Try finding a cache key match
                 for e in c_emails:
-                    if e in cache:
-                        cached_data = cache[e]
-                        cache_key = e
-                        break
+                    if e in cache: cached_data = cache[e]; break
                 
                 if cached_data:
-                    # Use Cache
-                    entry["login"] = cached_data.get("login")
-                    entry["location"] = cached_data.get("location")
-                    entry["company"] = cached_data.get("company")
-                    entry["followers"] = cached_data.get("followers", 0)
-                    entry["is_enriched"] = True
+                    # Apply cached data immediately
+                    entry["login"] = entry["login"] or cached_data.get("login")
+                    entry["location"] = entry["location"] or cached_data.get("location")
+                    entry["company"] = entry["company"] or cached_data.get("company")
+                    entry["followers"] = entry["followers"] or cached_data.get("followers", 0)
+                    entry["is_enriched"] = True # We have data (even if undisclosed), we are done.
+                    needs_refresh = False
                 else:
-                    # CALL API (If token exists)
-                    if GitHubAPI.TOKEN and api_calls_made < MAX_API_CALLS:
-                        print(f"Fetching missing data for {canonical_name}...")
-                        result = None
-                        
-                        # Try Email
-                        for e in c_emails:
-                            if "users.noreply" in e: continue
-                            result = GitHubAPI.search_user(e, "email")
-                            if result == "RATE_LIMIT": 
-                                rate_limit_hit = True
-                                break
-                            if result: break
-                            
-                        # Try Name (if no email match)
-                        if not result and not rate_limit_hit:
-                             result = GitHubAPI.search_user(canonical_name, "user")
-                             if result == "RATE_LIMIT":
-                                 rate_limit_hit = True
-                        
-                        if result and result != "RATE_LIMIT":
-                            # Save to Entry
-                            entry["login"] = result.get("login")
-                            entry["location"] = result.get("location")
-                            entry["company"] = result.get("company")
-                            entry["followers"] = result.get("followers", 0)
-                            entry["is_enriched"] = True
-                            
-                            # Cache It (Store by first email to allow future lookup)
-                            if c_emails:
-                                first_email = list(c_emails)[0]
-                                cache[first_email] = {
-                                    "login": result.get("login"),
-                                    "location": result.get("location"),
-                                    "company": result.get("company"),
-                                    "followers": result.get("followers", 0)
-                                }
-                                api_calls_made += 1
+                    needs_refresh = True
+
+                # 4b. Call API ONLY if user is NOT in cache and we aren't rate limited
+                if needs_refresh and not rate_limit_hit and GitHubAPI.TOKEN and api_calls_made < MAX_API_CALLS:
+                    print(f"Fetching discovery for {canonical_name}...")
                     
+                    result = None
+                    for e in c_emails:
+                        if "users.noreply" in e: continue
+                        result = GitHubAPI.search_user(e, "email")
+                        if result: break
+                    if not result:
+                        result = GitHubAPI.search_user(canonical_name, "user")
+                    
+                    if result and result != "RATE_LIMIT":
+                        entry["login"] = entry["login"] or result.get("login")
+                        entry["location"] = entry["location"] or result.get("location") or "Undisclosed"
+                        entry["company"] = entry["company"] or result.get("company") or "Personal/Independent"
+                        entry["followers"] = entry["followers"] or result.get("followers", 0)
+                        entry["is_enriched"] = True
+                        
+                        if c_emails:
+                            cache[list(c_emails)[0]] = {
+                                "login": entry["login"], "location": entry["location"],
+                                "company": entry["company"], "followers": entry["followers"],
+                                "verified_at": time.time()
+                            }
+                            api_calls_made += 1
+                    elif result == "RATE_LIMIT":
+                        rate_limit_hit = True
+                    elif result is None:
+                        # User truly NOT found on GitHub - Cache this permanent fail
+                        if c_emails:
+                            cache[list(c_emails)[0]] = {"login": "Not Found", "location": "Undisclosed", "verified_at": time.time()}
+                            api_calls_made += 1
+
             if entry["is_enriched"]:
                 count_mapped += 1
-                
             contributors.append(entry)
             
         print(f"Enriched {count_mapped} out of {len(contributors)} contributors.")
@@ -240,7 +247,6 @@ class Enricher:
             print(f"Made {api_calls_made} API calls. Updating cache.")
             EnrichmentCache.save(cache)
         
-        # 3. Create DataFrame
         enriched_df = pd.DataFrame(contributors)
         enriched_df.to_parquet(Enricher.OUTPUT_FILE, index=False)
         print(f"Saved enriched data to {Enricher.OUTPUT_FILE}")

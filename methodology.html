@@ -363,15 +363,7 @@
 
     <div class="container">
         <!-- Header -->
-        <header>
-            <nav>
-                <a href="dashboard.html">Dashboard</a>
-                <a href="contributors.html">Contributors</a>
-                <a href="codebase.html">Codebase</a>
-                <a href="health.html">Health & Culture</a>
-                <a href="methodology.html" class="active">Methodology</a>
-            </nav>
-        </header>
+        <header id="main-nav" style="margin-bottom: 20px;"></header>
 
         <!-- Main Content -->
         <main>
@@ -1009,14 +1001,17 @@
 
     <div id="footer"></div>
 
+    <script src="js/components.js"></script>
     <script src="https://sorukumar.github.io/Bitcoin-Data-Labs/components/app-components.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            BitcoinLabsAppComponents.init({
-                isApp: true,
-                appName: 'orange-dev-tracker',
-                appHomeUrl: 'dashboard.html'
-            });
+            if (typeof BitcoinLabsAppComponents !== 'undefined') {
+                BitcoinLabsAppComponents.init({
+                    isApp: true,
+                    appName: 'orange-dev-tracker',
+                    appHomeUrl: 'dashboard.html'
+                });
+            }
         });
     </script>
 </body>

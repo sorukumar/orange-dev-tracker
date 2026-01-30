@@ -85,15 +85,7 @@
 
     <div class="container">
         <!-- Header -->
-        <header style="margin-bottom: 20px;">
-            <nav>
-                <a href="dashboard.html">Dashboard</a>
-                <a href="contributors.html">Contributors</a>
-                <a href="codebase.html" class="active">Codebase</a>
-                <a href="health.html">Health & Culture</a>
-                <a href="methodology.html">Methodology</a>
-            </nav>
-        </header>
+        <header id="main-nav" style="margin-bottom: 20px;"></header>
 
         <!-- KPI Section -->
         <section style="margin-top: 30px;">
@@ -164,18 +156,12 @@
             <div id="chart-category-evolution" style="height:400px;"></div>
         </section>
 
-        <!-- Engineering Efficiency: Churn vs Net -->
-        <section class="card" style="margin-top: 30px;">
-            <h3>Engineering Efficiency: Historical Churn vs. Net Growth</h3>
-            <p class="narrative">Bitcoin Core is famous for "refactoring" (making it smaller). Highlighting weeks where
-                net LOC went down but churn was high shows high-quality engineering.</p>
-            <div id="chart-churn" style="height: 500px; width: 100%;"></div>
-        </section>
     </div>
 
     <div id="footer"></div>
 
     <script src="https://sorukumar.github.io/Bitcoin-Data-Labs/components/app-components.js"></script>
+    <script src="js/components.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/charts-dashboard.js"></script>

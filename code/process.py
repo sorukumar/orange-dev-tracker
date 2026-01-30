@@ -1439,29 +1439,60 @@ class MetricGenerators:
     @staticmethod
     def generate_retention_metrics(commits):
         print("Generating Retention Metrics...")
+        # A "Regular" is someone with 3+ commits in a single year
         yearly_activity = commits.groupby(['year', 'canonical_id']).size().reset_index(name='commit_count')
         regulars = yearly_activity[yearly_activity['commit_count'] >= 3]
+        
+        # Arrival Years for each person (First commit ever)
+        arrival_years = commits.groupby('canonical_id')['year'].min().reset_index(name='first_year')
         
         years = sorted([int(y) for y in commits['year'].unique()])
         focus_years = [y for y in years if y >= 2018 and y <= 2025]
         
-        retention_data = []
+        # Strategy A: Workforce Retention (Active regulars of that year, regardless of join date)
+        workforce_data = []
         for cohort_year in focus_years:
             cohort_ids = set(regulars[regulars['year'] == cohort_year]['canonical_id'])
             if not cohort_ids: continue
                 
-            activity_over_time = {"cohort_year": int(cohort_year), "starting_size": int(len(cohort_ids)), "counts": []}
+            counts = []
             for check_year in focus_years:
                 if check_year < cohort_year:
-                    activity_over_time["counts"].append(None)
+                    counts.append(None)
                     continue
                 active_now = set(yearly_activity[yearly_activity['year'] == check_year]['canonical_id'])
                 still_active = cohort_ids.intersection(active_now)
-                activity_over_time["counts"].append(int(len(still_active)))
-            retention_data.append(activity_over_time)
+                counts.append(int(len(still_active)))
+            workforce_data.append({"cohort_year": int(cohort_year), "starting_size": int(len(cohort_ids)), "counts": counts})
+
+        # Strategy B: Arrival Loyalty (People who JOINED and were regulars in their first year)
+        loyalty_data = []
+        for cohort_year in focus_years:
+            # People who joined in this year
+            joined_in_year = set(arrival_years[arrival_years['first_year'] == cohort_year]['canonical_id'])
+            # People who were regulars in this year
+            regulars_in_year = set(regulars[regulars['year'] == cohort_year]['canonical_id'])
+            # Intersection: The "Incoming Class"
+            cohort_ids = joined_in_year.intersection(regulars_in_year)
+            
+            if not cohort_ids: continue
+                
+            counts = []
+            for check_year in focus_years:
+                if check_year < cohort_year:
+                    counts.append(None)
+                    continue
+                active_now = set(yearly_activity[yearly_activity['year'] == check_year]['canonical_id'])
+                still_active = cohort_ids.intersection(active_now)
+                counts.append(int(len(still_active)))
+            loyalty_data.append({"cohort_year": int(cohort_year), "starting_size": int(len(cohort_ids)), "counts": counts})
             
         with open(os.path.join(Config.OUTPUT_DIR, "stats_retention.json"), 'w') as f:
-            json.dump({"xAxis": [str(y) for y in focus_years], "cohorts": retention_data}, f)
+            json.dump({
+                "xAxis": [str(y) for y in focus_years], 
+                "workforce": workforce_data,
+                "loyalty": loyalty_data
+            }, f)
 
     @staticmethod
     def generate_reviewer_metrics():

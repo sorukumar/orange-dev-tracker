@@ -3,6 +3,8 @@
  */
 
 const COLORS = {
+    primary: '#E8916B',
+    secondary: '#2A3342',
     textPrimary: '#2D3748',
     textSecondary: '#4A5568',
     textLight: '#718096',

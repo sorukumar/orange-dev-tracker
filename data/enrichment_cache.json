@@ -958,5 +958,278 @@
     "location": null,
     "company": null,
     "followers": 65
+  },
+  "practicalswift@users.noreply.github.com": {
+    "login": "practicalswift",
+    "location": null,
+    "company": null,
+    "followers": 790
+  },
+  "jonas.schnelli@include7.ch": {
+    "login": "Anonymous",
+    "location": "World",
+    "company": "Bitcoin Core",
+    "followers": 1383
+  },
+  "phil.kaufmann@t-online.de": {
+    "login": "Anonymous",
+    "location": null,
+    "company": null,
+    "followers": 0
+  },
+  "gmaxwell@gmail.com": {
+    "login": "gmaxwell",
+    "location": null,
+    "company": null,
+    "followers": 0
+  },
+  "morcos@chaincode.com": {
+    "login": "morcos",
+    "location": null,
+    "company": "Chaincode Labs",
+    "followers": 525
+  },
+  "jtimon@blockstream.io": {
+    "login": "jtimon",
+    "location": null,
+    "company": null,
+    "followers": 524
+  },
+  "cozzlovan@yahoo.com": {
+    "login": "cozz",
+    "location": null,
+    "company": null,
+    "followers": 25
+  },
+  "btcdrak@gmail.com": {
+    "login": "btcdrak",
+    "location": null,
+    "company": null,
+    "followers": 536
+  },
+  "jl2012@users.noreply.github.com": {
+    "login": "jl2012",
+    "location": null,
+    "company": null,
+    "followers": 289
+  },
+  "kiminuo@protonmail.com": {
+    "login": "kiminuo",
+    "location": null,
+    "company": "See the link below for my work",
+    "followers": 0
+  },
+  "naumenko.gs@gmail.com": {
+    "login": "naumenkogs",
+    "location": null,
+    "company": null,
+    "followers": 312
+  },
+  "ariard@student.42.fr": {
+    "login": "ariard",
+    "location": null,
+    "company": null,
+    "followers": 394
+  },
+  "nils.schneider@gmail.com": {
+    "login": "Anonymous",
+    "location": null,
+    "company": null,
+    "followers": 0
+  },
+  "me@mortis.eu": {
+    "login": "muggenhor",
+    "location": null,
+    "company": "@tomtom-international",
+    "followers": 51
+  },
+  "elombrozo@gmail.com": {
+    "login": "CodeShark",
+    "location": null,
+    "company": null,
+    "followers": 210
+  },
+  "1466284+s3rk@users.noreply.github.com": {
+    "login": "S3RK",
+    "location": null,
+    "company": null,
+    "followers": 30
+  },
+  "6440430+mruddy@users.noreply.github.com": {
+    "login": "mruddy",
+    "location": null,
+    "company": null,
+    "followers": 21
+  },
+  "james.obeirne@pm.me": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769778087.477484
+  },
+  "karljohan-alm@garage.co.jp": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769778091.3437052
+  },
+  "ken2812221@gmail.com": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769778093.8522298
+  },
+  "pavel@janik.cz": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769778096.3803542
+  },
+  "rebroad+github@gmail.com": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769778099.030806
+  },
+  "marko.bencun@monetas.net": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769778101.608466
+  },
+  "metlushko@gmail.com": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769778104.082098
+  },
+  "jarolrod@tutanota.com": {
+    "login": "jarolrod",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 0,
+    "verified_at": 1769778104.589361
+  },
+  "13120787+251labs@users.noreply.github.com": {
+    "login": "Anonymous",
+    "location": "Undisclosed",
+    "company": "Imperial College London",
+    "followers": 21,
+    "verified_at": 1769778105.147527
+  },
+  "sergi.delgado.s@gmail.com": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769778107.7177339
+  },
+  "isle2983@yahoo.com": {
+    "login": "isle2983",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 9,
+    "verified_at": 1769778109.456969
+  },
+  "michagogo@server.fake": {
+    "login": "Michagogo",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 15,
+    "verified_at": 1769778111.233166
+  },
+  "troygiorshev@gmail.com": {
+    "login": "troygiorshev",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 25,
+    "verified_at": 1769778111.755368
+  },
+  "sirius-m@1a98c847-1fd6-4fd8-948a-caf3550aa51b": {
+    "login": "sirius-m",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 4,
+    "verified_at": 1769778113.5769138
+  },
+  "klement.tan@ninjavan.co": {
+    "login": "Anonymous",
+    "location": "Singapore",
+    "company": "Personal/Independent",
+    "followers": 25,
+    "verified_at": 1769778115.317462
+  },
+  "wtogami@gmail.com": {
+    "login": "wtogami",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 183,
+    "verified_at": 1769778198.491744
+  },
+  "igor@openbook.hr": {
+    "login": "Anonymous",
+    "location": "Split, Croatia",
+    "company": "Personal/Independent",
+    "followers": 50,
+    "verified_at": 1769778202.8476999
+  },
+  "mike@plan99.net": {
+    "login": "Anonymous",
+    "location": "Switzerland",
+    "company": "@hydraulic-software ",
+    "followers": 896,
+    "verified_at": 1769778207.147831
+  },
+  "pasta@dashboost.org": {
+    "login": "Pasta",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 25,
+    "verified_at": 1769778208.861405
+  },
+  "dexx@bitwatch.co": {
+    "login": "dexX7",
+    "location": "Undisclosed",
+    "company": "@OmniLayer ",
+    "followers": 138,
+    "verified_at": 1769778209.344584
+  },
+  "jonas@chaincode.com": {
+    "login": "adamjonas",
+    "location": "NYC",
+    "company": "Chaincode Labs",
+    "followers": 519,
+    "verified_at": 1769778211.0756621
+  },
+  "kiwigb@yahoo.com": {
+    "login": "Anonymous",
+    "location": "https://webchat.freenode.net/?channels=opentransactions&uio=d4",
+    "company": "Personal/Independent",
+    "followers": 35,
+    "verified_at": 1769778214.05476
+  },
+  "xanatos@geocities.com": {
+    "login": "Anonymous",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 8,
+    "verified_at": 1769778215.773769
+  },
+  "jkczyz@gmail.com": {
+    "login": "jkczyz",
+    "location": "Undisclosed",
+    "company": "Spiral",
+    "followers": 69,
+    "verified_at": 1769778217.509227
+  },
+  "kdomanski@kdemail.net": {
+    "login": "kdomanski",
+    "location": "Hamburg, Germany",
+    "company": "Personal/Independent",
+    "followers": 44,
+    "verified_at": 1769778219.243444
+  },
+  "emilstud2015@gmail.com": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769778223.1092439
+  },
+  "temp@temp.temp": {
+    "login": "jask",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 1,
+    "verified_at": 1769778224.902854
   }
 }
