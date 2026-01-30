@@ -185,58 +185,62 @@ class Enricher:
                 for k, v in ov.items(): entry[k] = v
                 entry["is_enriched"] = True
 
-            # --- STRATEGY 4: API FALLBACK ---
-            needs_api = (entry["login"] is None or entry["location"] is None)
-            
-            if needs_api:
-                cached_data = None
-                for e in c_emails:
-                    if e in cache: cached_data = cache[e]; break
-                
-                if cached_data:
-                    # Apply cached data immediately
-                    entry["login"] = entry["login"] or cached_data.get("login")
-                    entry["location"] = entry["location"] or cached_data.get("location")
-                    entry["company"] = entry["company"] or cached_data.get("company")
-                    entry["followers"] = entry["followers"] or cached_data.get("followers", 0)
-                    entry["is_enriched"] = True # We have data (even if undisclosed), we are done.
-                    needs_refresh = False
-                else:
-                    needs_refresh = True
+                # --- STRATEGY 4: API FALLBACK ---
+                # DISABLED by default to avoid hitting rate limits. 
+                # Uncomment 'ENABLE_API = True' below or use a flag to re-enable for monthly refreshes.
+                ENABLE_API = False 
 
-                # 4b. Call API ONLY if user is NOT in cache and we aren't rate limited
-                if needs_refresh and not rate_limit_hit and GitHubAPI.TOKEN and api_calls_made < MAX_API_CALLS:
-                    print(f"Fetching discovery for {canonical_name}...")
-                    
-                    result = None
+                needs_api = (entry["login"] is None or entry["location"] is None)
+                
+                if needs_api:
+                    cached_data = None
                     for e in c_emails:
-                        if "users.noreply" in e: continue
-                        result = GitHubAPI.search_user(e, "email")
-                        if result: break
-                    if not result:
-                        result = GitHubAPI.search_user(canonical_name, "user")
+                        if e in cache: cached_data = cache[e]; break
                     
-                    if result and result != "RATE_LIMIT":
-                        entry["login"] = entry["login"] or result.get("login")
-                        entry["location"] = entry["location"] or result.get("location") or "Undisclosed"
-                        entry["company"] = entry["company"] or result.get("company") or "Personal/Independent"
-                        entry["followers"] = entry["followers"] or result.get("followers", 0)
-                        entry["is_enriched"] = True
+                    if cached_data:
+                        # Apply cached data immediately from local storage
+                        entry["login"] = entry["login"] or cached_data.get("login")
+                        entry["location"] = entry["location"] or cached_data.get("location")
+                        entry["company"] = entry["company"] or cached_data.get("company")
+                        entry["followers"] = entry["followers"] or cached_data.get("followers", 0)
+                        entry["is_enriched"] = True 
+                        needs_refresh = False
+                    else:
+                        needs_refresh = True
+
+                    # 4b. Call API ONLY if explicitly enabled and user is NOT in cache
+                    if ENABLE_API and needs_refresh and not rate_limit_hit and GitHubAPI.TOKEN and api_calls_made < MAX_API_CALLS:
+                        print(f"Fetching discovery for {canonical_name}...")
                         
-                        if c_emails:
-                            cache[list(c_emails)[0]] = {
-                                "login": entry["login"], "location": entry["location"],
-                                "company": entry["company"], "followers": entry["followers"],
-                                "verified_at": time.time()
-                            }
-                            api_calls_made += 1
-                    elif result == "RATE_LIMIT":
-                        rate_limit_hit = True
-                    elif result is None:
-                        # User truly NOT found on GitHub - Cache this permanent fail
-                        if c_emails:
-                            cache[list(c_emails)[0]] = {"login": "Not Found", "location": "Undisclosed", "verified_at": time.time()}
-                            api_calls_made += 1
+                        result = None
+                        for e in c_emails:
+                            if "users.noreply" in e: continue
+                            result = GitHubAPI.search_user(e, "email")
+                            if result: break
+                        if not result:
+                            result = GitHubAPI.search_user(canonical_name, "user")
+                        
+                        if result and result != "RATE_LIMIT":
+                            entry["login"] = entry["login"] or result.get("login")
+                            entry["location"] = entry["location"] or result.get("location") or "Undisclosed"
+                            entry["company"] = entry["company"] or result.get("company") or "Personal/Independent"
+                            entry["followers"] = entry["followers"] or result.get("followers", 0)
+                            entry["is_enriched"] = True
+                            
+                            if c_emails:
+                                cache[list(c_emails)[0]] = {
+                                    "login": entry["login"], "location": entry["location"],
+                                    "company": entry["company"], "followers": entry["followers"],
+                                    "verified_at": time.time()
+                                }
+                                api_calls_made += 1
+                        elif result == "RATE_LIMIT":
+                            rate_limit_hit = True
+                        elif result is None:
+                            # User truly NOT found on GitHub - Cache this permanent fail
+                            if c_emails:
+                                cache[list(c_emails)[0]] = {"login": "Not Found", "location": "Undisclosed", "verified_at": time.time()}
+                                api_calls_made += 1
 
             if entry["is_enriched"]:
                 count_mapped += 1
