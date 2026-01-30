@@ -1231,5 +1231,104 @@
     "company": "Personal/Independent",
     "followers": 1,
     "verified_at": 1769778224.902854
+  },
+  "39886733+drahtbot@users.noreply.github.com": {
+    "login": "DrahtBot",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 140,
+    "verified_at": 1769802097.95825
+  },
+  "me@jonl.io": {
+    "login": "Anonymous",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 88,
+    "verified_at": 1769802101.048936
+  },
+  "evgeni@eniks.com": {
+    "login": "ENikS",
+    "location": "Newport Beach, CA",
+    "company": "Personal/Independent",
+    "followers": 103,
+    "verified_at": 1769802102.952289
+  },
+  "brakmic@gmail.com": {
+    "login": "brakmic",
+    "location": "Bonn, Germany",
+    "company": "Personal/Independent",
+    "followers": 236,
+    "verified_at": 1769802103.497986
+  },
+  "sandakersmann@users.noreply.github.com": {
+    "login": "Anonymous",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 77,
+    "verified_at": 1769802105.265257
+  },
+  "dimitris.apostolou@icloud.com": {
+    "login": "rex4539",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 95,
+    "verified_at": 1769802107.09471
+  },
+  "scravy@users.noreply.github.com": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769802109.628296
+  },
+  "wodry@localhost": {
+    "login": "Anonymous",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 0,
+    "verified_at": 1769802111.388715
+  },
+  "tjps636@gmail.com": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769802113.920886
+  },
+  "lucash.dev@gmail.com": {
+    "login": "Not Found",
+    "location": "Undisclosed",
+    "verified_at": 1769802116.485327
+  },
+  "apawlik@protonmail.com": {
+    "login": "amadeuszpawlik",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 0,
+    "verified_at": 1769802116.99007
+  },
+  "doug@bloq.com": {
+    "login": "Anonymous",
+    "location": "Austin, TX",
+    "company": "Personal/Independent",
+    "followers": 41,
+    "verified_at": 1769802121.474624
+  },
+  "21xe14@gmail.com": {
+    "login": "Anonymous",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 0,
+    "verified_at": 1769802123.2591841
+  },
+  "jack@z.cash": {
+    "login": "str4d",
+    "location": "Undisclosed",
+    "company": "@zcash",
+    "followers": 926,
+    "verified_at": 1769802125.086189
+  },
+  "lsilva01@protonmail.com": {
+    "login": "Anonymous",
+    "location": "Undisclosed",
+    "company": "Personal/Independent",
+    "followers": 11,
+    "verified_at": 1769802126.874583
   }
 }

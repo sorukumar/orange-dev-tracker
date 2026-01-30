@@ -67,7 +67,7 @@ def get_git_log(repo_path):
         "git",
         "-C", repo_path,
         "log",
-        "--all",
+        "master",
         "--format=COMMIT_Start^|^%H^|^%at^|^%an^|^%ae^|^%cn^|^%ce^|^%ct^|^%P^|^%ai^|^%s",
         # "--numstat", # Temporarily disable numstat to isolate the issue? No, keep it.
         "--numstat",
@@ -96,7 +96,7 @@ def get_git_log_with_messages(repo_path):
         "git",
         "-C", repo_path,
         "log",
-        "--all",
+        "master",
         "--format=MESSAGE_START^|^%H^|^%s^|^%b^|^MESSAGE_END",
     ]
     
@@ -247,39 +247,41 @@ def process_commit(meta, stats, commits_list):
     files_count = len(stats)
     
     # Categorization Stats
+    is_merge = len(meta["parents"].split()) > 1
     cat_deltas = {}
-    
-    # Extension Stats
     ext_deltas = {}
 
-    for s in stats:
-        # Category
-        cat = categorize_file(s["path"])
-        if cat not in cat_deltas:
-            cat_deltas[cat] = {"adds": 0, "dels": 0}
-        cat_deltas[cat]["adds"] += s["adds"]
-        cat_deltas[cat]["dels"] += s["dels"]
-        
-        # Extension
-        _, ext = os.path.splitext(s["path"])
-        ext = ext.lower()
-        if not ext:
-            ext = "(no_ext)"
-        
-        if ext not in ext_deltas:
-            ext_deltas[ext] = {"adds": 0, "dels": 0}
-        ext_deltas[ext]["adds"] += s["adds"]
-        ext_deltas[ext]["dels"] += s["dels"]
+    if is_merge:
+        # Handle Merges specially for authorship attribution
+        # To avoid double-counting code authored in PR commits (X, Y) 
+        # which are already on the master branch, we attribute 0 lines 
+        # to the merge commit (Z) itself, but keep the record so 
+        # the maintainer gets the "Commit Count" credit.
+        cat_deltas = {"Merge": {"adds": 0, "dels": 0}}
+    else:
+        # Categorization logic for non-merge commits
+        for s in stats:
+            # Category
+            cat = categorize_file(s["path"])
+            if cat not in cat_deltas:
+                cat_deltas[cat] = {"adds": 0, "dels": 0}
+            cat_deltas[cat]["adds"] += s["adds"]
+            cat_deltas[cat]["dels"] += s["dels"]
+            
+            # Extension
+            _, ext = os.path.splitext(s["path"])
+            ext = ext.lower()
+            if not ext:
+                ext = "(no_ext)"
+            
+            if ext not in ext_deltas:
+                ext_deltas[ext] = {"adds": 0, "dels": 0}
+            ext_deltas[ext]["adds"] += s["adds"]
+            ext_deltas[ext]["dels"] += s["dels"]
 
-    # If no stats (Merge or empty), assign "Merge" category
-    if not stats:
-        # Logic: If it has parents > 1, it's a merge
-         if len(meta["parents"].split()) > 1:
-             cat_deltas["Merge"] = {"adds": 0, "dels": 0}
-         else:
-             # Weird empty commit? Assign Core Libs default or Ignore?
-             # Let's assign Core Libs with 0 stats
-             cat_deltas["Core Libs"] = {"adds": 0, "dels": 0}
+    # If no stats (Empty commit), assign "Core Libs" default with 0 stats
+    if not cat_deltas:
+        cat_deltas["Core Libs"] = {"adds": 0, "dels": 0}
 
     dt_utc = datetime.fromtimestamp(meta["author_ts"], timezone.utc)
     
