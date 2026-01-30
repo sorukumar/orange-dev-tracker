@@ -1,0 +1,126 @@
+{
+  "xAxis": [
+    "2018",
+    "2019",
+    "2020",
+    "2021",
+    "2022",
+    "2023",
+    "2024",
+    "2025"
+  ],
+  "cohorts": [
+    {
+      "cohort_year": 2018,
+      "starting_size": 91,
+      "counts": [
+        91,
+        51,
+        35,
+        34,
+        28,
+        23,
+        20,
+        20
+      ]
+    },
+    {
+      "cohort_year": 2019,
+      "starting_size": 84,
+      "counts": [
+        null,
+        84,
+        52,
+        45,
+        34,
+        26,
+        25,
+        23
+      ]
+    },
+    {
+      "cohort_year": 2020,
+      "starting_size": 86,
+      "counts": [
+        null,
+        null,
+        86,
+        59,
+        43,
+        32,
+        26,
+        25
+      ]
+    },
+    {
+      "cohort_year": 2021,
+      "starting_size": 83,
+      "counts": [
+        null,
+        null,
+        null,
+        83,
+        49,
+        34,
+        29,
+        28
+      ]
+    },
+    {
+      "cohort_year": 2022,
+      "starting_size": 81,
+      "counts": [
+        null,
+        null,
+        null,
+        null,
+        81,
+        44,
+        40,
+        35
+      ]
+    },
+    {
+      "cohort_year": 2023,
+      "starting_size": 53,
+      "counts": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        53,
+        41,
+        42
+      ]
+    },
+    {
+      "cohort_year": 2024,
+      "starting_size": 61,
+      "counts": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        61,
+        48
+      ]
+    },
+    {
+      "cohort_year": 2025,
+      "starting_size": 79,
+      "counts": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        79
+      ]
+    }
+  ]
+}

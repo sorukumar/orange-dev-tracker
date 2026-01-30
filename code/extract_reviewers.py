@@ -61,17 +61,7 @@ SIGNED_ACK_PATTERN = r"(?:ACK|utACK|tACK).*?(?:^|\n)\s*[-—]\s*(.+?)(?:\s*<([^>
 def extract_reviews_from_body(commit_hash, body):
     """
     Extract all review signals from a commit message body.
-    
-    Returns list of review records:
-    [
-        {
-            "commit_hash": str,
-            "reviewer_name": str or None,
-            "reviewer_email": str or None,
-            "review_type": str,  # ACK, utACK, NACK, Reviewed-by, etc.
-            "raw_line": str
-        }
-    ]
+    Handles both single-line trailers and multi-line ACK blocks.
     """
     reviews = []
     
@@ -80,9 +70,27 @@ def extract_reviews_from_body(commit_hash, body):
     
     lines = body.split('\n')
     
-    for line in lines:
+    # Track context for block-style ACKs
+    # ACKs for top commit:
+    #   fanquake:
+    #     ACK abc123
+    current_context_name = None
+    in_ack_block = False
+    
+    for i, line in enumerate(lines):
         line_stripped = line.strip()
         if not line_stripped:
+            continue
+        
+        # Detect start of ACK block
+        if re.search(r'^(ACKs|Reviewers|Reviewed-by) (from|for|:)', line_stripped, re.IGNORECASE):
+            in_ack_block = True
+            continue
+            
+        # Common pattern: "Name:" on its own line followed by ACK on next line
+        name_colon_match = re.search(r'^[\s]*([a-zA-Z0-9\s._-]+):$', line_stripped)
+        if name_colon_match:
+            current_context_name = name_colon_match.group(1).strip()
             continue
         
         # Check ACK patterns
@@ -91,40 +99,42 @@ def extract_reviews_from_body(commit_hash, body):
             if match:
                 review_type = match.group(1).upper().replace("-", " ").replace("  ", " ")
                 
-                # Try to extract reviewer name from the line
-                # Common formats:
-                # "ACK abc123" - no name
-                # "ACK abc123 fanquake" - name after hash
-                # "Tested ACK abc123 - Some Person" - name after dash
-                
-                reviewer_name = None
+                reviewer_name = current_context_name
                 reviewer_email = None
                 
-                # Look for name patterns after the ACK
-                name_match = re.search(r"(?:ACK|NACK)\s+(?:[a-f0-9]{6,40})?\s*[-—:]?\s*(.+)", line_stripped, re.IGNORECASE)
-                if name_match:
-                    potential_name = name_match.group(1).strip()
-                    # Filter out common non-name patterns
-                    if potential_name and len(potential_name) > 2 and not potential_name.startswith(('http', '//', '#')):
-                        # Check if it contains an email
-                        email_match = re.search(r'<([^>]+@[^>]+)>', potential_name)
-                        if email_match:
-                            reviewer_email = email_match.group(1).lower()
-                            reviewer_name = re.sub(r'\s*<[^>]+>\s*', '', potential_name).strip()
-                        else:
-                            # Just take first few words as name (avoid long comments)
-                            words = potential_name.split()
-                            if len(words) <= 4:
-                                reviewer_name = potential_name
+                # If no context name, try same-line extraction
+                if not reviewer_name:
+                    name_match = re.search(r"(?:ACK|NACK)\s+(?:[a-f0-9]{6,40})?\s*[-—:]?\s*(.+)", line_stripped, re.IGNORECASE)
+                    if name_match:
+                        potential_name = name_match.group(1).strip()
+                        if potential_name and len(potential_name) > 2 and not potential_name.startswith(('http', '//', '#')):
+                            email_match = re.search(r'<([^>]+@[^>]+)>', potential_name)
+                            if email_match:
+                                reviewer_email = email_match.group(1).lower()
+                                reviewer_name = re.sub(r'\s*<[^>]+>\s*', '', potential_name).strip()
+                            else:
+                                words = potential_name.split()
+                                if len(words) <= 4:
+                                    reviewer_name = potential_name
+                
+                # If STILL no name, look up one line (common in some formats)
+                if not reviewer_name and i > 0:
+                    prev_line = lines[i-1].strip()
+                    if prev_line and len(prev_line) < 40 and not any(x in prev_line.upper() for x in ["ACK", "COMMIT", "MERGE"]):
+                         reviewer_name = prev_line
                 
                 reviews.append({
                     "commit_hash": commit_hash,
                     "reviewer_name": reviewer_name,
                     "reviewer_email": reviewer_email,
                     "review_type": review_type,
-                    "raw_line": line_stripped[:200]  # Truncate for storage
+                    "raw_line": line_stripped[:200]
                 })
                 break  # One match per line
+
+        # Reset context if we hit a non-indented line that doesn't look like a name
+        if current_context_name and not line.startswith(' ') and len(line_stripped) > 40:
+             current_context_name = None
         
         # Check trailer patterns (Reviewed-by, etc.)
         for pattern in TRAILER_PATTERNS:
@@ -133,7 +143,6 @@ def extract_reviews_from_body(commit_hash, body):
                 reviewer_name = match.group(1).strip() if match.group(1) else None
                 reviewer_email = match.group(2).lower().strip() if len(match.groups()) > 1 and match.group(2) else None
                 
-                # Determine review type from trailer
                 if "reviewed-by" in line_stripped.lower():
                     review_type = "Reviewed-by"
                 elif "tested-by" in line_stripped.lower():

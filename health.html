@@ -159,6 +159,26 @@
                 <div id="chart-weekend" style="height: 200px; margin-top:30px;"></div>
             </div>
         </section>
+
+        <!-- Advanced Human Metrics -->
+        <section class="story-section">
+            <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+                <!-- Left: Top Reviewers -->
+                <div class="card" style="flex: 1; min-width: 400px;">
+                    <h3>The Review Gap: Top Reviewers</h3>
+                    <p class="narrative">Commits are only half the story. 90% of a dev's life in Bitcoin Core is
+                        Reviewing (ACK/NACK). These are the unsung heroes who safeguard the code.</p>
+                    <div id="chart-reviewers" style="height: 500px;"></div>
+                </div>
+                <!-- Right: Ghost Metrics -->
+                <div class="card" style="flex: 1; min-width: 400px;">
+                    <h3>"Ghost" Metrics (Retention)</h3>
+                    <p class="narrative">How many "Regulars" from past cohorts are still active today? High retention
+                        indicates a healthy, sustainable team culture.</p>
+                    <div id="chart-retention" style="height: 500px;"></div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <div id="footer"></div>
@@ -168,6 +188,7 @@
     <script src="js/theme.js"></script>
     <script src="js/charts-dashboard.js"></script>
     <script src="js/charts-health.js"></script>
+    <script src="js/charts-advanced.js"></script>
     <script src="js/app.js?v=3"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {

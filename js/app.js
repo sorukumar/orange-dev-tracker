@@ -38,6 +38,9 @@ async function init() {
     charts.social = initChart('chart-social');
     charts.maintainers = initChart('chart-maintainers');
     charts.landscape = initChart('chart-contributor-landscape');
+    charts.churn = initChart('chart-churn');
+    charts.retention = initChart('chart-retention');
+    charts.reviewers = initChart('chart-reviewers');
 
     window.addEventListener('resize', () => {
         Object.values(charts).forEach(c => c && c.resize());
@@ -69,6 +72,11 @@ async function init() {
         if (document.getElementById('chart-geography')) await loadGeography();
         if (document.getElementById('chart-maintainer-independence')) await loadMaintainerIndependence();
         if (document.getElementById('chart-regional-evolution')) await loadRegionalEvolution();
+
+        // Advanced Engineering Metrics
+        if (charts.churn) await loadChurnMetrics();
+        if (charts.retention) await loadRetentionMetrics();
+        if (charts.reviewers) await loadReviewersMetrics();
 
         // Contributors specific
         if (charts.landscape) await loadContributorLandscape();

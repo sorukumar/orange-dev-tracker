@@ -3,6 +3,7 @@ import json
 import os
 import ast
 import numpy as np
+import re
 from datetime import datetime, timedelta
 import clean
 
@@ -1411,6 +1412,107 @@ class MetricGenerators:
         with open(os.path.join(Config.OUTPUT_DIR, "stats_category_history.json"), "w") as f:
             json.dump({"xAxis": periods, "series": series}, f)
 
+    @staticmethod
+    def generate_churn_metrics(commits):
+        print("Generating Churn Metrics...")
+        commits_unique = commits[['hash', 'date_utc', 'commit_total_adds', 'commit_total_dels']].drop_duplicates()
+        weekly = commits_unique.set_index('date_utc').resample('W').agg({
+            'commit_total_adds': 'sum',
+            'commit_total_dels': 'sum',
+            'hash': 'count'
+        }).reset_index()
+        
+        weekly.columns = ['date', 'additions', 'deletions', 'commit_count']
+        weekly['net_change'] = weekly['additions'] - weekly['deletions']
+        weekly['churn'] = weekly['additions'] + weekly['deletions']
+        
+        chart_data = {
+            "dates": weekly['date'].dt.strftime('%Y-%m-%d').tolist(),
+            "net_change": [int(x) for x in weekly['net_change']],
+            "churn": [int(x) for x in weekly['churn']],
+            "commit_count": [int(x) for x in weekly['commit_count']]
+        }
+        
+        with open(os.path.join(Config.OUTPUT_DIR, "stats_churn.json"), 'w') as f:
+            json.dump(chart_data, f)
+
+    @staticmethod
+    def generate_retention_metrics(commits):
+        print("Generating Retention Metrics...")
+        yearly_activity = commits.groupby(['year', 'canonical_id']).size().reset_index(name='commit_count')
+        regulars = yearly_activity[yearly_activity['commit_count'] >= 3]
+        
+        years = sorted([int(y) for y in commits['year'].unique()])
+        focus_years = [y for y in years if y >= 2018 and y <= 2025]
+        
+        retention_data = []
+        for cohort_year in focus_years:
+            cohort_ids = set(regulars[regulars['year'] == cohort_year]['canonical_id'])
+            if not cohort_ids: continue
+                
+            activity_over_time = {"cohort_year": int(cohort_year), "starting_size": int(len(cohort_ids)), "counts": []}
+            for check_year in focus_years:
+                if check_year < cohort_year:
+                    activity_over_time["counts"].append(None)
+                    continue
+                active_now = set(yearly_activity[yearly_activity['year'] == check_year]['canonical_id'])
+                still_active = cohort_ids.intersection(active_now)
+                activity_over_time["counts"].append(int(len(still_active)))
+            retention_data.append(activity_over_time)
+            
+        with open(os.path.join(Config.OUTPUT_DIR, "stats_retention.json"), 'w') as f:
+            json.dump({"xAxis": [str(y) for y in focus_years], "cohorts": retention_data}, f)
+
+    @staticmethod
+    def generate_reviewer_metrics():
+        print("Generating Reviewer Metrics...")
+        REVIEWS_FILE = "data/reviews.parquet"
+        ALIASES_FILE = "data/aliases_lookup.json"
+        
+        if not os.path.exists(REVIEWS_FILE): return
+
+        df = pd.read_parquet(REVIEWS_FILE)
+        
+        # Identity Resolution
+        lookup = {}
+        if os.path.exists(ALIASES_FILE):
+            with open(ALIASES_FILE, 'r') as f:
+                als = json.load(f).get("aliases", [])
+                for e in als:
+                    name = e["canonical_name"]
+                    for a in e.get("aliases", []): lookup[a.lower()] = name
+                    for m in e.get("emails", []): lookup[m.lower()] = name
+                    lookup[name.lower()] = name
+
+        def canonicalize(name, email):
+            if email and email.lower() in lookup: return lookup[email.lower()]
+            if name and name.lower() in lookup: return lookup[name.lower()]
+            return name
+
+        df = df[df['reviewer_name'].notna() | df['reviewer_email'].notna()]
+        df['canonical_name'] = df.apply(lambda row: canonicalize(row['reviewer_name'], row['reviewer_email']), axis=1)
+        
+        # Whitelist Filter (Only known contributors)
+        if os.path.exists("data/contributors_enriched.parquet"):
+            c_df = pd.read_parquet("data/contributors_enriched.parquet")
+            whitelist = set(c_df['name'].str.lower().tolist())
+            df = df[df['canonical_name'].str.lower().isin(whitelist)]
+
+        # Scoring
+        exclude_types = ["CO-AUTHORED-BY", "TRAILER"]
+        df = df[~df['review_type'].str.upper().isin(exclude_types)]
+        
+        SCORES = {"ACK": 1.0, "TESTED ACK": 1.5, "TACK": 1.5, "UTACK": 0.5, "NACK": 0.2, "CONCEPT ACK": 0.8, "REVIEWED-BY": 1.2, "TESTED-BY": 1.3, "ACKED-BY": 1.1}
+        df['score'] = df['review_type'].str.upper().map(SCORES).fillna(1.0)
+        
+        summary = df.groupby('canonical_name').agg({'score': 'sum', 'commit_hash': 'nunique', 'review_type': 'count'}).rename(columns={'commit_hash': 'unique_commits', 'review_type': 'total_reviews'})
+        top_n = summary.sort_values('score', ascending=False).head(50).reset_index()
+        
+        output = [{"name": r['canonical_name'], "score": round(float(r['score']), 1), "commits": int(r['unique_commits']), "reviews": int(r['total_reviews'])} for _, r in top_n.iterrows()]
+        
+        with open(os.path.join(Config.OUTPUT_DIR, "stats_reviewers.json"), 'w') as f:
+            json.dump(output, f)
+
 # --- Orchestrator ---
 def main():
     os.makedirs(Config.OUTPUT_DIR, exist_ok=True)
@@ -1435,6 +1537,11 @@ def main():
     MetricGenerators.generate_geography(commits)
     MetricGenerators.generate_codebase_stats(commits)
     MetricGenerators.generate_category_history(commits) # New
+    
+    # Advanced Metrics
+    MetricGenerators.generate_churn_metrics(commits)
+    MetricGenerators.generate_retention_metrics(commits)
+    MetricGenerators.generate_reviewer_metrics()
     
     print("All stats generated successfully.")
 

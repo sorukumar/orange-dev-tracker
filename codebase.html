@@ -163,6 +163,14 @@
             <div class="chart-header">Longitudinal Category Evolution (Lines of Code 2009-2025)</div>
             <div id="chart-category-evolution" style="height:400px;"></div>
         </section>
+
+        <!-- Engineering Efficiency: Churn vs Net -->
+        <section class="card" style="margin-top: 30px;">
+            <h3>Engineering Efficiency: Historical Churn vs. Net Growth</h3>
+            <p class="narrative">Bitcoin Core is famous for "refactoring" (making it smaller). Highlighting weeks where
+                net LOC went down but churn was high shows high-quality engineering.</p>
+            <div id="chart-churn" style="height: 500px; width: 100%;"></div>
+        </section>
     </div>
 
     <div id="footer"></div>
@@ -172,6 +180,7 @@
     <script src="js/theme.js"></script>
     <script src="js/charts-dashboard.js"></script>
     <script src="js/charts-codebase.js"></script>
+    <script src="js/charts-advanced.js"></script>
     <script src="js/app.js?v=3"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
