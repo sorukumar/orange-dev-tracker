@@ -166,66 +166,121 @@ async function loadSnapshots() {
     }
 }
 
+let categoryData = null;
+let currentCategoryView = 'total';
+
 async function loadCategory() {
     try {
         const res = await fetch('data/stats_category_evolution.json');
-        const data = await res.json();
-        const validIndices = data.xAxis.map((x, i) => parseInt(x) <= 2025 ? i : -1).filter(i => i !== -1);
-        const riverData = [];
-        data.series.forEach(s => {
-            validIndices.forEach(idx => {
-                const date = data.xAxis[idx] + "-12-31";
-                const val = s.data[idx];
-                if (val > 0) riverData.push([date, val, s.name]);
-            });
+        categoryData = await res.json();
+
+        setupCategoryToggles();
+        renderCategory('total');
+
+    } catch (e) {
+        console.error("Category Evolution Error:", e);
+    }
+}
+
+function setupCategoryToggles() {
+    const btnTotal = document.getElementById('btn-category-total');
+    const btnAuthored = document.getElementById('btn-category-authored');
+
+    if (!btnTotal || !btnAuthored) return;
+
+    const updateUI = (view) => {
+        [btnTotal, btnAuthored].forEach(btn => {
+            btn.classList.remove('active');
+            btn.style.background = 'transparent';
+            btn.style.color = '#718096';
+            btn.style.boxShadow = 'none';
         });
 
-        charts.category.setOption({
-            backgroundColor: 'transparent',
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: { type: 'line', lineStyle: { color: 'rgba(0,0,0,0.2)', width: 1, type: 'solid' } },
-                formatter: function (params) {
-                    if (!params || !params.length) return "";
-                    const dateStr = params[0].axisValue;
-                    const year = new Date(dateStr).getFullYear();
-                    let total = 0;
-                    params.forEach(p => total += p.value[1]);
-                    let html = `<div style="margin-bottom:8px; border-bottom:1px solid ${COLORS.border}; padding-bottom:4px;"><b>Year: ${year}</b></div>`;
-                    html += `<div style="font-size:11px; color:${COLORS.textLight}; margin-bottom:8px;">Total Activity: <b>${formatCount(total)}</b> Commits</div>`;
-                    const sorted = [...params].sort((a, b) => b.value[1] - a.value[1]);
-                    sorted.forEach(p => {
-                        const val = p.value[1];
-                        const name = p.value[2];
-                        const pct = (total > 0 ? (val / total * 100) : 0).toFixed(1);
-                        html += `
-                        <div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; margin-bottom:2px;">
-                            <span>${p.marker} ${name}</span>
-                            <span><b>${pct}%</b> <span style="color:${COLORS.textLight}; font-size:10px;">(${formatCount(val)})</span></span>
-                        </div>`;
-                    });
-                    return html;
-                },
-                ...tooltipStyle
-            },
-            legend: { ...legendStyle, data: data.categories, bottom: 0, type: 'scroll' },
-            singleAxis: {
-                top: 20, bottom: 60, type: 'time',
-                axisTick: { show: false },
-                axisLabel: { ...axisStyle.axisLabel },
-                axisPointer: { animation: true, label: { show: true } },
-                splitLine: { show: true, lineStyle: { type: 'dashed', opacity: 0.1 } }
-            },
-            series: [{
-                type: 'themeRiver',
-                emphasis: { itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0, 0, 0, 0.3)' } },
-                data: riverData,
-                label: { show: false },
-                itemStyle: { shadowBlur: 2, shadowColor: 'rgba(0,0,0,0.1)' }
-            }],
-            color: GHIBLI_PALETTE
+        const activeBtn = view === 'total' ? btnTotal : btnAuthored;
+        activeBtn.classList.add('active');
+        activeBtn.style.background = '#fff';
+        activeBtn.style.color = 'inherit';
+        activeBtn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+    };
+
+    btnTotal.addEventListener('click', () => {
+        if (currentCategoryView === 'total') return;
+        currentCategoryView = 'total';
+        updateUI('total');
+        renderCategory('total');
+    });
+
+    btnAuthored.addEventListener('click', () => {
+        if (currentCategoryView === 'authored') return;
+        currentCategoryView = 'authored';
+        updateUI('authored');
+        renderCategory('authored');
+    });
+}
+
+function renderCategory(view) {
+    if (!charts.category || !categoryData) return;
+
+    // Data Structure: { total: {categories, xAxis, series}, authored: {...} }
+    const dataset = categoryData[view];
+    if (!dataset) return;
+
+    const validIndices = dataset.xAxis.map((x, i) => parseInt(x) <= 2025 ? i : -1).filter(i => i !== -1);
+    const riverData = [];
+
+    dataset.series.forEach(s => {
+        validIndices.forEach(idx => {
+            const date = dataset.xAxis[idx] + "-12-31";
+            const val = s.data[idx];
+            if (val > 0) riverData.push([date, val, s.name]);
         });
-    } catch (e) { }
+    });
+
+    charts.category.setOption({
+        backgroundColor: 'transparent',
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: { type: 'line', lineStyle: { color: 'rgba(0,0,0,0.2)', width: 1, type: 'solid' } },
+            formatter: function (params) {
+                if (!params || !params.length) return "";
+                const dateStr = params[0].axisValue;
+                const year = new Date(dateStr).getFullYear();
+                let total = 0;
+                params.forEach(p => total += p.value[1]);
+                let html = `<div style="margin-bottom:8px; border-bottom:1px solid ${COLORS.border}; padding-bottom:4px;"><b>Year: ${year}</b></div>`;
+                html += `<div style="font-size:11px; color:${COLORS.textLight}; margin-bottom:8px;">Total Activity: <b>${formatCount(total)}</b> Commits</div>`;
+                const sorted = [...params].sort((a, b) => b.value[1] - a.value[1]);
+                sorted.forEach(p => {
+                    const val = p.value[1];
+                    const name = p.value[2];
+                    const pct = (total > 0 ? (val / total * 100) : 0).toFixed(1);
+                    html += `
+                    <div style="display:flex; justify-content:space-between; gap:20px; font-size:12px; margin-bottom:2px;">
+                        <span>${p.marker} ${name}</span>
+                        <span><b>${pct}%</b> <span style="color:${COLORS.textLight}; font-size:10px;">(${formatCount(val)})</span></span>
+                    </div>`;
+                });
+                return html;
+            },
+            ...tooltipStyle
+        },
+        legend: { ...legendStyle, data: dataset.categories, bottom: 0, type: 'scroll' },
+        singleAxis: {
+            top: 20, bottom: 60, type: 'time',
+            axisTick: { show: false },
+            axisLabel: { ...axisStyle.axisLabel },
+            axisPointer: { animation: true, label: { show: true } },
+            splitLine: { show: true, lineStyle: { type: 'dashed', opacity: 0.1 } }
+        },
+        series: [{
+            type: 'themeRiver',
+            emphasis: { itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0, 0, 0, 0.3)' } },
+            data: riverData,
+            label: { show: false },
+            itemStyle: { shadowBlur: 2, shadowColor: 'rgba(0,0,0,0.1)' }
+        }],
+        color: GHIBLI_PALETTE
+    }, true); // Use 'true' to clear previous
 }
 
 async function loadGrowth() {
@@ -261,72 +316,116 @@ async function loadGrowth() {
     } catch (e) { }
 }
 
+let pyramidData = null;
+let currentPyramidView = 'total';
+
 async function loadEngagementTiers() {
     try {
-        const res = await fetch('data/contributors_rich.json');
-        const data = await res.json();
-        data.sort((a, b) => b.total_commits - a.total_commits);
-        const totalCommits = data.reduce((sum, c) => sum + c.total_commits, 0);
-        const count = data.length;
+        const res = await fetch('data/stats_engagement_tiers.json');
+        pyramidData = await res.json();
 
-        const i1 = Math.ceil(count * 0.01);
-        const i20 = Math.ceil(count * 0.20);
+        setupPyramidToggles();
+        renderPyramid('total');
 
-        const group1 = data.slice(0, i1);
-        const group2 = data.slice(i1, i20);
-        const group3 = data.slice(i20);
+    } catch (e) {
+        console.error("Engagement Pyramid Error:", e);
+    }
+}
 
-        const sumC = (arr) => arr.reduce((s, c) => s + c.total_commits, 0);
+function setupPyramidToggles() {
+    const btnTotal = document.getElementById('btn-pyramid-total');
+    const btnAuthored = document.getElementById('btn-pyramid-authored');
 
-        const tiers = [
-            { name: "👑 The Core (Top 1%)", val: sumC(group1), count: group1.length, color: GHIBLI_PALETTE[4] },
-            { name: "⭐ The Contributors (Top 20%)", val: sumC(group2), count: group2.length, color: GHIBLI_PALETTE[5] },
-            { name: "🌱 The Prospects (Bottom 80%)", val: sumC(group3), count: group3.length, color: GHIBLI_PALETTE[12] }
-        ];
+    if (!btnTotal || !btnAuthored) return;
 
-        charts.engagement.setOption({
-            backgroundColor: 'transparent',
-            tooltip: {
-                ...tooltipStyle,
-                trigger: 'axis',
-                axisPointer: { type: 'shadow' },
-                formatter: (params) => {
-                    const p = params[0];
-                    const tier = tiers.find(t => t.name === p.name);
-                    const pct = formatPct(p.value / totalCommits, 1, true);
-                    return `
-                        <div style="margin-bottom:4px; font-weight:bold;">${p.name}</div>
-                        <div style="font-size:12px;">Contributors: <b>${tier ? tier.count : '-'}</b></div>
-                        <div style="font-size:12px;">Commits: <b>${formatCount(p.value)}</b> (${pct}%)</div>
-                    `;
-                }
-            },
-            grid: { left: '4%', right: '8%', bottom: '3%', containLabel: true },
-            xAxis: { type: 'value', show: false },
-            yAxis: {
-                ...axisStyle,
-                type: 'category',
-                data: tiers.map(t => t.name).reverse(),
-                axisLabel: { ...axisStyle.axisLabel, fontSize: 10 },
-                axisLine: { show: false },
-                axisTick: { show: false }
-            },
-            series: [{
-                type: 'bar',
-                data: tiers.map(t => ({ value: t.val, itemStyle: { color: t.color, borderRadius: [0, 4, 4, 0] } })).reverse(),
-                label: {
-                    show: true,
-                    position: 'right',
-                    formatter: (p) => formatPct(p.value / totalCommits, 0, true),
-                    color: COLORS.textSecondary,
-                    fontSize: 11,
-                    fontWeight: 'bold',
-                    distance: 10
-                },
-                barWidth: '50%'
-            }]
+    const updateUI = (view) => {
+        [btnTotal, btnAuthored].forEach(btn => {
+            btn.classList.remove('active');
+            btn.style.background = 'transparent';
+            btn.style.color = '#718096';
+            btn.style.boxShadow = 'none';
         });
-    } catch (e) { }
+
+        const activeBtn = view === 'total' ? btnTotal : btnAuthored;
+        activeBtn.classList.add('active');
+        activeBtn.style.background = '#fff';
+        activeBtn.style.color = 'inherit';
+        activeBtn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+    };
+
+    btnTotal.addEventListener('click', () => {
+        if (currentPyramidView === 'total') return;
+        currentPyramidView = 'total';
+        updateUI('total');
+        renderPyramid('total');
+    });
+
+    btnAuthored.addEventListener('click', () => {
+        if (currentPyramidView === 'authored') return;
+        currentPyramidView = 'authored';
+        updateUI('authored');
+        renderPyramid('authored');
+    });
+}
+
+function renderPyramid(view) {
+    if (!charts.engagement || !pyramidData) return;
+
+    // Data is already pre-calculated: [ {name, value, count, color_idx}, ... ]
+    const tiers = pyramidData[view];
+    if (!tiers) return;
+
+    // Calculate total volume for percentages
+    const totalVolume = tiers.reduce((sum, t) => sum + t.value, 0);
+
+    charts.engagement.setOption({
+        backgroundColor: 'transparent',
+        tooltip: {
+            ...tooltipStyle,
+            trigger: 'axis',
+            axisPointer: { type: 'shadow' },
+            formatter: (params) => {
+                const p = params[0];
+                const tier = tiers.find(t => t.name === p.name);
+                const pct = formatPct(p.value / totalVolume, 1, true);
+                return `
+                    <div style="margin-bottom:4px; font-weight:bold;">${p.name}</div>
+                    <div style="font-size:12px;">Contributors: <b>${tier ? tier.count : '-'}</b></div>
+                    <div style="font-size:12px;">Commits: <b>${formatCount(p.value)}</b> (${pct}%)</div>
+                `;
+            }
+        },
+        grid: { left: '4%', right: '8%', bottom: '3%', containLabel: true },
+        xAxis: { type: 'value', show: false },
+        yAxis: {
+            ...axisStyle,
+            type: 'category',
+            data: tiers.map(t => t.name).reverse(),
+            axisLabel: { ...axisStyle.axisLabel, fontSize: 10 },
+            axisLine: { show: false },
+            axisTick: { show: false }
+        },
+        series: [{
+            type: 'bar',
+            data: tiers.map(t => ({
+                value: t.value,
+                itemStyle: {
+                    color: GHIBLI_PALETTE[t.color_idx || 4], // Use index from backend or default
+                    borderRadius: [0, 4, 4, 0]
+                }
+            })).reverse(),
+            label: {
+                show: true,
+                position: 'right',
+                formatter: (p) => formatPct(p.value / totalVolume, 0, true),
+                color: COLORS.textSecondary,
+                fontSize: 11,
+                fontWeight: 'bold',
+                distance: 10
+            },
+            barWidth: '50%'
+        }]
+    });
 }
 
 async function loadSocial() {

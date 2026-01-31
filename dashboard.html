@@ -67,14 +67,32 @@
             </div>
             <!-- Right 3/5: Human Pyramid -->
             <div class="card" style="flex: 3; min-width: 350px; display: flex; flex-direction: column;">
-                <h3>The Engagement Pyramid</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0;">The Engagement Pyramid</h3>
+                    <div class="toggle-group"
+                        style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 11px; font-weight: 600;">
+                        <button id="btn-pyramid-total" class="active"
+                            style="padding: 4px 10px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); color: inherit;">Total</button>
+                        <button id="btn-pyramid-authored"
+                            style="padding: 4px 10px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">Authored</button>
+                    </div>
+                </div>
                 <div id="chart-engagement-tiers" style="flex: 1; height: 350px;"></div>
             </div>
         </section>
 
         <!-- Row 2: The Hero Narrative (Historial Context) -->
         <section class="card" style="margin-bottom: 30px;">
-            <h3>Evolution of Functional Areas (Commit Trends)</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">Evolution of Functional Areas (Commit Trends)</h3>
+                <div class="toggle-group"
+                    style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 11px; font-weight: 600;">
+                    <button id="btn-category-total" class="active"
+                        style="padding: 4px 10px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); color: inherit;">Total</button>
+                    <button id="btn-category-authored"
+                        style="padding: 4px 10px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">Authored</button>
+                </div>
+            </div>
             <div id="chart-category" style="height: 450px; width: 100%;"></div>
         </section>
 

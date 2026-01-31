@@ -477,36 +477,48 @@ class MetricGenerators:
     @staticmethod
     def generate_category_evolution(commits):
         print("Generating Category Evolution...")
-        # Annual Aggregation (December only) for cleaner chart
-        # Count unique hashes per category per year.
         
-        commits['year'] = commits['date_utc'].dt.year
-        
-        # Group by Year + Category, count UNIQUE commits
-        pivot = commits.groupby(['year', 'category'])['hash'].nunique().unstack(fill_value=0)
-        
-        # Filter 2026? User said "no need to show 2026"
-        if 2026 in pivot.index:
-            pivot = pivot.drop(2026)
-        
-        categories = pivot.columns.tolist()
-        data = {
-            "categories": categories,
-            "xAxis": [str(y) for y in pivot.index.tolist()],
-            "series": []
-        }
-        for cat in categories:
-            data["series"].append({
-                "name": cat,
-                "type": "line",
-                "stack": "Total",
-                "areaStyle": {},
-                "emphasis": {"focus": "series"},
-                "data": pivot[cat].tolist()
-            })
+        # Annual Aggregation helper
+        def get_evolution_data(df):
+            df['year'] = df['date_utc'].dt.year
+            pivot = df.groupby(['year', 'category'])['hash'].nunique().unstack(fill_value=0)
             
+            if 2026 in pivot.index:
+                pivot = pivot.drop(2026)
+            
+            categories = pivot.columns.tolist()
+            res = {
+                "categories": categories,
+                "xAxis": [str(y) for y in pivot.index.tolist()],
+                "series": []
+            }
+            for cat in categories:
+                res["series"].append({
+                    "name": cat,
+                    "type": "line",
+                    "stack": "Total",
+                    "areaStyle": {},
+                    "emphasis": {"focus": "series"},
+                    "data": pivot[cat].tolist()
+                })
+            return res
+
+        # 1. Total Activity
+        print("  Generating Total view...")
+        data_total = get_evolution_data(commits.copy())
+        
+        # 2. Authored Work (No 'Merge')
+        print("  Generating Authored view...")
+        commits_authored = commits[commits['category'] != 'Merge'].copy()
+        data_authored = get_evolution_data(commits_authored)
+        
+        output = {
+            "total": data_total,
+            "authored": data_authored
+        }
+
         with open(Config.FILES["trend_category"], "w") as f:
-            json.dump(data, f)
+            json.dump(output, f)
             
     @staticmethod
     def generate_contributor_growth(commits):
@@ -583,7 +595,16 @@ class MetricGenerators:
             'hash': 'nunique', # Total Commits (Unique SHAs)
             'canonical_name': 'first' # Name
         })
-        g1.columns = ['start_year', 'end_year', 'tenure', 'lines_added', 'commits', 'name']
+        g1.columns = ['start_year', 'end_year', 'tenure', 'lines_added', 'total_commits', 'name']
+        
+        # Add Authored vs Merge breakdown
+        g1['merge_commits'] = commits[commits['category'] == 'Merge'].groupby('canonical_id')['hash'].nunique()
+        g1['authored_commits'] = commits[commits['category'] != 'Merge'].groupby('canonical_id')['hash'].nunique()
+        g1['merge_commits'] = g1['merge_commits'].fillna(0).astype(int)
+        g1['authored_commits'] = g1['authored_commits'].fillna(0).astype(int)
+        
+        # Rename 'commits' to 'total_commits' above and use it consistently
+        df = g1.copy()
         
         # Group 2: Focus / Category
         # Most frequent category
@@ -621,6 +642,9 @@ class MetricGenerators:
         }
         
         # 2. Calculate Aggregated Risk Score per Author
+        # SENIOR ENGINEER NOTE: Merge commits are excluded from RADAR_AXES below.
+        # This keeps the "Impact Profile" focused on technical authorship rather than
+        # administrative integration work.
         # Formula: Sum(Commit_Weight * Category_Risk)
         # We need to iterate carefully. We have 'commits_w' from Fractional Attribution step below.
         # But we haven't computed commits_w yet in this flow (it's in the next block). 
@@ -691,17 +715,17 @@ class MetricGenerators:
         # --- ENRICHMENT METRICS ---
         total_project_commits = commits.shape[0]
         
-        # Sort by commits for ranking
-        df = df.sort_values('commits', ascending=False)
+        # Sort by total_commits for ranking
+        df = df.sort_values('total_commits', ascending=False)
         
         # Calculate Ranks and Percentiles
-        df['rank'] = df['commits'].rank(ascending=False, method='min')
-        df['percentile'] = df['commits'].rank(pct=True) # 0 to 1, higher is better (more commits)
+        df['rank'] = df['total_commits'].rank(ascending=False, method='min')
+        df['percentile'] = df['total_commits'].rank(pct=True) # 0 to 1, higher is better (more commits)
         
         def get_rank_label(row, total_authors):
             # Top 1% or Top 5 is "Legend"
             pct = row['percentile']
-            comm = row['commits']
+            comm = row['total_commits']
             
             if pct > 0.99: return "👑 The Core" # Top 1%
             if pct > 0.90: return "⭐ The Regulars" # Top 10%
@@ -730,7 +754,7 @@ class MetricGenerators:
              location = enrich_data.get('location')
              
              # Metrics
-             contribution_pct = (row['commits'] / total_project_commits) * 100
+             contribution_pct = (row['total_commits'] / total_project_commits) * 100
              rank_label = get_rank_label(row, total_authors)
              
              output_list.append({
@@ -741,7 +765,9 @@ class MetricGenerators:
                  "location": location,
                  "cohort_year": int(row['start_year']),
                  "last_active_year": int(row['end_year']),
-                 "total_commits": int(row['commits']),
+                 "total_commits": int(row['total_commits']),
+                 "authored_commits": int(row['authored_commits']),
+                 "merge_commits": int(row['merge_commits']),
                  "impact": int(row['lines_added']),
                  "primary_category": primary,
                  "span": f"{int(row['start_year'])}-{int(row['end_year'])}",
@@ -1544,6 +1570,69 @@ class MetricGenerators:
         with open(os.path.join(Config.OUTPUT_DIR, "stats_reviewers.json"), 'w') as f:
             json.dump(output, f)
 
+    @staticmethod
+    def generate_engagement_tiers(commits):
+        print("Generating Engagement Tiers...")
+        
+        # We need two views: Total Activity vs Authored Work
+        
+        def calculate_tiers(counts_series):
+            # Sort descending
+            counts = counts_series.sort_values(ascending=False)
+            total_vol = counts.sum()
+            n_contributors = len(counts)
+            
+            if n_contributors == 0: return []
+            
+            # Thresholds
+            i1 = int(np.ceil(n_contributors * 0.01))
+            i20 = int(np.ceil(n_contributors * 0.20))
+            
+            # Slices
+            g1 = counts.iloc[0:i1]
+            g2 = counts.iloc[i1:i20]
+            g3 = counts.iloc[i20:]
+            
+            # Output Structure
+            # [Core, Regulars, Prospects]
+            return [
+                {
+                    "name": "👑 The Core (Top 1%)",
+                    "value": int(g1.sum()),
+                    "count": int(len(g1)),
+                    "color_idx": 4 # GHIBLI_PALETTE[4]
+                },
+                {
+                    "name": "⭐ The Contributors (Top 20%)",
+                    "value": int(g2.sum()),
+                    "count": int(len(g2)),
+                    "color_idx": 5 # GHIBLI_PALETTE[5]
+                },
+                {
+                    "name": "🌱 The Prospects (Bottom 80%)",
+                    "value": int(g3.sum()),
+                    "count": int(len(g3)),
+                    "color_idx": 12 # GHIBLI_PALETTE[12]
+                }
+            ]
+
+        # 1. Total Commits
+        total_counts = commits.groupby('canonical_id')['hash'].nunique()
+        tiers_total = calculate_tiers(total_counts)
+        
+        # 2. Authored Commits (Exclude Merge)
+        authored_commits = commits[commits['category'] != 'Merge']
+        authored_counts = authored_commits.groupby('canonical_id')['hash'].nunique()
+        tiers_authored = calculate_tiers(authored_counts)
+        
+        output = {
+            "total": tiers_total,
+            "authored": tiers_authored
+        }
+        
+        with open(os.path.join(Config.OUTPUT_DIR, "stats_engagement_tiers.json"), "w") as f:
+            json.dump(output, f)
+
 # --- Orchestrator ---
 def main():
     os.makedirs(Config.OUTPUT_DIR, exist_ok=True)
@@ -1568,6 +1657,7 @@ def main():
     MetricGenerators.generate_geography(commits)
     MetricGenerators.generate_codebase_stats(commits)
     MetricGenerators.generate_category_history(commits) # New
+    MetricGenerators.generate_engagement_tiers(commits) # New - Pyramid Toggle Support
     
     # Advanced Metrics
     MetricGenerators.generate_churn_metrics(commits)
