@@ -1,4 +1,27 @@
 :root {
+    /* Global Reset */
+    box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+    max-width: 100%;
+    height: auto;
+}
+
+:root {
     /* Ghibli Nature Palette tokens */
     --ghibli-sky: #7BA9CC;
     --ghibli-sky-light: #B9D4E7;
@@ -47,6 +70,20 @@ body header {
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+
+@media screen and (max-width: 480px) {
+    .logos-container {
+        flex-wrap: wrap;
+        /* Allow wrapping */
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .logos-container img {
+        max-height: 40px;
+        /* Limit height to prevent huge logos */
+    }
 }
 
 .app-name {
@@ -184,18 +221,107 @@ h3 {
 /* Mobile responsiveness */
 @media screen and (max-width: 768px) {
     body {
-        padding-top: 80px;
+        padding-top: 20px;
+        /* Reduced padding for mobile */
     }
 
     .container {
         padding: 15px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     header h1 {
-        font-size: 2em;
+        font-size: 1.5em;
+        /* Smaller header */
     }
 
+    /* Stack flex containers vertically */
+    section[style*="display: flex"] {
+        flex-direction: column !important;
+        gap: 20px !important;
+        min-height: auto !important;
+    }
+
+    .card {
+        margin-bottom: 20px;
+        min-width: 0 !important;
+        /* Allow shrinking */
+        width: 100% !important;
+    }
+
+    /* KPI Grid adjustments */
     .kpi-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
+        /* Force 1 column on mobile */
+        gap: 15px;
+    }
+
+    .kpi-value {
+        font-size: 1.8em;
+    }
+
+    /* Charts */
+    .chart-container,
+    div[id^="chart-"] {
+        height: 300px !important;
+        /* Slightly shorter on mobile */
+    }
+}
+
+/* Mobile Navigation */
+.mobile-nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 10px;
+}
+
+@media screen and (max-width: 768px) {
+
+    /* Hide regular nav items by default on mobile */
+    nav {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        background: #fff;
+        position: absolute;
+        top: 100%;
+        /* Below header */
+        left: 0;
+        right: 0;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        border-radius: 0 0 8px 8px;
+    }
+
+    nav.open {
+        display: flex;
+    }
+
+    .mobile-nav-toggle {
+        display: block;
+        position: absolute;
+        top: 50%;
+        right: 15px;
+        transform: translateY(-50%);
+        z-index: 1100;
+        /* High z-index */
+    }
+
+    /* Ensure header relative positioning for absolute nav */
+    #main-nav {
+        position: relative;
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        /* justify-content: flex-end; <--- Removed, using absolute pos */
+        padding: 0 10px;
+        width: 100%;
+        max-width: 100%;
     }
 }

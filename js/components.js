@@ -19,7 +19,10 @@ const Navigation = {
         const currentPath = window.location.pathname.split('/').pop() || 'dashboard.html';
 
         const navHtml = `
-            <nav>
+            <button class="mobile-nav-toggle" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav id="nav-menu">
                 ${this.links.map(link => {
             const isActive = currentPath === link.url ? 'class="active"' : '';
             return `<a href="${link.url}" ${isActive}>${link.name}</a>`;
@@ -28,6 +31,22 @@ const Navigation = {
         `;
 
         container.innerHTML = navHtml;
+
+        // Add event listener for mobile toggle
+        const toggleBtn = container.querySelector('.mobile-nav-toggle');
+        const navMenu = container.querySelector('#nav-menu');
+
+        if (toggleBtn && navMenu) {
+            toggleBtn.addEventListener('click', () => {
+                navMenu.classList.toggle('open');
+                const icon = toggleBtn.querySelector('i');
+                if (navMenu.classList.contains('open')) {
+                    icon.className = 'fas fa-times';
+                } else {
+                    icon.className = 'fas fa-bars';
+                }
+            });
+        }
     }
 };
 
