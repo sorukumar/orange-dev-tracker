@@ -528,40 +528,66 @@
             <!-- Maintainers Section -->
             <section id="maintainers">
                 <h2>Maintainers</h2>
-                <p>Maintainers are individuals who merge code into the repository. In Bitcoin Core's governance model,
-                    maintainers have commit access but decisions are made through rough consensus.</p>
+                <p>Maintainers are individuals with the technical authority to merge code into the Bitcoin Core
+                    repository. They act as "gatekeepers" rather than deciders, ensuring that changes have achieved
+                    rough consensus from the broader developer community.</p>
 
                 <div class="metric-card">
-                    <h4>Total Maintainers</h4>
-                    <p class="definition">Count of distinct individuals who have ever merged commits into the
-                        repository.
-                    </p>
+                    <h4>The Trusted Circle (Identity Whitelist)</h4>
+                    <p class="definition">We maintain a curated whitelist of known historical and active maintainers,
+                        verified against project documentation and security keys.</p>
                     <dl class="details">
-                        <dt>Technical basis</dt>
-                        <dd>Identified by the <code>committer_email</code> field on merge commits
-                            (<code>is_merge = True</code>).</dd>
-                        <dt>Caveat</dt>
-                        <dd>This is broader than current write access. It includes historical maintainers and may
-                            include
-                            some self-rebases.</dd>
+                        <dt>Principal Sources</dt>
+                        <dd>
+                            <ul>
+                                <li><strong>Historical Lineage:</strong> <a
+                                        href="https://bitcoin.stackexchange.com/questions/176/is-there-a-list-of-core-bitcoin-committers"
+                                        target="_blank">Bitcoin StackExchange (History of Committers)</a>.</li>
+                                <li><strong>Technical Authority:</strong> The official <a
+                                        href="https://github.com/bitcoin/bitcoin/blob/master/contrib/verify-commits/trusted-keys"
+                                        target="_blank">Bitcoin Core Trusted Keys</a>
+                                    (contrib/verify-commits/trusted-keys).</li>
+                            </ul>
+                        </dd>
                     </dl>
                 </div>
 
                 <div class="metric-card">
-                    <h4>Active Maintainers</h4>
-                    <p class="definition">Maintainers with merge activity in the last 12 months.</p>
+                    <h4>Hybrid Activity Detection</h4>
+                    <p class="definition">Because "Maintenance" is a social role but its effects are technical, we use a
+                        two-pronged detection logic.</p>
                     <dl class="details">
-                        <dt>Current value</dt>
-                        <dd>Approximately 5 active maintainers, reflecting Bitcoin Core's small trusted group.</dd>
+                        <dt>1. Modern Era (Merge Commits)</dt>
+                        <dd>For work after 2012, maintainers are identified by the <code>committer_email</code> on
+                            <code>is_merge = True</code> commits. This accurately captures the "janitorial" actions of
+                            clicking the merge button.</dd>
+                        <dt>2. Satoshi Era (Author Credit)</dt>
+                        <dd>In the early days (Pre-2012), formal merge commits were not standard. To respect the "Relay
+                            Race" legacy, Satoshi, Sirius, Laszlo, and Gavin are credited for their direct author
+                            commits during their periods of leadership.</dd>
+                    </dl>
+                </div>
+
+                <div class="metric-card">
+                    <h4>Status: Active vs. Authorized</h4>
+                    <p class="definition">We distinguish between a maintainer's technical access and their real-world
+                        activity.</p>
+                    <dl class="details">
+                        <dt>Headline KPI (Active Count)</dt>
+                        <dd>Reflects the <strong>Authorized</strong> team. We count every individual currently listed as
+                            "Active" in our whitelist (verified against Trusted Keys), even if they haven't performed a
+                            merge in the current data snapshot (e.g., specialized build/GUI maintainers).</dd>
+                        <dt>Relay Race & Activity Trends</dt>
+                        <dd>Visualizes the <strong>Active Years</strong> where the individual either held push access or
+                            performed a maintainer action in the logs. If a maintainer is authorized but has 0 merges,
+                            they are shown as "Authorized" in the timeline starting from their year of appointment.</dd>
                     </dl>
                 </div>
 
                 <div class="callout info">
                     <p><strong>Context:</strong> Bitcoin Core has historically had a small group of maintainers (rarely
-                        more
-                        than 5-6 at a time). This is intentional — maintainer access is granted conservatively and
-                        requires
-                        significant trust from the community.</p>
+                        more than 6 at a time). This is intentional — maintainer access is granted conservatively and
+                        requires significant trust from the community.</p>
                 </div>
             </section>
 
@@ -961,6 +987,16 @@
                                 <td>Bitcoin Core Git Repository</td>
                                 <td>Commits, authors, timestamps, file changes</td>
                                 <td><code>git log --all --numstat</code></td>
+                            </tr>
+                            <tr>
+                                <td>Bitcoin Core Trusted Keys</td>
+                                <td>Active maintainer verification</td>
+                                <td>Verifying <code>contrib/verify-commits/trusted-keys</code></td>
+                            </tr>
+                            <tr>
+                                <td>Bitcoin StackExchange</td>
+                                <td>Historical maintainer lineage</td>
+                                <td>Curated community-led history of committers</td>
                             </tr>
                             <tr>
                                 <td>Repository HEAD</td>

@@ -40,10 +40,11 @@ class Config:
 class MaintainerLookup:
     """
     Uses a curated whitelist of known Bitcoin Core maintainers.
-    This provides accurate counts vs. naive committer_email counting.
+    Identity is from the whitelist, activity is calculated from git logs.
     """
     _instance = None
     _email_to_id = {}
+    _id_to_record = {}
     _maintainers = []
     
     @classmethod
@@ -54,7 +55,7 @@ class MaintainerLookup:
         cls._instance = cls()
         
         if not os.path.exists(Config.MAINTAINERS_FILE):
-            print(f"Warning: {Config.MAINTAINERS_FILE} not found. Using fallback logic.")
+            print(f"Warning: {Config.MAINTAINERS_FILE} not found. Maintainer detection will be degraded.")
             return cls._instance
         
         with open(Config.MAINTAINERS_FILE, "r") as f:
@@ -62,8 +63,9 @@ class MaintainerLookup:
         
         cls._maintainers = data.get("maintainers", [])
         
-        # Build email -> maintainer_id lookup
+        # Build lookups
         for m in cls._maintainers:
+            cls._id_to_record[m["id"]] = m
             for email in m.get("emails", []):
                 cls._email_to_id[email.lower()] = m["id"]
         
@@ -71,36 +73,31 @@ class MaintainerLookup:
         return cls._instance
     
     @classmethod
-    def get_maintainer_id(cls, email):
-        """Returns maintainer ID if email belongs to a known maintainer, else None."""
-        return cls._email_to_id.get(email.lower())
-    
+    def identify_maintainer(cls, email):
+        """Returns maintainer record if email belongs to a known maintainer, else None."""
+        mid = cls._email_to_id.get(email.lower() if email else "")
+        return cls._id_to_record.get(mid) if mid else None
+
     @classmethod
     def is_maintainer(cls, email):
         """Check if email belongs to a known maintainer."""
-        return email.lower() in cls._email_to_id
+        return (email.lower() if email else "") in cls._email_to_id
     
     @classmethod
     def get_all_maintainers(cls):
         """Returns list of all maintainer records."""
         return cls._maintainers
-    
+
     @classmethod
-    def get_active_maintainers(cls, year=None):
-        """Returns maintainers active in a given year (or currently active if year is None)."""
-        if year is None:
-            return [m for m in cls._maintainers if m.get("status") == "active"]
-        return [m for m in cls._maintainers if year in m.get("active_years", [])]
-    
+    def get_status(cls, email):
+        """Returns status (active, emeritus, historical) from whitelist if known."""
+        m = cls.identify_maintainer(email)
+        return m.get("status") if m else None
+
     @classmethod
-    def count_total(cls):
-        """Total unique maintainers (all time)."""
+    def count_whitelist(cls):
+        """Total unique maintainers in the whitelist."""
         return len(cls._maintainers)
-    
-    @classmethod
-    def count_active(cls):
-        """Currently active maintainers."""
-        return len([m for m in cls._maintainers if m.get("status") == "active"])
 
 # --- Sponsor Lookup ---
 class SponsorLookup:
@@ -275,20 +272,34 @@ class MetricGenerators:
         # 1.5 Total Commits (Simulated SHA count if available, else row count)
         total_commits = commits['hash'].nunique()
 
-        # 2. Maintainers - USE WHITELIST for accurate counts
-        # Active = status == "active" in lookup
-        # Total = all maintainers in lookup
+        # 2. Maintainers - Data Driven
+        # Identification via whitelist, Activity via Commit Logs.
         
-        if MaintainerLookup.count_total() > 0:
-            # Use curated whitelist
-            unique_maintainers_active = MaintainerLookup.count_active()
-            unique_maintainers_total = MaintainerLookup.count_total()
-        else:
-            # Fallback to old logic if no lookup file
-            max_date = commits['date_utc'].max()
-            last_year = commits[commits['date_utc'] > (max_date - pd.Timedelta(days=365))]
-            unique_maintainers_active = last_year[last_year['is_merge'] == True]['committer_email'].nunique()
-            unique_maintainers_total = commits[commits['is_merge'] == True]['committer_email'].nunique()
+        # Tag maintainer actions:
+        # A) Merge commits by known maintainers
+        # B) Early commits (pre-2012) by historical maintainers (Satoshi era)
+        commits['is_maintainer_action'] = False
+        
+        # Case A: Merge commits (Committer is the maintainer)
+        merge_mask = (commits['is_merge'] == True)
+        commits.loc[merge_mask, 'is_maintainer_action'] = commits.loc[merge_mask, 'committer_email'].apply(MaintainerLookup.is_maintainer)
+        
+        # Case B: Early Era handling (Pre-2012)
+        # Using author_email as early devs often committed their own work directly.
+        early_mask = (commits['date_utc'].dt.year < 2012)
+        historical_ids = [m['id'] for m in MaintainerLookup.get_all_maintainers() if m.get('status') == 'historical']
+        
+        def is_historical_maintainer(email):
+            m = MaintainerLookup.identify_maintainer(email)
+            return m['id'] in historical_ids if m else False
+            
+        commits.loc[early_mask, 'is_maintainer_action'] = commits.loc[early_mask, 'is_maintainer_action'] | commits.loc[early_mask, 'author_email'].apply(is_historical_maintainer)
+
+        # Calculate Statistics
+        # We use the Whitelist for the Headline KPI counts to ensure recent appointees (Authorized) 
+        # are included even if they haven't merged yet.
+        unique_maintainers_total = MaintainerLookup.count_whitelist()
+        unique_maintainers_active = len([m for m in MaintainerLookup.get_all_maintainers() if m.get("status") == "active"])
         
         # 3. Current Codebase Size (True Static LOC)
         # We prefer the actual scan data over historical net churn
@@ -733,6 +744,18 @@ class MetricGenerators:
             if pct > 0.50: return "🔭 The Explorers" # Top 50%
             return "🧱 The Scouts" # Bottom 50%
 
+        # Prepare maintainer lookup map for the loop
+        maintainer_info_map = {}
+        maintainer_ids = commits[commits['is_maintainer_action'] == True]['canonical_id'].unique()
+        for cid in maintainer_ids:
+             # Find any email associated with this CID that is in the whitelist
+             cid_emails = commits[commits['canonical_id'] == cid]['committer_email'].unique()
+             for email in cid_emails:
+                  m = MaintainerLookup.identify_maintainer(email)
+                  if m:
+                       maintainer_info_map[cid] = m
+                       break
+
         # Build JSON list
         output_list = []
         possible_cats = list(cat_pivot.columns)
@@ -757,12 +780,17 @@ class MetricGenerators:
              contribution_pct = (row['total_commits'] / total_project_commits) * 100
              rank_label = get_rank_label(row, total_authors)
              
+             # Maintainer info
+             m_info = maintainer_info_map.get(cid)
+             
              output_list.append({
                  "id": str(cid), 
                  "name": row['name'],
                  "login": login,
                  "company": company,
                  "location": location,
+                 "is_maintainer": m_info is not None,
+                 "maintainer_status": m_info.get("status") if m_info else None,
                  "cohort_year": int(row['start_year']),
                  "last_active_year": int(row['end_year']),
                  "total_commits": int(row['total_commits']),
@@ -773,8 +801,6 @@ class MetricGenerators:
                  "span": f"{int(row['start_year'])}-{int(row['end_year'])}",
                  "tenure": int(row['tenure']),
                  "focus_areas": focus_map,
-                 "contribution_pct": round(contribution_pct, 4),
-                 "rank_label": rank_label,
                  "contribution_pct": round(contribution_pct, 4),
                  "rank_label": rank_label,
                  "percentile_raw": round(row['percentile'] * 100, 1), # e.g. 99.5
@@ -794,32 +820,37 @@ class MetricGenerators:
         # Load maintainer lookup
         MaintainerLookup.load()
         
-        # Maintainers Trend - Use whitelist if available
-        merges = commits[commits['is_merge'] == True].copy()
-        if merges.empty: merges = commits.copy()
-        
-        merges['date'] = merges['date_utc']
-        merges = merges.set_index('date').sort_index()
+        # Maintainers Trend - Data Driven
+        # Count unique maintainers active in rolling windows
         
         dates = []
         counts = []
+        
+        # Ensure 'is_maintainer_action' is calculated (it should be from Vital Signs step, but just in case)
+        if 'is_maintainer_action' not in commits.columns:
+             # Basic detection if not already present
+             commits['is_maintainer_action'] = (commits['is_merge'] == True) & (commits['committer_email'].apply(MaintainerLookup.is_maintainer))
+        
+        maintainer_commits = commits[commits['is_maintainer_action'] == True].copy()
+        maintainer_commits['date'] = maintainer_commits['date_utc']
+        maintainer_commits = maintainer_commits.set_index('date').sort_index()
+        
         periods = pd.date_range(start=commits['date_utc'].min(), end=commits['date_utc'].max(), freq='M')
         
-        if MaintainerLookup.count_total() > 0:
-            # Use whitelist: count maintainers active in each year based on active_years field
-            for p in periods:
-                year = p.year
-                active_in_year = MaintainerLookup.get_active_maintainers(year)
-                dates.append(p.strftime("%Y-%m"))
-                counts.append(len(active_in_year))
-        else:
-            # Fallback: Rolling 12m distinct committer_email
-            for p in periods:
-                start_date = p - pd.DateOffset(months=12)
-                mask = (merges.index > start_date) & (merges.index <= p)
-                n = merges.loc[mask, 'committer_email'].nunique()
-                dates.append(p.strftime("%Y-%m"))
-                counts.append(int(n))
+        for p in periods:
+            # Rolling 12-month window
+            start_date = p - pd.DateOffset(months=12)
+            mask = (maintainer_commits.index > start_date) & (maintainer_commits.index <= p)
+            n = maintainer_commits.loc[mask, 'canonical_id'].nunique()
+            
+            # Special case for very early years to avoid 0s if data is sparse
+            if p.year < 2011 and n == 0:
+                 # Be more lenient for Satoshi era
+                 mask_lenient = (maintainer_commits.index <= p)
+                 n = maintainer_commits.loc[mask_lenient, 'canonical_id'].nunique()
+
+            dates.append(p.strftime("%Y-%m"))
+            counts.append(int(n))
             
         with open(Config.FILES["trend_maintainers"], "w") as f:
             json.dump({"xAxis": dates, "series": [{"name": "Active Maintainers", "type": "line", "step": "start", "data": counts}]}, f)
@@ -949,7 +980,8 @@ class MetricGenerators:
              enrich_map = enriched_df.set_index('canonical_id').to_dict(orient='index')
         
         commits['year'] = commits['date_utc'].dt.year
-        
+        maintainer_commits = commits[commits['is_maintainer_action'] == True]
+
         # ========================================
         # PART 1: Contributor Commits by Sponsorship
         # ========================================
@@ -1040,18 +1072,37 @@ class MetricGenerators:
                         if company and len(str(company).strip()) > 1:
                             sponsor_name = company
                             break
+
+            # NEW: Calculate active years from commit data
+            emails_lower = [e.lower() for e in emails]
+            m_actions = maintainer_commits[maintainer_commits['committer_email'].str.lower().isin(emails_lower)]
+            
+            # For historical devs, also check early author credit
+            if m_status == 'historical':
+                 m_early = commits[(commits['date_utc'].dt.year < 2012) & (commits['author_email'].str.lower().isin(emails_lower))]
+                 m_actions = pd.concat([m_actions, m_early])
+            
+            active_years = sorted(m_actions['year'].unique().tolist()) if not m_actions.empty else []
+            merges_count = len(m_actions[m_actions['is_merge'] == True]) if not m_actions.empty else 0
+            
+            # For showing in the relay race even if no merges (recent appointees)
+            if m_status == 'active' and not active_years:
+                 active_years = [commits['date_utc'].max().year]
             
             maintainer_sponsors.append({
                 "id": m_id,
                 "name": m_name,
                 "status": m_status,
                 "sponsor": sponsor_name if sponsor_name else "Independent",
-                "active_years": m.get("active_years", [])
+                "active_years": [int(y) for y in active_years],
+                "merges_count": merges_count,
+                "merges_active": merges_count > 0 or m_status == 'active'
             })
         
-        # Summary: Count by Sponsor (for current/active maintainers)
-        active_maintainers = [m for m in maintainer_sponsors if m["status"] == "active"]
-        all_maintainers = maintainer_sponsors
+        # Summary: Count by Sponsor (for maintainers with recorded activity)
+        active_maintainers = [m for m in maintainer_sponsors if m["status"] == "active" and len(m["active_years"]) > 0]
+        # For historical/all-time, only count those who actually acted as maintainers
+        all_maintainers = [m for m in maintainer_sponsors if len(m["active_years"]) > 0]
         
         # Count sponsors for active maintainers
         sponsor_counts_active = {}
@@ -1064,7 +1115,7 @@ class MetricGenerators:
         for m in all_maintainers:
             s = m["sponsor"]
             sponsor_counts_all[s] = sponsor_counts_all.get(s, 0) + 1
-        
+
         # Format for chart (horizontal bar or pie)
         independence_data = {
             "title": "Maintainer Independence",

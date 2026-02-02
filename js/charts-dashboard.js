@@ -471,19 +471,19 @@ async function loadSocial() {
 
 async function loadMaintainers() {
     try {
-        const res = await fetch('data/stats_maintainer_independence.json');
+        const res = await fetch('data/stats_maintainer_independence.json?t=' + Date.now());
         const data = await res.json();
-        const maintainers = data.maintainers;
-        maintainers.sort((a, b) => Math.min(...a.active_years) - Math.min(...b.active_years));
-        const names = maintainers.map(m => m.name);
+        const validMaintainers = data.maintainers.filter(m => m.active_years && m.active_years.length > 0);
+        validMaintainers.sort((a, b) => Math.min(...a.active_years) - Math.min(...b.active_years));
+        const names = validMaintainers.map(m => m.name);
 
-        const seriesData = maintainers.map((m, idx) => {
+        const seriesData = validMaintainers.map((m, idx) => {
             const start = Math.min(...m.active_years);
             const end = Math.max(...m.active_years);
             const isLatest = m.status === 'active';
             return {
                 name: m.name,
-                value: [idx, new Date(start, 0, 1).getTime(), new Date(end, 11, 31).getTime(), m.status, m.sponsor, m.active_years.length],
+                value: [idx, new Date(start, 0, 1).getTime(), new Date(end, 11, 31).getTime(), m.status, m.sponsor, m.active_years.length, m.merges_count || 0],
                 itemStyle: { color: isLatest ? GHIBLI_PALETTE[2] : '#94A3B8', opacity: isLatest ? 0.9 : 0.6 }
             };
         });
@@ -493,20 +493,29 @@ async function loadMaintainers() {
             tooltip: {
                 ...tooltipStyle,
                 formatter: function (params) {
-                    const status = params.value[3], sponsor = params.value[4], years = params.value[5];
+                    const status = params.value[3], sponsor = params.value[4], years_len = params.value[5], merges = params.value[6];
                     const start = new Date(params.value[1]).getFullYear(), end = new Date(params.value[2]).getFullYear();
                     const statusColor = status === 'active' ? '#48BB78' : '#718096';
-                    return `
+
+                    let html = `
                         <div style="font-weight:bold; font-size:14px; margin-bottom:4px;">${params.name}</div>
                         <div style="color:${statusColor}; font-size:11px; font-weight:600; text-transform:uppercase; margin-bottom:8px;">${status}</div>
                         <div style="display:grid; grid-template-columns: 1fr; gap:4px; font-size:12px;">
-                            <div>📅 <b>${start} — ${end}</b> (${years} years)</div>
+                            <div>📅 <b>${start} — ${end}</b> (${years_len} years)</div>
                             <div>🏢 Sponsored by <b>${sponsor}</b></div>
+                            <div>📝 <b>${merges}</b> merge${merges !== 1 ? 's' : ''}</div>
                         </div>
                     `;
+
+                    if (merges === 0 && status === 'active') {
+                        html += `<div style="color:#E8916B; font-size:10px; margin-top:8px; border-top:1px dashed #eee; padding-top:6px; font-style:italic;">
+                                    Authorized with push access, but no merges recorded in the current dataset logs.
+                                 </div>`;
+                    }
+                    return html;
                 }
             },
-            grid: { left: '160', right: '40', bottom: '20', top: '10' },
+            grid: { left: 160, right: 40, bottom: 40, top: 20 },
             xAxis: {
                 type: 'time', min: new Date(2009, 0, 1).getTime(),
                 axisLabel: { ...axisStyle.axisLabel, fontSize: 10 },
