@@ -16,7 +16,7 @@
 
     <!-- Open Graph -->
     <meta property="og:title" content="Codebase | Orange Dev Tracker | Bitcoin Data Labs">
-    <meta property="og:description" content="Deep dive into the Bitcoin Core codebase.">
+    <meta property="og:description" content="Explore the architecture and growth of the Bitcoin Core codebase.">
     <meta property="og:image" content="https://sorukumar.github.io/orange-dev-tracker/assets/og-image.png">
     <link rel="stylesheet" href="style.css">
     <style>
@@ -80,12 +80,10 @@
     </style>
 </head>
 
-<body>
+<body class="has-fixed-header">
     <div id="header"></div>
 
     <div class="container">
-        <!-- Header -->
-        <header id="main-nav" style="margin-bottom: 20px;"></header>
 
         <!-- KPI Section -->
         <section style="margin-top: 30px;">
@@ -161,7 +159,6 @@
     <div id="footer"></div>
 
     <script src="https://sorukumar.github.io/Bitcoin-Data-Labs/components/app-components.js"></script>
-    <script src="js/components.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/charts-dashboard.js"></script>
@@ -172,14 +169,19 @@
         document.addEventListener('DOMContentLoaded', () => {
             BitcoinLabsAppComponents.init({
                 isApp: true,
-                appName: 'orange-dev-tracker',
-                appHomeUrl: 'dashboard.html'
+                appName: 'Orange Dev Tracker',
+                appHomeUrl: 'dashboard.html',
+                navLinks: [
+                    { name: 'Dashboard', url: 'dashboard.html' },
+                    { name: 'Contributors', url: 'contributors.html' },
+                    { name: 'Codebase', url: 'codebase.html' },
+                    { name: 'Engineering', url: 'engineering.html' },
+                    { name: 'Health & Culture', url: 'health.html' },
+                    { name: 'Methodology', url: 'methodology.html' }
+                ]
             });
         });
     </script>
 </body>
-
-</html>
-
 
 </html>

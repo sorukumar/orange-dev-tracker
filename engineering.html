@@ -15,20 +15,16 @@
     <link rel="icon" type="image/png" href="https://sorukumar.github.io/Bitcoin-Data-Labs/favicon.png">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Engineering | Orange Dev Tracker | Bitcoin Data Labs">
-    <meta property="og:description"
-        content="Analysis of churn, refactoring discipline, and reviewer activity in Bitcoin Core.">
+    <meta property="og:title" content="Engineering Velocity | Orange Dev Tracker | Bitcoin Data Labs">
+    <meta property="og:description" content="Analyzing the speed, merge times, and review cycles of Bitcoin Core.">
     <meta property="og:image" content="https://sorukumar.github.io/orange-dev-tracker/assets/og-image.png">
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="has-fixed-header">
     <div id="header"></div>
 
     <div class="container">
-        <!-- Header -->
-        <header id="main-nav" style="margin-bottom: 20px;"></header>
-
         <!-- Engineering Efficiency: Churn vs Net -->
         <section class="card" style="margin-top: 30px;">
             <h3>Engineering Efficiency: Historical Churn vs. Net Change</h3>
@@ -107,7 +103,6 @@
     <div id="footer"></div>
 
     <script src="https://sorukumar.github.io/Bitcoin-Data-Labs/components/app-components.js"></script>
-    <script src="js/components.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/charts-dashboard.js"></script>
@@ -118,8 +113,16 @@
         document.addEventListener('DOMContentLoaded', () => {
             BitcoinLabsAppComponents.init({
                 isApp: true,
-                appName: 'orange-dev-tracker',
-                appHomeUrl: 'dashboard.html'
+                appName: 'Orange Dev Tracker',
+                appHomeUrl: 'dashboard.html',
+                navLinks: [
+                    { name: 'Dashboard', url: 'dashboard.html' },
+                    { name: 'Contributors', url: 'contributors.html' },
+                    { name: 'Codebase', url: 'codebase.html' },
+                    { name: 'Engineering', url: 'engineering.html' },
+                    { name: 'Health & Culture', url: 'health.html' },
+                    { name: 'Methodology', url: 'methodology.html' }
+                ]
             });
         });
     </script>

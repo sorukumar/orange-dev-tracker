@@ -21,12 +21,10 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="has-fixed-header">
     <div id="header"></div>
 
     <div class="container">
-        <header id="main-nav" style="margin-bottom: 20px;"></header>
-
         <!-- Slide: Maintainers -->
         <!-- Slide: Maintainers -->
         <section class="slide">
@@ -261,7 +259,6 @@
     <div id="footer"></div>
 
     <script src="https://sorukumar.github.io/Bitcoin-Data-Labs/components/app-components.js"></script>
-    <script src="js/components.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/charts-dashboard.js"></script>
@@ -272,8 +269,16 @@
         document.addEventListener('DOMContentLoaded', () => {
             BitcoinLabsAppComponents.init({
                 isApp: true,
-                appName: 'orange-dev-tracker',
-                appHomeUrl: 'dashboard.html'
+                appName: 'Orange Dev Tracker',
+                appHomeUrl: 'dashboard.html',
+                navLinks: [
+                    { name: 'Dashboard', url: 'dashboard.html' },
+                    { name: 'Contributors', url: 'contributors.html' },
+                    { name: 'Codebase', url: 'codebase.html' },
+                    { name: 'Engineering', url: 'engineering.html' },
+                    { name: 'Health & Culture', url: 'health.html' },
+                    { name: 'Methodology', url: 'methodology.html' }
+                ]
             });
         });
     </script>

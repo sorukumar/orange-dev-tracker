@@ -358,13 +358,10 @@
     </style>
 </head>
 
-<body>
+<body class="has-fixed-header">
     <div id="header"></div>
 
     <div class="container">
-        <!-- Header -->
-        <header id="main-nav" style="margin-bottom: 20px;"></header>
-
         <!-- Main Content -->
         <main>
             <!-- <header class="page-header">
@@ -1001,15 +998,22 @@
 
     <div id="footer"></div>
 
-    <script src="js/components.js"></script>
     <script src="https://sorukumar.github.io/Bitcoin-Data-Labs/components/app-components.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof BitcoinLabsAppComponents !== 'undefined') {
                 BitcoinLabsAppComponents.init({
                     isApp: true,
-                    appName: 'orange-dev-tracker',
-                    appHomeUrl: 'dashboard.html'
+                    appName: 'Orange Dev Tracker',
+                    appHomeUrl: 'dashboard.html',
+                    navLinks: [
+                        { name: 'Dashboard', url: 'dashboard.html' },
+                        { name: 'Contributors', url: 'contributors.html' },
+                        { name: 'Codebase', url: 'codebase.html' },
+                        { name: 'Engineering', url: 'engineering.html' },
+                        { name: 'Health & Culture', url: 'health.html' },
+                        { name: 'Methodology', url: 'methodology.html' }
+                    ]
                 });
             }
         });
