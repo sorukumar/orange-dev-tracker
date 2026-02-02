@@ -384,11 +384,12 @@ class MetricGenerators:
         # --- 1. Category Rich Stats ---
         # Commits Total
         # Filter to 2025 for consistency with Snapshot label
-        commits_2025 = commits[commits['date_utc'].dt.year <= 2025]
+        # Filter to end of previous month (handled globally now)
+        commits_filtered = commits.copy()
         
         # Count unique hashes per category (A commit can count for multiple categories)
         # ingest now guarantees clean rows, so we rely on 'category' column
-        cat_counts = commits_2025.groupby('category')['hash'].nunique()
+        cat_counts = commits_filtered.groupby('category')['hash'].nunique()
         
         # Commits Last 5 Years
         max_date = commits['date_utc'].max()
@@ -494,8 +495,7 @@ class MetricGenerators:
             df['year'] = df['date_utc'].dt.year
             pivot = df.groupby(['year', 'category'])['hash'].nunique().unstack(fill_value=0)
             
-            if 2026 in pivot.index:
-                pivot = pivot.drop(2026)
+            # Auto-cutoff handles future years
             
             categories = pivot.columns.tolist()
             res = {
@@ -634,20 +634,24 @@ class MetricGenerators:
         # --- NEW: Risk & Radar Profile ---
         # 1. Define Weights & Mapping
         RISK_WEIGHTS = {
-            "Core Libs": 50,                 # Security / Crypto
-            "Utilities (Shared Libs)": 30,   # Resilience / Base
-            "Node & RPC (App/Interface)": 10,# Usability
-            "GUI (Presentation Layer)": 10,  # Usability
-            "Wallet": 20,                    # Usability (Funds)
-            "Tests (QA)": 5,                 # Quality
-            "Build & CI (DevOps)": 5,        # Quality
-            "Documentation": 1               # Education
+            "Consensus (Domain Logic)": 50,
+            "Cryptography (Primitives)": 50,
+            "Core Libs": 50,
+            "P2P Network (Infrastructure)": 40,
+            "Database (Persistence)": 30,
+            "Utilities (Shared Libs)": 30,
+            "Node & RPC (App/Interface)": 10,
+            "GUI (Presentation Layer)": 10,
+            "Wallet (Client App)": 20,
+            "Tests (QA)": 5,
+            "Build & CI (DevOps)": 5,
+            "Documentation": 1
         }
         
         RADAR_AXES = {
-            "Security": ["Core Libs"],
-            "Resilience": ["Utilities (Shared Libs)"],
-            "Usability": ["GUI (Presentation Layer)", "Node & RPC (App/Interface)", "Wallet"],
+            "Security": ["Consensus (Domain Logic)", "Cryptography (Primitives)", "Core Libs"],
+            "Resilience": ["P2P Network (Infrastructure)", "Database (Persistence)", "Utilities (Shared Libs)"],
+            "Usability": ["GUI (Presentation Layer)", "Node & RPC (App/Interface)", "Wallet (Client App)"],
             "Quality": ["Tests (QA)", "Build & CI (DevOps)"],
             "Education": ["Documentation"]
         }
@@ -1077,16 +1081,21 @@ class MetricGenerators:
             emails_lower = [e.lower() for e in emails]
             m_actions = maintainer_commits[maintainer_commits['committer_email'].str.lower().isin(emails_lower)]
             
-            # For historical devs, also check early author credit
-            if m_status == 'historical':
+            # For legacy maintainers, also check early author credit (Satoshi era)
+            if m_status in ['historical', 'emeritus']:
                  m_early = commits[(commits['date_utc'].dt.year < 2012) & (commits['author_email'].str.lower().isin(emails_lower))]
                  m_actions = pd.concat([m_actions, m_early])
             
+            # If still no actions found (e.g. build system maintainers like Cory who push directly/no merges)
+            # check their general authorship across the whole history
+            if m_actions.empty:
+                m_actions = commits[commits['author_email'].str.lower().isin(emails_lower)]
+
             active_years = sorted(m_actions['year'].unique().tolist()) if not m_actions.empty else []
             merges_count = len(m_actions[m_actions['is_merge'] == True]) if not m_actions.empty else 0
             
-            # For showing in the relay race even if no merges (recent appointees)
-            if m_status == 'active' and not active_years:
+            # For showing in the relay race even if no merges (recent appointees or emeritus)
+            if not active_years and m_status in ['active', 'emeritus']:
                  active_years = [commits['date_utc'].max().year]
             
             maintainer_sponsors.append({
@@ -1099,10 +1108,11 @@ class MetricGenerators:
                 "merges_active": merges_count > 0 or m_status == 'active'
             })
         
-        # Summary: Count by Sponsor (for maintainers with recorded activity)
-        active_maintainers = [m for m in maintainer_sponsors if m["status"] == "active" and len(m["active_years"]) > 0]
-        # For historical/all-time, only count those who actually acted as maintainers
-        all_maintainers = [m for m in maintainer_sponsors if len(m["active_years"]) > 0]
+        # Summary: Count by Sponsor
+        # Use the whitelist status as primary truth for totals to match Dashboard KPI
+        active_maintainers = [m for m in maintainer_sponsors if m["status"] == "active"]
+        # For all-time, include everyone in the whitelist/processed list
+        all_maintainers = [m for m in maintainer_sponsors]
         
         # Count sponsors for active maintainers
         sponsor_counts_active = {}
@@ -1284,11 +1294,10 @@ class MetricGenerators:
             snapshot.update(current_state)
             history.append(snapshot)
             
-        # Filter for End-of-Year (December Only) up to 2025
-        # User explicitly requested to stop at 2025
+        # Filter for End-of-Year (December Only)
         filtered_history = [
             h for h in history 
-            if h['period'].endswith('-12') and int(h['period'].split('-')[0]) <= 2025
+            if h['period'].endswith('-12')
         ]
             
         history = filtered_history
@@ -1417,7 +1426,7 @@ class MetricGenerators:
         
         min_date = df['date_utc'].min().replace(day=1)
         # Cap at end of 2025
-        limit_date = pd.Timestamp("2025-12-31", tz='UTC')
+        limit_date = commits['date_utc'].max()
         daterange = pd.period_range(min_date, limit_date, freq='M')
         
         history = []
@@ -1524,7 +1533,7 @@ class MetricGenerators:
         arrival_years = commits.groupby('canonical_id')['year'].min().reset_index(name='first_year')
         
         years = sorted([int(y) for y in commits['year'].unique()])
-        focus_years = [y for y in years if y >= 2018 and y <= 2025]
+        focus_years = [y for y in years if y >= 2018]
         
         # Strategy A: Workforce Retention (Active regulars of that year, regardless of join date)
         workforce_data = []
@@ -1690,6 +1699,25 @@ def main():
     
     
     commits, social = DataFactory.load()
+    
+    # --- DYNAMIC CUTOFF LOGIC ---
+    # Goal: Have data refreshed monthly. In Feb 2026, we should have data till end of Jan 2026.
+    # Use timezone-aware comparison to avoid TypeError
+    from datetime import timezone as dt_timezone
+    now = datetime.now(dt_timezone.utc)
+    # First day of current month (UTC)
+    first_day_curr = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    # End of previous month
+    cutoff_date = first_day_curr - timedelta(seconds=1)
+    
+    # Filter commits
+    commits['date_utc'] = pd.to_datetime(commits['date_utc'], utc=True)
+    commits = commits[commits['date_utc'] <= cutoff_date]
+    if not social.empty:
+        social['date'] = pd.to_datetime(social['date'], utc=True)
+        social = social[social['date'] <= cutoff_date]
+    
+    print(f"Filtering data to cutoff: {cutoff_date.strftime('%Y-%m-%d')}")
     
     # Normalize Identities
     commits = DataFactory.normalize_data(commits)

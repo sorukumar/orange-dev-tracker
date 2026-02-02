@@ -190,7 +190,8 @@ function updateRetentionChart(type) {
         '#ED8936', // 2022 (Amber start)
         '#E07A5F', // 2023
         '#C53030', // 2024
-        '#9B2C2C'  // 2025 (Deep Red)
+        '#9B2C2C', // 2025 (Deep Red)
+        '#702459'  // 2026 (Plum)
     ];
 
     const cohorts = retentionData[type];
@@ -247,7 +248,7 @@ function updateRetentionChart(type) {
         grid: { top: 40, bottom: 40, left: 60, right: 160 }, // Even more right margin for the labels
         xAxis: {
             type: 'category',
-            data: retentionData.xAxis,
+            data: retentionData.xAxis.map(x => x === '2026' ? '2026 (Partial)' : x),
             axisLabel: { color: COLORS.textSecondary },
         },
         yAxis: {

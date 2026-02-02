@@ -57,7 +57,7 @@ class GitHubAPI:
         except Exception as e:
             print(f"  API Error: {e}")
             
-        time.sleep(1) # Polite delay
+        time.sleep(2) # Stricter delay for Search API to avoid 403
         return None
 
     @staticmethod
@@ -68,8 +68,11 @@ class GitHubAPI:
             resp = requests.get(url, headers=GitHubAPI.HEADERS)
             if resp.status_code == 200:
                 return resp.json()
+            elif resp.status_code == 403:
+                return "RATE_LIMIT"
         except:
             pass
+        time.sleep(0.02) # Respectful 20ms delay for high-rate API (allow 50/sec)
         return None
 
 class Enricher:
@@ -110,15 +113,34 @@ class Enricher:
 
         # 2. Iterate Canonical Groups (PRIORITIZED BY IMPACT)
         contributors = []
-        id_counts = commits['canonical_id'].value_counts()
-        sorted_ids = id_counts.index.tolist()
-        
-        api_calls_made = 0
-        MAX_API_CALLS = 100 
-        rate_limit_hit = False
-        count_mapped = 0
-        
+        # 2. Sort Canonical IDs to prioritize unidentified/recent contributors (STRICT for 2025+)
         grouped = commits.groupby('canonical_id')
+        
+        # Calculate scores for sorting
+        id_scores = []
+        for cid, group in grouped:
+            c_emails = set(group['author_email'].str.lower().dropna())
+            canonical_name = group.iloc[0]['canonical_name']
+            
+            has_legacy = any(e in email_map for e in c_emails)
+            has_cache = any(e in cache for e in c_emails)
+            max_year = group['date_utc'].dt.year.max()
+            
+            # PRIORITIZE: 2025/2026 lack of location
+            priority = 0
+            if max_year >= 2025: priority += 10000 
+            if not has_legacy: priority += 1000
+            if not has_cache: priority += 500
+            priority += (max_year - 2000) 
+            
+            id_scores.append({"cid": cid, "priority": priority})
+            
+        sorted_ids = [item['cid'] for item in sorted(id_scores, key=lambda x: x['priority'], reverse=True)]
+        
+        count_mapped = 0
+        api_calls_made = 0
+        search_limit_hit = False
+        core_limit_hit = False
         
         # Load Whitelists once
         maintainers = []
@@ -178,69 +200,117 @@ class Enricher:
                 "Wladimir J. van der Laan": {"login": "laanwj", "location": "Netherlands"},
                 "Wladimir van der Laan": {"login": "laanwj", "location": "Netherlands"},
                 "Marco Falke": {"login": "MarcoFalke"},
-                "Satoshi Nakamoto": {"login": "satoshi", "location": "P2P Space"}
+                "Satoshi Nakamoto": {"login": "satoshi", "location": "P2P Space"},
+                "Salvatore Ingala": {"login": "bigspider", "location": "Switzerland"},
+                "Calin Culianu": {"login": "cculianu", "location": "USA"},
+                "Gleb Naumenko": {"login": "rkrux", "location": "USA"},
+                "rkrux": {"login": "rkrux", "location": "USA"},
+                "Musa Haruna": {"login": "Moozay", "location": "Morocco"}
             }
             if canonical_name in MANUAL_OVERRIDES:
                 ov = MANUAL_OVERRIDES[canonical_name]
                 for k, v in ov.items(): entry[k] = v
                 entry["is_enriched"] = True
 
-                # --- STRATEGY 4: API FALLBACK ---
-                # DISABLED by default to avoid hitting rate limits. 
-                # Uncomment 'ENABLE_API = True' below or use a flag to re-enable for monthly refreshes.
-                ENABLE_API = False 
+            # --- STRATEGY 4: API/CACHE FALLBACK ---
+            ENABLE_API = True 
+            MAX_API_CALLS = 1500 # Full sweep
 
-                needs_api = (entry["login"] is None or entry["location"] is None)
+            # Condition for refresh: No login OR no location (if we want more regions)
+            needs_details = (pd.isna(entry["login"]) or pd.isna(entry["location"]))
+            
+            if needs_details:
+                cached_data = None
+                for e in c_emails:
+                    if e in cache: cached_data = cache[e]; break
                 
-                if needs_api:
-                    cached_data = None
-                    for e in c_emails:
-                        if e in cache: cached_data = cache[e]; break
-                    
-                    if cached_data:
-                        # Apply cached data immediately from local storage
+                if cached_data:
+                    # Apply cached data
+                    if cached_data.get("login") and cached_data.get("login") != "Not Found":
                         entry["login"] = entry["login"] or cached_data.get("login")
                         entry["location"] = entry["location"] or cached_data.get("location")
                         entry["company"] = entry["company"] or cached_data.get("company")
                         entry["followers"] = entry["followers"] or cached_data.get("followers", 0)
-                        entry["is_enriched"] = True 
-                        needs_refresh = False
-                    else:
-                        needs_refresh = True
+                        entry["is_enriched"] = True
+                    
+                    # RECOVERY LOGIC: If we still lack location, refresh ONLY if we haven't 
+                    # successfully scanned this profile yet (indicated by verified_at)
+                    needs_refresh = (pd.isna(entry["location"]) and "verified_at" not in cached_data)
+                else:
+                    needs_refresh = True
 
-                    # 4b. Call API ONLY if explicitly enabled and user is NOT in cache
-                    if ENABLE_API and needs_refresh and not rate_limit_hit and GitHubAPI.TOKEN and api_calls_made < MAX_API_CALLS:
-                        print(f"Fetching discovery for {canonical_name}...")
-                        
+                # 4b. API Call 
+                # We split limits: Search API (Strict) vs Core API (Generous 5000/hr)
+                if ENABLE_API and needs_refresh and not core_limit_hit and GitHubAPI.TOKEN and api_calls_made < MAX_API_CALLS:
+                    result = None
+                    
+                    # Try 1: Direct Username from noreply email (High Rate Limit)
+                    for e in c_emails:
+                        if "users.noreply.github.com" in e:
+                             username = e.split('@')[0]
+                             if '+' in username: username = username.split('+')[1]
+                             if username:
+                                 print(f"  Direct lookup (noreply): {username}")
+                                 result = GitHubAPI.get_user_details(username)
+                                 if result: break
+                    
+                    # Try 1b: Direct lookup by Name if it looks like a login (High Rate Limit)
+                    if not result and canonical_name and " " not in canonical_name and len(canonical_name) > 3:
+                         print(f"  Direct lookup (handle-like name): {canonical_name}")
+                         result = GitHubAPI.get_user_details(canonical_name)
+
+                    # Try 1c: Direct lookup by existing Login (High Rate Limit)
+                    if not result and entry["login"] and entry["login"] != "Anonymous":
+                        print(f"  Deep profile refresh for legacy login: {entry['login']}")
+                        result = GitHubAPI.get_user_details(entry["login"])
+                    
+                    # Check for Core Rate Limit
+                    if result == "RATE_LIMIT": 
+                        core_limit_hit = True
                         result = None
+
+                    # Try 2: Search by Email (Stricter Rate Limit - 30/min)
+                    if not result and not search_limit_hit:
                         for e in c_emails:
                             if "users.noreply" in e: continue
                             result = GitHubAPI.search_user(e, "email")
                             if result: break
-                        if not result:
-                            result = GitHubAPI.search_user(canonical_name, "user")
                         
-                        if result and result != "RATE_LIMIT":
-                            entry["login"] = entry["login"] or result.get("login")
-                            entry["location"] = entry["location"] or result.get("location") or "Undisclosed"
-                            entry["company"] = entry["company"] or result.get("company") or "Personal/Independent"
-                            entry["followers"] = entry["followers"] or result.get("followers", 0)
-                            entry["is_enriched"] = True
-                            
-                            if c_emails:
-                                cache[list(c_emails)[0]] = {
-                                    "login": entry["login"], "location": entry["location"],
-                                    "company": entry["company"], "followers": entry["followers"],
-                                    "verified_at": time.time()
-                                }
-                                api_calls_made += 1
-                        elif result == "RATE_LIMIT":
-                            rate_limit_hit = True
-                        elif result is None:
-                            # User truly NOT found on GitHub - Cache this permanent fail
-                            if c_emails:
-                                cache[list(c_emails)[0]] = {"login": "Not Found", "location": "Undisclosed", "verified_at": time.time()}
-                                api_calls_made += 1
+                        if result == "RATE_LIMIT":
+                            search_limit_hit = True
+                            result = None
+                    
+                    # Try 3: Search by Name (Stricter Rate Limit)
+                    if not result and not search_limit_hit:
+                        result = GitHubAPI.search_user(canonical_name, "user")
+                        if result == "RATE_LIMIT":
+                            search_limit_hit = True
+                            result = None
+                    
+                    if result and result != "RATE_LIMIT":
+                        entry["login"] = entry["login"] or result.get("login")
+                        entry["location"] = entry["location"] or result.get("location")
+                        entry["company"] = entry["company"] or result.get("company")
+                        entry["followers"] = entry["followers"] or result.get("followers", 0)
+                        entry["is_enriched"] = True
+                        
+                        # Cache enrichment (with timestamp)
+                        res_dict = {
+                            "login": result.get("login"),
+                            "location": result.get("location") or "Undisclosed",
+                            "company": result.get("company"),
+                            "followers": result.get("followers", 0),
+                            "verified_at": time.time()
+                        }
+                        for e in c_emails: cache[e] = res_dict
+                        api_calls_made += 1
+                        count_mapped += 1
+                    
+                    elif not result and not search_limit_hit and not core_limit_hit:
+                        # Mark as Not Found in cache to avoid re-searching
+                        for e in c_emails:
+                            cache[e] = {"login": "Not Found", "verified_at": time.time()}
+                        api_calls_made += 1
 
             if entry["is_enriched"]:
                 count_mapped += 1

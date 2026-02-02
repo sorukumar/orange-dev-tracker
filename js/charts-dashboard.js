@@ -225,12 +225,11 @@ function renderCategory(view) {
     const dataset = categoryData[view];
     if (!dataset) return;
 
-    const validIndices = dataset.xAxis.map((x, i) => parseInt(x) <= 2025 ? i : -1).filter(i => i !== -1);
     const riverData = [];
 
     dataset.series.forEach(s => {
-        validIndices.forEach(idx => {
-            const date = dataset.xAxis[idx] + "-12-31";
+        dataset.xAxis.forEach((datePart, idx) => {
+            const date = datePart + "-12-31";
             const val = s.data[idx];
             if (val > 0) riverData.push([date, val, s.name]);
         });
@@ -268,7 +267,14 @@ function renderCategory(view) {
         singleAxis: {
             top: 20, bottom: 60, type: 'time',
             axisTick: { show: false },
-            axisLabel: { ...axisStyle.axisLabel },
+            axisLabel: {
+                ...axisStyle.axisLabel,
+                formatter: (val) => {
+                    const date = new Date(val);
+                    const year = date.getFullYear();
+                    return year === 2026 ? "2026 (Partial)" : year.toString();
+                }
+            },
             axisPointer: { animation: true, label: { show: true } },
             splitLine: { show: true, lineStyle: { type: 'dashed', opacity: 0.1 } }
         },
@@ -289,15 +295,19 @@ async function loadGrowth() {
         const data = await res.json();
         const newSeries = data.series.find(s => s.name === "New Contributors");
         if (newSeries) {
-            const validIndices = data.xAxis.map((x, i) => parseInt(x) <= 2025 ? i : -1).filter(i => i !== -1);
-            const filteredX = validIndices.map(i => data.xAxis[i]);
-            const filteredData = validIndices.map(i => newSeries.data[i]);
+            const filteredX = data.xAxis;
+            const filteredData = newSeries.data;
 
             charts.growth.setOption({
                 backgroundColor: 'transparent',
                 tooltip: { ...tooltipStyle, trigger: 'axis' },
                 grid: { left: '4%', right: '4%', bottom: '10%', containLabel: true },
-                xAxis: { ...axisStyle, type: 'category', boundaryGap: false, data: filteredX },
+                xAxis: {
+                    ...axisStyle,
+                    type: 'category',
+                    boundaryGap: false,
+                    data: filteredX.map(x => x === '2026' ? '2026 (Partial)' : x)
+                },
                 yAxis: { ...axisStyle, type: 'value', name: 'New Devs' },
                 series: [{
                     name: 'New Contributors',
@@ -432,10 +442,9 @@ async function loadSocial() {
     try {
         const res = await fetch('data/stats_social_proof.json');
         const data = await res.json();
-        const validIndices = data.xAxis.map((x, i) => parseInt(x.split('-')[0]) <= 2025 ? i : -1).filter(i => i !== -1);
-        const filteredX = validIndices.map(i => data.xAxis[i]);
-        const filteredStars = validIndices.map(i => data.stars[i]);
-        const filteredForks = validIndices.map(i => data.forks[i]);
+        const filteredX = data.xAxis;
+        const filteredStars = data.stars;
+        const filteredForks = data.forks;
 
         charts.social.setOption({
             backgroundColor: 'transparent',
@@ -456,7 +465,11 @@ async function loadSocial() {
             },
             legend: { ...legendStyle, bottom: 0 },
             grid: { left: '4%', right: '4%', bottom: '15%', containLabel: true },
-            xAxis: { ...axisStyle, type: 'category', data: filteredX },
+            xAxis: {
+                ...axisStyle,
+                type: 'category',
+                data: filteredX.map(x => x.startsWith('2026') ? x + ' (Partial)' : x)
+            },
             yAxis: [
                 { ...axisStyle, type: 'value', name: 'Stars', position: 'left', axisLabel: { formatter: (v) => formatCount(v, 0) } },
                 { ...axisStyle, type: 'value', name: 'Forks', position: 'right', splitLine: { show: false }, axisLabel: { formatter: (v) => formatCount(v, 0) } }
@@ -551,9 +564,8 @@ async function loadStory() {
     try {
         const resHM = await fetch('data/stats_heatmap.json');
         const dataHM = await resHM.json();
-        const validYearIndices = dataHM.years.map((y, i) => parseInt(y) <= 2025 ? i : -1).filter(i => i !== -1);
-        const filteredYears = validYearIndices.map(i => dataHM.years[i]);
-        const filteredDataHM = dataHM.data.filter(item => validYearIndices.includes(item[0]));
+        const filteredYears = dataHM.years;
+        const filteredDataHM = dataHM.data;
 
         charts.heatmap.setOption({
             backgroundColor: 'transparent',
@@ -571,10 +583,9 @@ async function loadStory() {
 
         const resW = await fetch('data/stats_weekend.json');
         const dataW = await resW.json();
-        const validIndicesW = dataW.xAxis.map((x, i) => parseInt(x) <= 2025 ? i : -1).filter(i => i !== -1);
-        const filteredXW = validIndicesW.map(i => dataW.xAxis[i]);
+        const filteredXW = dataW.xAxis;
         const filteredSeriesW = dataW.series.map(s => ({
-            ...s, data: validIndicesW.map(i => s.data[i]), smooth: true, symbol: 'circle', symbolSize: 6
+            ...s, smooth: true, symbol: 'circle', symbolSize: 6
         }));
 
         charts.weekend.setOption({

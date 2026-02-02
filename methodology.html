@@ -560,7 +560,8 @@
                         <dt>1. Modern Era (Merge Commits)</dt>
                         <dd>For work after 2012, maintainers are identified by the <code>committer_email</code> on
                             <code>is_merge = True</code> commits. This accurately captures the "janitorial" actions of
-                            clicking the merge button.</dd>
+                            clicking the merge button.
+                        </dd>
                         <dt>2. Satoshi Era (Author Credit)</dt>
                         <dd>In the early days (Pre-2012), formal merge commits were not standard. To respect the "Relay
                             Race" legacy, Satoshi, Sirius, Laszlo, and Gavin are credited for their direct author
@@ -641,90 +642,109 @@
 
             <!-- Categories Section -->
             <section id="categories">
-                <h2>Categories (Architecture)</h2>
-                <p>Every file is assigned to a functional category based on its path. This segmentation reflects Bitcoin
-                    Core's architecture, grouping related functionality to track development focus. Categories with
-                    consensus-critical code require higher scrutiny than user-facing features.</p>
+                <h2>Categories & Fractional Attribution</h2>
+                <p>Bitcoin Core development is analyzed through a functional lens, where every file is assigned to a
+                    specific functional category based on its architectural role. This allows us to track development
+                    focus and calculate impact scores based on the technical risk of each domain.</p>
+
+                <div class="callout success">
+                    <p><strong>Priority Categorization:</strong> To ensure cross-cutting work like Testing and DevOps is
+                        correctly captured, we apply rules in a specific priority order. <strong>Tests (QA)</strong>,
+                        <strong>Build & CI</strong>, and <strong>Documentation</strong> are identified first, even if
+                        the files reside within a subsystem directory (e.g., <code>src/wallet/test/</code> is
+                        categorized as Tests, not Wallet).
+                    </p>
+                </div>
 
                 <div class="table-wrapper">
                     <table>
                         <thead>
                             <tr>
                                 <th>Category</th>
-                                <th>Paths Matched</th>
+                                <th>Priority Patterns</th>
                                 <th>Description</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
+                                <td><strong>Tests (QA)</strong></td>
+                                <td><code>/test/</code>, <code>/fuzz/</code>, <code>/bench/</code></td>
+                                <td>Unit, functional, fuzzing, and benchmark suites across the entire codebase.</td>
+                            </tr>
+                            <tr>
                                 <td><strong>Consensus (Domain Logic)</strong></td>
-                                <td><code>src/consensus/</code>, <code>src/script/</code>, <code>src/validation</code>
+                                <td><code>src/consensus/</code>, <code>src/kernel/</code>, <code>src/script/</code>,
+                                    <code>src/validation</code>
                                 </td>
-                                <td>The core rules of Bitcoin. Changes here are critical and require extreme scrutiny.
-                                </td>
+                                <td>The "Nuclear Core" of Bitcoin. The invariant rules that define the protocol.</td>
                             </tr>
                             <tr>
                                 <td><strong>Node & RPC (App/Interface)</strong></td>
-                                <td><code>src/node/</code>, <code>src/rpc/</code></td>
-                                <td>Application layer — the bitcoind daemon and command-line interface.</td>
+                                <td><code>src/node/</code>, <code>src/rpc/</code>, <code>src/index/</code></td>
+                                <td>The daemon application logic, command-line interface, and indexing.</td>
                             </tr>
                             <tr>
                                 <td><strong>P2P Network (Infrastructure)</strong></td>
-                                <td><code>src/net</code>, <code>src/addrman</code></td>
-                                <td>Peer discovery, message handling, network protocol.</td>
+                                <td><code>src/net</code>, <code>src/protocol</code>, <code>src/addrman</code></td>
+                                <td>Networking stack, peer discovery, and message handling.</td>
                             </tr>
                             <tr>
                                 <td><strong>Wallet (Client App)</strong></td>
-                                <td><code>src/wallet/</code></td>
-                                <td>Internal wallet for key management and transaction creation.</td>
+                                <td><code>src/wallet/</code>, <code>src/interfaces/</code></td>
+                                <td>Key management, coin selection, and transaction creation.</td>
                             </tr>
                             <tr>
                                 <td><strong>GUI (Presentation Layer)</strong></td>
                                 <td><code>src/qt/</code></td>
-                                <td>The graphical interface (Bitcoin-Qt).</td>
+                                <td>The user interface (Bitcoin-Qt).</td>
                             </tr>
                             <tr>
                                 <td><strong>Cryptography (Primitives)</strong></td>
                                 <td><code>src/crypto/</code>, <code>src/secp256k1/</code></td>
-                                <td>Cryptographic primitives and the secp256k1 elliptic curve library.</td>
+                                <td>Elliptic curve libraries and cryptographic primitives.</td>
                             </tr>
                             <tr>
                                 <td><strong>Database (Persistence)</strong></td>
                                 <td><code>src/leveldb/</code>, <code>src/dbwrapper</code></td>
-                                <td>Persistence layer for blockchain and wallet data.</td>
+                                <td>Local storage for the block index and wallet state.</td>
                             </tr>
                             <tr>
                                 <td><strong>Utilities (Shared Libs)</strong></td>
-                                <td><code>src/util/</code>, <code>src/support/</code></td>
-                                <td>Shared libraries, logging, and low-level support code.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Tests (QA)</strong></td>
-                                <td><code>src/test/</code>, <code>test/</code></td>
-                                <td>Unit tests, functional tests, and benchmarks.</td>
+                                <td><code>src/util/</code>, <code>src/support/</code>, <code>src/univalue/</code></td>
+                                <td>Common helpers, formatting, and cross-platform support.</td>
                             </tr>
                             <tr>
                                 <td><strong>Build & CI (DevOps)</strong></td>
-                                <td><code>ci/</code>, <code>Makefile</code>, <code>CMakeLists</code></td>
-                                <td>Build system configuration and continuous integration.</td>
+                                <td><code>ci/</code>, <code>Makefile</code>, <code>CMakeLists</code>,
+                                    <code>depends/</code>
+                                </td>
+                                <td>The machinery that compiles, tests, and deploys the software.</td>
                             </tr>
                             <tr>
                                 <td><strong>Documentation</strong></td>
-                                <td><code>doc/</code>, <code>*.md</code></td>
-                                <td>Developer documentation and markdown files.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Core Libs</strong></td>
-                                <td><code>src/</code> (misc)</td>
-                                <td>Core libraries and dependencies not fitting other categories.</td>
+                                <td><code>doc/</code>, <code>*.md</code>, <code>*.txt</code></td>
+                                <td>Operational guides, release notes, and developer specs.</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <p>When a commit touches multiple categories, the category with the most changed lines is assigned as
-                    the
-                    primary category for that commit.</p>
+                <div class="metric-card">
+                    <h4>Fractional Attribution Model</h4>
+                    <p class="definition">How we handle "Multi-Category" commits to prevent data inflation.</p>
+                    <dl class="details">
+                        <dt>The Logic</dt>
+                        <dd>If a single commit touches files in multiple categories (e.g., a Wallet change that also
+                            requires a new Test), the credit for that commit is split equally across those categories.
+                        </dd>
+                        <dt>Formula</dt>
+                        <dd><code>Credit = 1 / Total_Distinct_Categories_Touched</code></dd>
+                        <dt>Result</dt>
+                        <dd>This ensures that the sum of all category counts for a contributor exactly equals their
+                            total commit count, providing a precise "Focus Profile" rather than over-counting
+                            contributions.</dd>
+                    </dl>
+                </div>
             </section>
 
             <!-- 5 Dimensions of Criticality -->
@@ -739,9 +759,9 @@
                     <p class="definition">The "Nuclear Core" of Bitcoin. Changes here are existential.</p>
                     <dl class="details">
                         <dt>Risk Weight</dt>
-                        <dd><span class="badge" style="background:#FED7D7; color:#C53030;">100x - 50x</span></dd>
+                        <dd><span class="badge" style="background:#FED7D7; color:#C53030;">50x</span></dd>
                         <dt>Categories</dt>
-                        <dd><strong>Consensus</strong>, <strong>Cryptography</strong>, <strong>Core Libs</strong>.</dd>
+                        <dd><strong>Consensus</strong>, <strong>Cryptography</strong>.</dd>
                         <dt>Rationale</dt>
                         <dd>Bugs in these areas can cause chain splits, inflation events, or key leakage. The highest
                             standard of review is required.</dd>
@@ -753,9 +773,11 @@
                     <p class="definition">The networking and validation infrastructure that keeps the system alive.</p>
                     <dl class="details">
                         <dt>Risk Weight</dt>
-                        <dd><span class="badge" style="background:#FEEBC8; color:#C05621;">50x - 30x</span></dd>
+                        <dd><span class="badge" style="background:#FEEBC8; color:#C05621;">40x - 30x</span></dd>
                         <dt>Categories</dt>
-                        <dd><strong>P2P Network</strong>, <strong>Utilities</strong>, <strong>Database</strong>.</dd>
+                        <dd><strong>P2P Network</strong> (40x), <strong>Database</strong> (30x),
+                            <strong>Utilities</strong> (30x).
+                        </dd>
                         <dt>Rationale</dt>
                         <dd>Failure here can lead to eclipse attacks, peer bans, or data corruption. Critical for
                             network health.</dd>
@@ -769,7 +791,8 @@
                         <dt>Risk Weight</dt>
                         <dd><span class="badge" style="background:#FEFCBF; color:#B7791F;">20x - 10x</span></dd>
                         <dt>Categories</dt>
-                        <dd><strong>Wallet</strong>, <strong>Node & RPC</strong>, <strong>GUI</strong>.</dd>
+                        <dd><strong>Wallet</strong> (20x), <strong>Node & RPC</strong> (10x), <strong>GUI</strong>
+                            (10x).</dd>
                         <dt>Rationale</dt>
                         <dd>Wallet bugs can lose user funds (local risk). RPC/GUI bugs break integration but don't
                             threaten the network globally.</dd>
@@ -799,7 +822,7 @@
                         <dt>Categories</dt>
                         <dd><strong>Documentation</strong>.</dd>
                         <dt>Rationale</dt>
-                        <dd>Important for the ecosystem, but carries near-zero risk to the protocol's operation.</dd>
+                        <dd>Low technical risk, but high social value for maintaining open-source accessibility.</dd>
                     </dl>
                 </div>
 
@@ -1029,7 +1052,7 @@
                     <code>docs/project_context/metric_logic_review.md</code>.
                 </p>
             </section>
-
+        </main>
     </div>
 
     <div id="footer"></div>

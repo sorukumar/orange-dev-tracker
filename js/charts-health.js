@@ -22,13 +22,13 @@ async function loadCorporateEra() {
             },
             legend: { ...legendStyle, bottom: 0 },
             grid: { left: '4%', right: '4%', bottom: '15%', containLabel: true },
-            xAxis: { ...axisStyle, type: 'category', boundaryGap: false, data: data.xAxis.filter(x => parseInt(x) <= 2025) },
+            xAxis: { ...axisStyle, type: 'category', boundaryGap: false, data: data.xAxis },
             yAxis: { ...axisStyle, type: 'value', max: 100, axisLabel: { ...axisStyle.axisLabel, formatter: (v) => formatPct(v) } },
             series: data.series.map(s => {
                 let name = s.name;
                 if (name.includes('Sponsor') || name.includes('Corporate')) name = 'Sponsored';
                 if (name.includes('Independent') || name.includes('Hobbyist')) name = 'Independent';
-                return { ...s, name: name, data: s.data.slice(0, data.xAxis.filter(x => parseInt(x) <= 2025).length), smooth: true, symbol: 'none' };
+                return { ...s, name: name, smooth: true, symbol: 'none' };
             })
         });
     } catch (e) { }
@@ -204,7 +204,7 @@ async function loadRegionalEvolution() {
             'Asia Pacific': GHIBLI_PALETTE[6],     // Blue
             'North America': '#718096',            // Slate
             'Europe': '#A0AEC0',                   // Grey-Blue
-            'Undisclosed': '#EDF2F7'               // Very Light
+            'Undisclosed': '#CBD5E0'               // Clearly visible grey
         };
 
         chart.setOption({
@@ -238,7 +238,7 @@ async function loadRegionalEvolution() {
                 bottom: 0,
                 icon: 'circle',
                 selected: {
-                    'Undisclosed': false
+                    'Undisclosed': true
                 }
             },
             grid: {

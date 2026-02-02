@@ -99,7 +99,7 @@ function renderGalaxy(viewType = 'total') {
     const groupedSeries = {};
     Object.keys(rankStyles).forEach(rank => groupedSeries[rank] = []);
 
-    galaxyData.filter(item => item && item.cohort_year && item.cohort_year <= 2025).forEach(item => {
+    galaxyData.filter(item => item && item.cohort_year).forEach(item => {
         const p = item.percentile_raw || 0;
         let rank;
         if (p >= 99) rank = 'The Core (Top 1%)';
@@ -107,7 +107,7 @@ function renderGalaxy(viewType = 'total') {
         else rank = 'The Prospects (Bottom 80%)';
 
         const style = rankStyles[rank];
-        const isActive = (item.last_active_year >= 2025);
+        const isActive = (item.last_active_year >= 2024); // Show a glow for recently active
         const portraitUrl = portraits[item.name];
 
         // Use random offset for visualization
@@ -169,7 +169,7 @@ function renderGalaxy(viewType = 'total') {
                 const login = r.login && r.login !== "Anonymous" ? `<span style="color:#A0AEC0;">@${r.login}</span>` : "";
                 const rankLabel = params.seriesName.includes(' ') ? params.seriesName.split(' ').slice(1).join(' ') : params.seriesName;
                 const badge = `<span style="background:${params.color}; color:#000; padding:2px 6px; border-radius:10px; font-size:10px; font-weight:bold; margin-left:8px;">${rankLabel}</span>`;
-                const isActive = (r.last_active_year >= 2025);
+                const isActive = (r.last_active_year >= 2025); // Active in last ~12 months
                 const activeBadge = isActive ? `<div style="margin-top:4px;"><span style="background:#48BB78; color:#fff; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:bold; text-transform:uppercase;">● Active</span></div>` : "";
                 const shareVal = parseFloat(r.contribution_pct || 0);
                 const shareStr = shareVal >= 1 ? shareVal.toFixed(1) : shareVal.toFixed(4);
@@ -204,8 +204,11 @@ function renderGalaxy(viewType = 'total') {
             }
         },
         xAxis: {
-            ...axisStyle, type: 'value', min: 2008.5, max: 2025.5, splitLine: { show: false },
-            name: 'Year Joined', nameLocation: 'middle', nameGap: 35
+            ...axisStyle, type: 'value', min: 2008.5, max: 2026.5, splitLine: { show: false },
+            name: 'Year Joined', nameLocation: 'middle', nameGap: 35,
+            axisLabel: {
+                formatter: (v) => v === 2026 ? '2026 (Partial)' : v.toString()
+            }
         },
         yAxis: {
             ...axisStyle, type: 'log', min: 0.8, name: viewType === 'total' ? 'Total Commits (Depth)' : 'Authored Commits (Depth)', nameLocation: 'middle', nameGap: 55,

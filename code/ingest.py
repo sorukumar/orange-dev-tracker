@@ -13,6 +13,17 @@ MESSAGES_OUTPUT_PATH = "data/commit_messages.parquet"  # NEW: For reviewer extra
 
 # --- Categorization Logic ---
 CATEGORY_RULES = {
+    # Global Cross-Cutting (Catch these before subsystem matches)
+    "Tests (QA)": [
+        r"/test/", r"/fuzz/", r"/bench/", 
+        r"src/test/", r"test/", r"src/bench/"
+    ],
+    "Build & CI (DevOps)": [
+        r"Makefile", r"ci/", r"\.github/", r"build_msvc", r"configure\.ac",
+        r"CMakeLists\.txt", r"depends/", r"share/"
+    ],
+    "Documentation": [r"doc/", r".*\.md$", r".*\.txt$", r".*\.rst$"],
+
     # Domain Logic (The "Truth")
     "Consensus (Domain Logic)": [
         r"src/consensus/", r"src/kernel/", r"src/script/", r"src/primitives/",
@@ -44,16 +55,7 @@ CATEGORY_RULES = {
     "Utilities (Shared Libs)": [
         r"src/util/", r"src/support/", r"src/common/",
         r"src/univalue/", r"src/compat/", r"src/ipc/"
-    ],
-
-    "Tests (QA)": [r"src/test/", r"test/", r"src/bench/"],
-
-    "Build & CI (DevOps)": [
-        r"Makefile", r"ci/", r"\.github/", r"build_msvc", r"configure\.ac",
-        r"CMakeLists\.txt", r"depends/", r"share/"
-    ],
-
-    "Documentation": [r"doc/", r".*\.md$"]
+    ]
 }
 
 def get_git_log(repo_path):

@@ -75,7 +75,7 @@ async function loadStreamgraph() {
         const res = await fetch('data/stats_stack_evolution.json');
         if (!res.ok) return;
         const data = await res.json();
-        const validIndices = data.xAxis.map((x, i) => parseInt(x) <= 2025 ? i : -1).filter(i => i !== -1);
+        const validIndices = data.xAxis.map((x, i) => parseInt(x) <= 2026 ? i : -1).filter(i => i !== -1);
         const riverData = [];
         data.series.forEach(s => {
             validIndices.forEach(idx => {
@@ -132,7 +132,7 @@ async function loadCategoryHistory() {
         const res = await fetch('data/stats_category_history.json');
         if (!res.ok) return;
         const data = await res.json();
-        const validIndices = data.xAxis.map((x, i) => parseInt(x) <= 2025 ? i : -1).filter(i => i !== -1);
+        const validIndices = data.xAxis.map((x, i) => parseInt(x) <= 2026 ? i : -1).filter(i => i !== -1);
         const riverData = [];
         data.series.forEach(s => {
             validIndices.forEach(idx => {

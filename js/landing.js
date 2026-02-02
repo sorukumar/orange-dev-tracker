@@ -34,7 +34,7 @@ const SCENES = {
     },
     'scale-growth': {
         type: 'scale',
-        onEnter: () => renderCodebaseHistory(0, 16) // 2009-2025
+        onEnter: () => renderCodebaseHistory(0, 17) // 2009-2026
     },
     'army-intro': {
         type: 'army',
@@ -100,7 +100,7 @@ async function loadData() {
         dataCache.processed.years = years;
         dataCache.processed.totalLoc = totalLoc;
 
-        // Process Tech Stack 2025 (Top 5)
+        // Process Tech Stack 2026 (Top 5)
         const lastIdx = years.length - 1;
         dataCache.processed.stack2025 = stackRes.series
             .map(s => {
@@ -262,7 +262,7 @@ function renderCodebaseHistory(startIndex, endIndex) {
 function renderArmyGrowth() {
     if (!dataCache.contributorGrowth) return;
     const raw = dataCache.contributorGrowth;
-    const limitIdx = raw.xAxis.indexOf("2025");
+    const limitIdx = raw.xAxis.indexOf("2026");
     const years = raw.xAxis.slice(0, limitIdx + 1);
     const newContribs = raw.series.find(s => s.name === "New Contributors").data.slice(0, limitIdx + 1);
     const veterans = raw.series.find(s => s.name === "Veterans").data.slice(0, limitIdx + 1);
@@ -369,7 +369,7 @@ function renderTechStack(mode) {
 
     myChart.setOption({
         title: {
-            text: 'Codebase Composition (2025)',
+            text: 'Codebase Composition (2026)',
             left: 'center', top: '15%',
             textStyle: { color: VISUAL_OPTS.textColor }
         },
