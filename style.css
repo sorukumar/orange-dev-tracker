@@ -58,36 +58,15 @@ object {
     padding: 20px;
 }
 
-header h1,
-.subtitle {
-    display: none;
+/* Spacing for fixed header */
+body.has-fixed-header {
+    padding-top: 120px;
 }
 
-nav {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-nav a {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-weight: 500;
-    padding: 5px 10px;
-    border-radius: 6px;
-    transition: all 0.2s;
-}
-
-nav a:hover {
-    color: var(--primary);
-    background: var(--bg-secondary);
-}
-
-nav a.active {
-    color: var(--primary);
-    font-weight: 600;
-    background: var(--bg-secondary);
+@media screen and (max-width: 768px) {
+    body.has-fixed-header {
+        padding-top: 80px;
+    }
 }
 
 .card {
