@@ -7,26 +7,20 @@ Future iterations of the pipeline **MUST** respect these definitions to ensure d
 Commits are categorized based on the file paths they touch. A commit is assigned a single **Primary Category** based on which category has the highest number of changed lines (`additions + deletions`).
 
 ### Regex Rules (Priority Order)
-The Rules are defined in `code/ingest.py`.
+The Rules are defined in `code/ingest.py` and `code/process.py`. To ensure cross-cutting work like Testing and Documentation is correctly captured, we apply rules in a specific **priority order**.
 
 | Category | Regex Pattern(s) | Explanation |
 | :--- | :--- | :--- |
-| **Consensus** | `src/consensus/`, `src/script/`, `src/primitives/`, `src/chain`, `src/coins`, `src/pow` | The core rules of Bitcoin. Changes here are critical. |
-| **MemPool/Policy** | `src/policy/` | Fee estimation, RBF, and transaction relay logic. |
-| **Net/P2P** | `src/net`, `src/protocol`, `src/addrman` | Networking code, peer discovery. |
-| **Wallet** | `src/wallet/` | The internal wallet logic. |
-| **UI/Qt** | `src/qt/`, `src/forms/` | The GUI (Bitcoin-Qt). |
-| **Crypto** | `src/crypto/`, `src/secp256k1/` | Cryptographic primitives and the secp256k1 library. |
-| **Utils** | `src/util/`, `src/support/`, `src/common/` | Shared utilities, logging, low-level support. |
-| **Tests** | `src/test/`, `test/` | Functional tests, unit tests, benchmarks. |
-| **Docs** | `doc/`, `.*\.md$` | Documentation and markdown files. |
-| **Build/CI** | `Makefile`, `ci/`, `\.github/`, `build_msvc`, `configure\.ac` | Build system and Continuous Integration configs. |
-| **Core Libs** | *(Fallback)* | Anything not matching above (often root files or new directories). |
-
-### Merge Handling
-*   If a commit has >1 parent, it is flagged as `is_merge=True`.
-*   Pure Merge Commits (empty diff) are categorized as **"Merge"**.
-*   **Maintainer Identification**: Mergers are identified by the `committer_email` field.
+| **Tests (QA)** | `/test/`, `/fuzz/`, `*/test/*.cpp` | **High Priority.** Safety & validation logic. Includes subsystem tests (e.g., `src/wallet/test/`). |
+| **Consensus** | `src/consensus/`, `src/script/`, `src/kernel/`, `src/validation`, `src/primitives/` | The core rules of Bitcoin. Changes here are existential. |
+| **Cryptography** | `src/crypto/`, `src/secp256k1/` | Mathematical primitives. |
+| **P2P Net** | `src/net/`, `src/protocol`, `src/addrman` | Networking code, peer discovery. |
+| **Wallet** | `src/wallet/`, `src/interfaces` | Internal wallet logic and key management. |
+| **Database** | `src/leveldb/`, `src/dbwrapper/` | Persistence and indexing. |
+| **GUI** | `src/qt/`, `src/forms/` | Visual presentation (Bitcoin-Qt). |
+| **Utilities** | `src/util/`, `src/support/`, `src/common/` | Shared helpers and low-level support. |
+| **Documentation** | `doc/`, `.*\.md$` | Education, guides, and markdown. |
+| **Build/CI** | `Makefile`, `ci/`, `\.github/`, `depends/` | Build system and DevOps. |
 
 ## 2. Contributor Unification (`code/clean.py`)
 Because Git allows users to commit with different names/emails, we use a **Graph Clustering** approach to calculate a `canonical_id`.
@@ -35,43 +29,39 @@ Because Git allows users to commit with different names/emails, we use a **Graph
 1.  **Nodes**: Every unique `author_name` and `author_email` is a node.
 2.  **Edges**:
     *   **Commit Edge**: If a commit has Name="Satoshi" and Email="satoshin@gmx.com", we draw an edge between them.
-    *   **Manual Edge**: We intentionally fuse known aliases (e.g., "Matt Corallo" <-> "TheBlueMatt") via a manual list based on deep research.
-3.  **Components**: Connected components in this graph represent a single human identity.
+    *   **Manual Edge**: We fuse known aliases (e.g., "sipa" <-> "Pieter Wuille") via `data/aliases_lookup.json`.
+3.  **Components**: Connected components represent a single human identity.
 4.  **Canonical Name**: The name associated with the most commits in the group is chosen as the display label.
 
-## 3. Enrichment (`code/enrich.py`)
-To add metadata (Location, GitHub Login, Company) without excessive API calls, we fuse our data with a snapshot.
+## 3. Maintainer Tracking
+Maintainer authority is no longer inferred solely from Git `committer_email`. We now use a more robust "Trusted Circle" heuristic.
+
+*   **Historical**: Manual lookup for early project phases (pre-2012).
+*   **Modern**: Match `committer_email` on merge commits against the `trusted-keys` whitelist from the Bitcoin Core repository.
+*   **Source**: `data/maintainers_lookup.json`.
+
+## 4. Enrichment Workflow (`code/enrich.py`)
+To add GEographic and Corporate metadata, we use a cached enrichment model with a "negative cache" to respect rate limits.
 
 *   **Logic**:
-    1.  Flatten the legacy snapshot into `Email -> Profile` and `Name -> Profile` maps.
-    2.  For each `canonical_id`, check all associated aliases against the map.
-    3.  If a match is found, assign the Profile (Login, Location, Company) to the ID.
-*   **Result**: ~75% coverage of historical contributors with rich metadata.
+    1.  Match identities against GitHub profiles.
+    2.  Cache "Verified Empty" results (e.g., Location: Undisclosed) to prevent redundant API calls.
+    3.  Periodic refresh (30-day stale policy).
+*   **Source**: `data/identified_locations.json`, `data/sponsors_lookup.json`.
 
-## 4. Metric Definitions
+## 5. Metric Definitions
 
 ### Vital Signs
-*   **Unique Contributors:** Count of unique `author_email` in the entire history.
-*   **Unique Maintainers:** Count of unique `committer_email` in the entire history. (Maintainers are those who merge/commit others' work).
-*   **Current Codebase Size:** `Sum(Additions) - Sum(Deletions)` across all time. This is "Net Lines".
+*   **Unique Contributors**: Unified human identities with ≥1 commit.
+*   **Current Codebase Size**: Determined by a **static analysis scan** of the repository HEAD (LLOC - Logic Lines of Code).
+*   **Historical Churn**: `Additions - Deletions` replayed over time, scaled to match the static scan.
 
-### Contributor Landscape
-*   **Cohort Year:** The year of a contributor's **first** commit.
-*   **Tenure (Active Years):** The count of *distinct years* in which the contributor made at least one commit. (e.g., Active in 2012 and 2015 = 2 Years Tenure).
-*   **Impact:** Total Lines Added (`additions`) by the author. Use `additions` rather than `net lines` for impact to avoid penalizing refactors/deletions.
+### Risk-Weighted Impact Model
+We apply weighting multipliers to categories to reflect technical criticality:
+*   **50x**: Consensus, Cryptography, Core Libs.
+*   **30x-40x**: P2P Network (40x), Database (30x).
+*   **10x-20x**: Wallet (20x), Node/RPC (10x), GUI (10x).
+*   **1x-5x**: Tests (5x), Build/CI (5x), Documentation (1x).
 
-### Health & Culture
-*   **Corporate Era**:
-    *   **Corporate**: Author has a non-empty `company` field OR uses a known corporate email domain (e.g. `@blockstream`).
-    *   **Personal**: Author uses a generic domain (`@gmail`, `@yahoo`) and has no `company` field.
-*   **Geography**:
-    *   Derived from `location` string.
-    *   Normalized using simple string matching (e.g. "Berlin" -> "Germany").
-
-## 3. Tech Stack (Languages)
-Language is inferred from file extensions logged in `commits.parquet`.
-*   `.cpp`, `.h` -> **C++**
-*   `.py` -> **Python**
-*   `.c` -> **C**
-*   `.md` -> **Markdown**
-*   `.sh` -> **Shell**
+### Formula
+`Impact Score = Σ (Commit × Weight × 1/N)` where N is the number of categories touched by a commit.

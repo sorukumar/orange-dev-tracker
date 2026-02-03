@@ -18,341 +18,379 @@
     <meta property="og:image" content="https://sorukumar.github.io/orange-dev-tracker/assets/og-image.png">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Methodology Specific Component Styles */
-        .page-header {
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            display: block !important;
-            /* Force override for dashboard look if needed */
+        /* Methodology Documentation Layout */
+        :root {
+            --stripe-slate: #0a2540;
+            --stripe-text: #424770;
+            --accent-orange: #F7931A;
+            --sidebar-width: 260px;
+            --section-gap: 5rem;
+            --app-bg: #fcfbf9;
+            /* Warmer background to match app */
         }
 
-        /* Ensure heading is visible in methodology */
-        .page-header h1 {
-            display: block !important;
-            font-size: 2.5rem;
+        body {
+            background-color: var(--app-bg);
+            color: var(--stripe-text);
+            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .layout-wrapper {
+            display: flex;
+            max-width: 1300px;
+            margin: 0 auto;
+            position: relative;
+            background: white;
+            /* Unified background */
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: calc(100vh - 120px);
+            position: sticky;
+            top: 120px;
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+            background: white;
+            /* Match main content */
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                max-width: 100% !important;
+            }
+        }
+
+        .sidebar h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #8898aa;
+            margin-bottom: 1.5rem;
             font-weight: 700;
+            padding-left: 14px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
             margin-bottom: 0.5rem;
-            color: var(--secondary, #2A3342);
         }
 
-        .page-header .subtitle {
-            display: block !important;
-            font-size: 1.1rem;
-            color: var(--text-secondary, #5F6C7E);
+        .sidebar a {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            display: block;
+            padding: 10px 16px;
+            border-radius: 50px;
+            /* Pill shape */
+            font-weight: 500;
         }
 
-        /* Table of Contents - Matching .card style */
-        .toc {
-            background: #ffffff;
-            border: 1px solid var(--border-color);
+        .sidebar a:hover {
+            color: var(--accent-orange);
+            background: #fffafa;
+        }
+
+        .sidebar a.active {
+            color: var(--accent-orange);
+            background: #fef2e0;
+            /* Matches header pill */
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 3rem 4rem;
+            max-width: 850px;
+            background: white;
+            min-height: 100vh;
+            border-left: 1px solid #f3f4f6;
+        }
+
+        .page-header {
+            margin-bottom: 4rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.75rem;
+            color: var(--stripe-slate);
+            font-weight: 800;
+            margin: 0 0 1rem 0;
+            letter-spacing: -0.02em;
+        }
+
+        .page-header p {
+            font-size: 1.25rem;
+            color: var(--stripe-text);
+            opacity: 0.85;
+            max-width: 650px;
+        }
+
+        /* Pipeline Visual */
+        .pipeline-container {
+            background: #0a2540;
             border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 12px rgba(42, 51, 66, 0.05);
+            padding: 3rem 2rem;
+            margin-bottom: 4rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(10, 37, 64, 0.1);
         }
 
-        .toc h3 {
-            font-size: 0.85rem;
+        .pipeline-title {
+            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            color: var(--text-muted, #94A3B8);
+            color: var(--accent-orange);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pipeline-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.25rem;
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .step:hover .step-icon {
+            transform: translateY(-5px);
+            background: var(--accent-orange);
+            border-color: var(--accent-orange);
+            box-shadow: 0 10px 20px rgba(247, 147, 26, 0.3);
+        }
+
+        .step-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .step-desc {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+        }
+
+        .connector {
+            flex: 1;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-top: -30px;
+        }
+
+        /* Content Sections */
+        section {
+            margin-bottom: var(--section-gap);
+            scroll-margin-top: 140px;
+        }
+
+        section h2 {
+            font-size: 1.75rem;
+            color: var(--stripe-slate);
             margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
             border-bottom: none;
             padding-bottom: 0;
         }
 
-        .toc ul {
-            list-style: none;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .toc a {
-            color: var(--text-secondary, #4A5568);
-            text-decoration: none;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: color 0.2s;
-        }
-
-        .toc a:hover {
-            color: var(--accent, #F7931A);
-        }
-
-        .page-header {
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-
-        .page-header .subtitle {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-        }
-
-        /* Table of Contents */
-        .toc {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 1.5rem 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .toc h3 {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-        }
-
-        .toc ul {
-            list-style: none;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0.5rem;
-        }
-
-        .toc a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .toc a:hover {
-            color: var(--accent-orange);
-        }
-
-        .toc a i {
-            font-size: 0.75rem;
-            opacity: 0.5;
-        }
-
-        /* Sections */
-        section {
-            margin-bottom: 4rem;
-        }
-
-        section h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            padding-bottom: 10px;
-            border-bottom: 3px solid var(--accent, #F7931A);
-            display: inline-block;
-            color: var(--secondary, #2A3342);
-        }
-
-        section h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin: 2.5rem 0 1.2rem;
-            color: var(--secondary, #2A3342);
-            border-bottom: none;
-        }
-
         section p {
-            margin-bottom: 1.2rem;
-            color: var(--text-secondary, #4A5568);
             font-size: 1.05rem;
+            color: #424770;
+            margin-bottom: 1.5rem;
         }
 
         /* Metric Cards */
         .metric-card {
             background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 12px rgba(42, 51, 66, 0.04);
+            border: 1px solid #e6ebf1;
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.2s;
+        }
+
+        .metric-card:hover {
+            border-color: #d1d9e2;
         }
 
         .metric-card h4 {
             font-size: 1.1rem;
             font-weight: 600;
-            color: var(--secondary, #2A3342);
-            margin-bottom: 1rem;
+            color: var(--stripe-slate);
+            margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: space-between;
         }
 
-        .metric-card h4 .badge {
-            font-size: 0.7rem;
-            background: var(--bg-secondary, #F7F5F3);
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-            font-weight: 600;
-            color: var(--accent, #F7931A);
+        .badge-source {
+            font-size: 0.65rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-        }
-
-        .metric-card .definition {
-            font-size: 1rem;
-            color: var(--text-secondary, #4A5568);
-            margin-bottom: 1.2rem;
-            line-height: 1.6;
-        }
-
-        .metric-card .details {
-            background: #F8FAFC;
-            border-radius: 12px;
-            padding: 1.5rem;
-            font-size: 0.95rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .metric-card .details dt {
+            background: #f6f9fc;
+            color: #8898aa;
+            padding: 3px 8px;
+            border-radius: 4px;
             font-weight: 600;
-            color: var(--secondary, #2A3342);
-            margin-bottom: 0.4rem;
-            font-size: 0.9rem;
+        }
+
+        .details-box {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-top: 1rem;
+            border: 1px solid #edf2f7;
+        }
+
+        .details-box dt {
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.05em;
+            color: #a0aec0;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
         }
 
-        .metric-card .details dd {
-            color: var(--text-secondary, #4A5568);
-            margin-bottom: 1rem;
+        .details-box dd {
             margin-left: 0;
-            line-height: 1.5;
+            font-size: 0.95rem;
+            color: var(--stripe-text);
+            margin-bottom: 1rem;
         }
 
-        .metric-card .details dd:last-child {
+        .details-box dd:last-child {
             margin-bottom: 0;
         }
 
-        /* Callouts */
-        .callout {
-            border-left: 4px solid var(--accent, #F7931A);
-            background: #FFF9F2;
-            padding: 1.5rem;
-            border-radius: 0 12px 12px 0;
-            margin: 2rem 0;
-            box-shadow: 0 2px 8px rgba(247, 147, 26, 0.05);
+        /* Criticality Indicators */
+        .weight-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
         }
 
-        .callout.info {
-            border-color: #3182CE;
-            background: #EBF8FF;
+        .weight-high {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
-        .callout.success {
-            border-color: #38A169;
-            background: #F0FFF4;
+        .weight-med {
+            background: #fef3c7;
+            color: #92400e;
         }
 
-        .callout p {
-            margin: 0;
-            font-size: 0.95rem;
+        .weight-low {
+            background: #ecfdf5;
+            color: #065f46;
         }
 
-        .callout strong {
-            color: var(--text-primary);
-        }
-
-        /* Tables */
-        .table-wrapper {
-            overflow-x: auto;
+        pre {
+            background: #0a2540;
+            color: #f7fafc;
+            padding: 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
             margin: 1.5rem 0;
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
+            margin-top: 1rem;
         }
 
         th,
         td {
             text-align: left;
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 12px;
+            border-bottom: 1px solid #e6ebf1;
         }
 
         th {
-            background: var(--bg-secondary);
+            background: #f8fafc;
+            color: var(--stripe-slate);
             font-weight: 600;
-            color: var(--text-primary);
+            text-transform: uppercase;
+            font-size: 0.75rem;
         }
 
-        td {
-            color: var(--text-secondary);
-        }
-
-        tr:hover td {
-            background: var(--bg-secondary);
-        }
-
-        /* Code Blocks */
-        code {
-            background: var(--bg-secondary);
-            padding: 0.15rem 0.4rem;
-            border-radius: 4px;
-            font-family: 'SF Mono', 'Consolas', monospace;
-            font-size: 0.85em;
-            color: #D53F8C;
-        }
-
-        pre {
-            background: #1A202C;
-            color: #E2E8F0;
-            padding: 1.5rem;
-            border-radius: 8px;
-            overflow-x: auto;
-            font-size: 0.85rem;
-            line-height: 1.5;
-            margin: 1.5rem 0;
-        }
-
-        pre code {
-            background: none;
-            color: inherit;
-            padding: 0;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            border-top: 1px solid var(--border-color);
-            margin-top: 4rem;
-        }
-
-        .footer a {
+        .static-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             color: var(--accent-orange);
             text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
         }
 
-        /* Responsive */
+        .static-link:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 768px) {
-            .container {
-                padding: 2rem 1rem;
+            .main-content {
+                padding: 2rem 1.5rem;
             }
 
-            .page-header h1 {
-                font-size: 1.8rem;
+            .pipeline-steps {
+                flex-direction: column;
+                gap: 2rem;
             }
 
-            .nav-links {
-                gap: 1rem;
+            .connector {
+                display: none;
             }
         }
     </style>
@@ -361,696 +399,289 @@
 <body class="has-fixed-header">
     <div id="header"></div>
 
-    <div class="container">
-        <!-- Main Content -->
-        <main>
-            <!-- <header class="page-header">
-                
-                <p class="subtitle">How we measure Bitcoin Core development — definitions, sources, and limitations.</p>
-            </header> -->
+    <div class="layout-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <h3>Methodology</h3>
+            <ul>
+                <li><a href="#pipeline" class="active">The Data Pipeline</a></li>
+                <li><a href="#contributors">Contributors & Aliases</a></li>
+                <li><a href="#maintainers">Maintainer Tracking</a></li>
+                <li><a href="#codebase">Codebase & LOC</a></li>
+                <li><a href="#categories">Categories & Mapping</a></li>
+                <li><a href="#criticality">Impact & Criticality</a></li>
+                <li><a href="#sources">Data Sources</a></li>
+            </ul>
+        </aside>
 
-            <!-- Table of Contents -->
-            <div class="toc">
-                <h3>On This Page</h3>
-                <ul>
-                    <li><a href="#contributors"><i class="fas fa-chevron-right"></i> Contributors</a></li>
-                    <li><a href="#components"><i class="fas fa-chevron-right"></i> Bitcoin Core Components</a></li>
-                    <li><a href="#maintainers"><i class="fas fa-chevron-right"></i> Maintainers</a></li>
-                    <li><a href="#codebase"><i class="fas fa-chevron-right"></i> Codebase & LOC</a></li>
-                    <li><a href="#categories"><i class="fas fa-chevron-right"></i> Categories</a></li>
-                    <li><a href="#criticality"><i class="fas fa-chevron-right"></i> 5 Dimensions of Criticality</a></li>
-                    <li><a href="#activity"><i class="fas fa-chevron-right"></i> Activity Patterns</a></li>
-                    <li><a href="#social"><i class="fas fa-chevron-right"></i> Social & Sponsorship</a></li>
-                    <li><a href="#limitations"><i class="fas fa-chevron-right"></i> Limitations</a></li>
-                    <li><a href="#data-sources"><i class="fas fa-chevron-right"></i> Data Sources</a></li>
-                </ul>
-            </div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Our Methodology</h1>
+                <p>Technical transparency on how we ingest, resolve, and analyze Bitcoin Core development activity.</p>
+            </header>
+
+            <!-- Data Pipeline Section -->
+            <section id="pipeline">
+                <div class="pipeline-container">
+                    <div class="pipeline-title">
+                        <i class="fas fa-microchip"></i>
+                        The Data Lifecycle
+                    </div>
+                    <div class="pipeline-steps">
+                        <div class="step">
+                            <div class="step-icon"><i class="fas fa-terminal"></i></div>
+                            <div class="step-label">Extract</div>
+                            <div class="step-desc">Git Numstat</div>
+                        </div>
+                        <div class="connector"></div>
+                        <div class="step">
+                            <div class="step-icon"><i class="fas fa-project-diagram"></i></div>
+                            <div class="step-label">Resolve</div>
+                            <div class="step-desc">Identity Fusion</div>
+                        </div>
+                        <div class="connector"></div>
+                        <div class="step">
+                            <div class="step-icon"><i class="fas fa-tags"></i></div>
+                            <div class="step-label">Classify</div>
+                            <div class="step-desc">Functional Areas</div>
+                        </div>
+                        <div class="connector"></div>
+                        <div class="step">
+                            <div class="step-icon"><i class="fas fa-file-export"></i></div>
+                            <div class="step-label">Serialize</div>
+                            <div class="step-desc">JSON Artifacts</div>
+                        </div>
+                    </div>
+                </div>
+                <p>The Orange Dev Tracker is powered by a forensic Git analysis pipeline. We reconstruct the 15-year
+                    history of the project to understand the evolution of the software and the people behind it.</p>
+            </section>
 
             <!-- Contributors Section -->
             <section id="contributors">
-                <h2>Contributors</h2>
-                <p>We track individuals who have authored at least one commit to the Bitcoin Core repository. Because
-                    developers often use multiple names or email addresses, we apply identity resolution to unify
-                    aliases.
-                </p>
+                <h2><i class="fas fa-users" style="color: var(--accent-orange)"></i> Contributors & Aliases</h2>
+                <p>We track individuals who have authored at least one commit. Because developers often use multiple
+                    aliases, we apply identity resolution to unify them into unique human identities.</p>
 
                 <div class="metric-card">
-                    <h4>Unique Contributors <span class="badge">KPI</span></h4>
-                    <p class="definition">The total count of distinct individuals who have authored commits to Bitcoin
-                        Core,
-                        with aliases unified into single identities.</p>
-                    <dl class="details">
-                        <dt>How it's calculated</dt>
-                        <dd>We build a graph where names and emails are nodes, connected when they appear in the same
-                            commit. Connected components represent one person. Known pseudonyms (e.g., "sipa" = Pieter
-                            Wuille) are manually linked.</dd>
-                        <dt>What it includes</dt>
-                        <dd>Any person who authored a commit, including documentation, tests, and typo fixes.</dd>
-                        <dt>What it excludes</dt>
-                        <dd>Reviewers who only ACK/NACK without authoring commits. Bot accounts are filtered out.</dd>
-                    </dl>
-                </div>
-
-                <div class="metric-card">
-                    <h4>Cohort Year</h4>
-                    <p class="definition">The year of a contributor's first commit to the repository.</p>
-                    <dl class="details">
-                        <dt>Use case</dt>
-                        <dd>Enables analysis of contributor retention and generational patterns. "Veterans" (first
-                            commit
-                            years ago) vs "Newcomers" (first commit this year).</dd>
-                    </dl>
-                </div>
-
-                <div class="metric-card">
-                    <h4>Tenure (Active Years)</h4>
-                    <p class="definition">The count of distinct calendar years in which the contributor made at least
-                        one
-                        commit.</p>
-                    <dl class="details">
-                        <dt>Example</dt>
-                        <dd>A developer active in 2012 and 2024 has tenure of <strong>2 years</strong>, not 12 years
-                            span.
-                        </dd>
-                        <dt>Why this matters</dt>
-                        <dd>Distinguishes sustained contributors from one-time contributors, regardless of calendar
-                            span.
-                        </dd>
-                    </dl>
-                </div>
-
-                <div class="metric-card">
-                    <h4>Contribution Tiers</h4>
-                    <p class="definition">Percentile-based segmentation of contributors by commit volume.</p>
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Tier</th>
-                                    <th>Percentile</th>
-                                    <th>Description</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>👑 The Core</td>
-                                    <td>Top 1%</ <td>~12 people responsible for ~80% of commits</td>
-                                </tr>
-                                <tr>
-                                    <td>⭐ The Regulars</td>
-                                    <td>Top 10%</td>
-                                    <td>Consistent, active contributors</td>
-                                </tr>
-                                <tr>
-                                    <td>⚒️ The Sustainers</td>
-                                    <td>Top 25%</td>
-                                    <td>Periodic contributors with steady output</td>
-                                </tr>
-                                <tr>
-                                    <td>🔭 The Explorers</td>
-                                    <td>Top 50%</td>
-                                    <td>Occasional contributors</td>
-                                </tr>
-                                <tr>
-                                    <td>🧱 The Scouts</td>
-                                    <td>Bottom 50%</td>
-                                    <td>One-time or rare contributors</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <h4>Unique Contributors <span class="badge-source">Engine: clean.py</span></h4>
+                    <p>Total count of distinct individuals with aliases unified via a graph clustering algorithm.</p>
+                    <div class="details-box">
+                        <dt>Methodology</dt>
+                        <dd>We build a relational graph where names and emails are nodes. Edges are drawn when they
+                            appear in the same commit. Connected components represent a single identity.</dd>
+                        <dt>Resolution</dt>
+                        <dd>Known pseudonyms (e.g., <code>sipa</code> → <code>Pieter Wuille</code>) are manually fused
+                            using our <code>aliases_lookup.json</code> index.</dd>
                     </div>
                 </div>
-
-                <div class="callout">
-                    <p><strong>Note:</strong> Commit count does not equal impact. A single consensus-critical change can
-                        be
-                        more significant than hundreds of documentation updates. The tier system reflects activity
-                        volume,
-                        not importance.</p>
-                </div>
-            </section>
-
-            <!-- Bitcoin Core Components Section -->
-            <section id="components">
-                <h2>Bitcoin Core Components</h2>
-                <p>Bitcoin Core consists of several key components that work together to run the network and provide
-                    user interfaces.</p>
-
-                <div class="metric-card">
-                    <h4>bitcoind (Daemon)</h4>
-                    <p class="definition">The core engine that validates transactions, maintains the blockchain, and
-                        communicates with peers.</p>
-                    <dl class="details">
-                        <dt>What it does</dt>
-                        <dd>Runs the Bitcoin protocol, manages the UTXO set, and provides RPC interfaces for automation.
-                        </dd>
-                        <dt>Categories involved</dt>
-                        <dd>Consensus, Node & RPC, P2P Network, Database, Cryptography, Utilities.</dd>
-                    </dl>
-                </div>
-
-                <div class="metric-card">
-                    <h4>bitcoin-qt (GUI)</h4>
-                    <p class="definition">The graphical user interface for wallet management and node operation.</p>
-                    <dl class="details">
-                        <dt>What it does</dt>
-                        <dd>Provides a desktop app for sending/receiving Bitcoin, viewing transactions, and configuring
-                            the node.</dd>
-                        <dt>Categories involved</dt>
-                        <dd>GUI, Wallet.</dd>
-                    </dl>
-                </div>
-
-                <p>These components share underlying libraries for consensus rules, cryptography, and utilities,
-                    ensuring consistency across implementations.</p>
             </section>
 
             <!-- Maintainers Section -->
             <section id="maintainers">
-                <h2>Maintainers</h2>
-                <p>Maintainers are individuals with the technical authority to merge code into the Bitcoin Core
-                    repository. They act as "gatekeepers" rather than deciders, ensuring that changes have achieved
-                    rough consensus from the broader developer community.</p>
-
+                <h2><i class="fas fa-key" style="color: var(--accent-orange)"></i> Maintainer Tracking</h2>
+                <p>Maintainers are the technical gatekeepers of the project. We track both historical lineage and
+                    current authority.</p>
                 <div class="metric-card">
-                    <h4>The Trusted Circle (Identity Whitelist)</h4>
-                    <p class="definition">We maintain a curated whitelist of known historical and active maintainers,
-                        verified against project documentation and security keys.</p>
-                    <dl class="details">
-                        <dt>Principal Sources</dt>
-                        <dd>
-                            <ul>
-                                <li><strong>Historical Lineage:</strong> <a
-                                        href="https://bitcoin.stackexchange.com/questions/176/is-there-a-list-of-core-bitcoin-committers"
-                                        target="_blank">Bitcoin StackExchange (History of Committers)</a>.</li>
-                                <li><strong>Technical Authority:</strong> The official <a
-                                        href="https://github.com/bitcoin/bitcoin/blob/master/contrib/verify-commits/trusted-keys"
-                                        target="_blank">Bitcoin Core Trusted Keys</a>
-                                    (contrib/verify-commits/trusted-keys).</li>
-                            </ul>
-                        </dd>
-                    </dl>
-                </div>
-
-                <div class="metric-card">
-                    <h4>Hybrid Activity Detection</h4>
-                    <p class="definition">Because "Maintenance" is a social role but its effects are technical, we use a
-                        two-pronged detection logic.</p>
-                    <dl class="details">
-                        <dt>1. Modern Era (Merge Commits)</dt>
-                        <dd>For work after 2012, maintainers are identified by the <code>committer_email</code> on
-                            <code>is_merge = True</code> commits. This accurately captures the "janitorial" actions of
-                            clicking the merge button.
-                        </dd>
-                        <dt>2. Satoshi Era (Author Credit)</dt>
-                        <dd>In the early days (Pre-2012), formal merge commits were not standard. To respect the "Relay
-                            Race" legacy, Satoshi, Sirius, Laszlo, and Gavin are credited for their direct author
-                            commits during their periods of leadership.</dd>
-                    </dl>
-                </div>
-
-                <div class="metric-card">
-                    <h4>Status: Active vs. Authorized</h4>
-                    <p class="definition">We distinguish between a maintainer's technical access and their real-world
-                        activity.</p>
-                    <dl class="details">
-                        <dt>Headline KPI (Active Count)</dt>
-                        <dd>Reflects the <strong>Authorized</strong> team. We count every individual currently listed as
-                            "Active" in our whitelist (verified against Trusted Keys), even if they haven't performed a
-                            merge in the current data snapshot (e.g., specialized build/GUI maintainers).</dd>
-                        <dt>Relay Race & Activity Trends</dt>
-                        <dd>Visualizes the <strong>Active Years</strong> where the individual either held push access or
-                            performed a maintainer action in the logs. If a maintainer is authorized but has 0 merges,
-                            they are shown as "Authorized" in the timeline starting from their year of appointment.</dd>
-                    </dl>
-                </div>
-
-                <div class="callout info">
-                    <p><strong>Context:</strong> Bitcoin Core has historically had a small group of maintainers (rarely
-                        more than 6 at a time). This is intentional — maintainer access is granted conservatively and
-                        requires significant trust from the community.</p>
+                    <h4>The Trusted Circle</h4>
+                    <div class="details-box">
+                        <dt>Historical (Author Era)</dt>
+                        <dd>Verified via community records (StackExchange) for early committers like Satoshi Nakamoto,
+                            Laszlo Hanyecz, and Gavin Andresen.</dd>
+                        <dt>Modern (Merge Era)</dt>
+                        <dd>Identified by the <code>committer_email</code> on <code>is_merge = True</code> commits,
+                            cross-referenced with the <code>trusted-keys</code> whitelist from the repository.</dd>
+                    </div>
                 </div>
             </section>
 
             <!-- Codebase Section -->
             <section id="codebase">
-                <h2>Codebase & Lines of Code</h2>
-                <p>We measure codebase size using static analysis of the current repository, supplemented by historical
-                    churn data.</p>
-
+                <h2><i class="fas fa-code-branch" style="color: var(--accent-orange)"></i> Codebase & LOC</h2>
+                <p>We measure project size using a combination of static analysis (current state) and historical churn
+                    replays (evolution).</p>
                 <div class="metric-card">
-                    <h4>Current Codebase Size (LOC) <span class="badge">KPI</span></h4>
-                    <p class="definition">Total lines of code in source files, measured from the current repository
-                        state.
-                    </p>
-                    <dl class="details">
-                        <dt>What's included</dt>
-                        <dd>C++, Python, Shell, C, and other logic files.</dd>
-                        <dt>What's excluded</dt>
-                        <dd>Qt translations (.ts, .xlf), UI files, images, config files, build system files, and
-                            generated
-                            data.</dd>
-                        <dt>Current value</dt>
-                        <dd>~480,000 lines of logic code.</dd>
-                    </dl>
-                </div>
-
-                <div class="metric-card">
-                    <h4>Historical LOC Evolution</h4>
-                    <p class="definition">Cumulative lines of code over time, calculated by replaying commit additions
-                        and
-                        deletions.</p>
-                    <dl class="details">
-                        <dt>Methodology</dt>
-                        <dd>Commits are sorted chronologically. For each month, we sum (additions - deletions) to get
-                            net
-                            change, then apply cumulatively.</dd>
-                        <dt>Calibration</dt>
-                        <dd>A scaling factor is applied so the final historical value matches the static scan. This
-                            corrects
-                            for file moves, reformatting, and branch merge artifacts.</dd>
-                    </dl>
-                </div>
-
-                <div class="callout">
-                    <p><strong>Why churn ≠ static scan:</strong> Git records file moves as delete + add (inflating
-                        both).
-                        Reformatting commits change lines without adding logic. The static scan gives the "true" current
-                        size; historical evolution shows the trend.</p>
+                    <h4>Logic Lines of Code (LLOC)</h4>
+                    <div class="details-box">
+                        <dt>Included</dt>
+                        <dd>C++, Python (Tests), C, and Shell scripts.</dd>
+                        <dt>Excluded</dt>
+                        <dd>Qt translations (.ts), UI forms (.ui), documentation (.md), and generated assets.</dd>
+                    </div>
                 </div>
             </section>
 
             <!-- Categories Section -->
             <section id="categories">
-                <h2>Categories & Fractional Attribution</h2>
-                <p>Bitcoin Core development is analyzed through a functional lens, where every file is assigned to a
-                    specific functional category based on its architectural role. This allows us to track development
-                    focus and calculate impact scores based on the technical risk of each domain.</p>
+                <h2><i class="fas fa-tags" style="color: var(--accent-orange)"></i> Categories & Mapping</h2>
+                <p>Every file in the Bitcoin Core repository is assigned a functional category. This allows us to track
+                    development focus and calculate risk-weighted impact scores.</p>
 
-                <div class="callout success">
-                    <p><strong>Priority Categorization:</strong> To ensure cross-cutting work like Testing and DevOps is
-                        correctly captured, we apply rules in a specific priority order. <strong>Tests (QA)</strong>,
-                        <strong>Build & CI</strong>, and <strong>Documentation</strong> are identified first, even if
-                        the files reside within a subsystem directory (e.g., <code>src/wallet/test/</code> is
-                        categorized as Tests, not Wallet).
+                <div class="metric-card" style="border-left: 4px solid var(--accent-orange); background: #fffcf9;">
+                    <h4><i class="fas fa-exclamation-circle"
+                            style="color: var(--accent-orange); margin-right: 8px;"></i>
+                        Priority Rules</h4>
+                    <p style="font-size: 0.95rem; margin-bottom: 0;">To ensure cross-cutting work like Testing and
+                        Documentation is correctly captured, we apply rules in a specific <strong>priority
+                            order</strong>. Cross-subsystem tests are identified first. For example, a file residing in
+                        <code>src/wallet/test/</code> is categorized as <strong>Tests (QA)</strong>, not Wallet, because
+                        its primary function is validation rather than feature logic.
                     </p>
                 </div>
 
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Category</th>
-                                <th>Priority Patterns</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Tests (QA)</strong></td>
-                                <td><code>/test/</code>, <code>/fuzz/</code>, <code>/bench/</code></td>
-                                <td>Unit, functional, fuzzing, and benchmark suites across the entire codebase.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Consensus (Domain Logic)</strong></td>
-                                <td><code>src/consensus/</code>, <code>src/kernel/</code>, <code>src/script/</code>,
-                                    <code>src/validation</code>
-                                </td>
-                                <td>The "Nuclear Core" of Bitcoin. The invariant rules that define the protocol.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Node & RPC (App/Interface)</strong></td>
-                                <td><code>src/node/</code>, <code>src/rpc/</code>, <code>src/index/</code></td>
-                                <td>The daemon application logic, command-line interface, and indexing.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>P2P Network (Infrastructure)</strong></td>
-                                <td><code>src/net</code>, <code>src/protocol</code>, <code>src/addrman</code></td>
-                                <td>Networking stack, peer discovery, and message handling.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Wallet (Client App)</strong></td>
-                                <td><code>src/wallet/</code>, <code>src/interfaces/</code></td>
-                                <td>Key management, coin selection, and transaction creation.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>GUI (Presentation Layer)</strong></td>
-                                <td><code>src/qt/</code></td>
-                                <td>The user interface (Bitcoin-Qt).</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Cryptography (Primitives)</strong></td>
-                                <td><code>src/crypto/</code>, <code>src/secp256k1/</code></td>
-                                <td>Elliptic curve libraries and cryptographic primitives.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Database (Persistence)</strong></td>
-                                <td><code>src/leveldb/</code>, <code>src/dbwrapper</code></td>
-                                <td>Local storage for the block index and wallet state.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Utilities (Shared Libs)</strong></td>
-                                <td><code>src/util/</code>, <code>src/support/</code>, <code>src/univalue/</code></td>
-                                <td>Common helpers, formatting, and cross-platform support.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Build & CI (DevOps)</strong></td>
-                                <td><code>ci/</code>, <code>Makefile</code>, <code>CMakeLists</code>,
-                                    <code>depends/</code>
-                                </td>
-                                <td>The machinery that compiles, tests, and deploys the software.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Documentation</strong></td>
-                                <td><code>doc/</code>, <code>*.md</code>, <code>*.txt</code></td>
-                                <td>Operational guides, release notes, and developer specs.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
                 <div class="metric-card">
-                    <h4>Fractional Attribution Model</h4>
-                    <p class="definition">How we handle "Multi-Category" commits to prevent data inflation.</p>
-                    <dl class="details">
-                        <dt>The Logic</dt>
-                        <dd>If a single commit touches files in multiple categories (e.g., a Wallet change that also
-                            requires a new Test), the credit for that commit is split equally across those categories.
-                        </dd>
-                        <dt>Formula</dt>
-                        <dd><code>Credit = 1 / Total_Distinct_Categories_Touched</code></dd>
-                        <dt>Result</dt>
-                        <dd>This ensures that the sum of all category counts for a contributor exactly equals their
-                            total commit count, providing a precise "Focus Profile" rather than over-counting
-                            contributions.</dd>
-                    </dl>
+                    <h4>Full Category Index</h4>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Primary Paths / Patterns</th>
+                                    <th>Core Role</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Consensus</strong></td>
+                                    <td><code>src/consensus/</code>, <code>src/validation</code></td>
+                                    <td>Protocol invariant rules</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Cryptography</strong></td>
+                                    <td><code>src/crypto/</code>, <code>src/secp256k1/</code></td>
+                                    <td>Mathematical primitives</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Core Libs</strong></td>
+                                    <td><code>src/kernel/</code>, <code>src/script/</code></td>
+                                    <td>Architectural scaffolding</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>P2P Network</strong></td>
+                                    <td><code>src/net/</code>, <code>src/protocol</code></td>
+                                    <td>Communication fabric</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Database</strong></td>
+                                    <td><code>src/leveldb/</code>, <code>src/dbwrapper</code></td>
+                                    <td>Persistence & Indexing</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Utilities</strong></td>
+                                    <td><code>src/util/</code>, <code>src/support/</code></td>
+                                    <td>Shared helpers</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Node & RPC</strong></td>
+                                    <td><code>src/node/</code>, <code>src/rpc/</code></td>
+                                    <td>Application & Interface</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Wallet</strong></td>
+                                    <td><code>src/wallet/</code>, <code>src/interfaces</code></td>
+                                    <td>Key & Coin management</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>GUI</strong></td>
+                                    <td><code>src/qt/</code></td>
+                                    <td>Visual presentation</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tests (QA)</strong></td>
+                                    <td><code>/test/</code>, <code>/fuzz/</code>, <code>*/test/*.cpp</code></td>
+                                    <td>Global & subsystem validation</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Build & CI</strong></td>
+                                    <td><code>ci/</code>, <code>Makefile</code>, <code>depends/</code></td>
+                                    <td>Compilation & DevOps</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Documentation</strong></td>
+                                    <td><code>doc/</code>, <code>*.md</code></td>
+                                    <td>Education & Guides</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
-            <!-- 5 Dimensions of Criticality -->
+            <!-- Criticality Section -->
             <section id="criticality">
-                <h2>The 5 Dimensions of Criticality</h2>
-                <p>Not all code is equal. A one-line change to consensus rules carries significantly more risk (and
-                    value) than a 500-line documentation update. To visualize this, we use a <strong>Risk-Weighted
-                        Impact Model</strong> that groups categories into 5 qualitative dimensions.</p>
-
+                <h2><i class="fas fa-shield-alt" style="color: var(--accent-orange)"></i> Impact & Criticality</h2>
+                <p>We use a Risk-Weighted Impact Model to visualize development focus. Not all code is equal; a bug in
+                    Consensus is existential, while a typo in Documentation is minor.</p>
                 <div class="metric-card">
-                    <h4>1. Security (The Guard Rails)</h4>
-                    <p class="definition">The "Nuclear Core" of Bitcoin. Changes here are existential.</p>
-                    <dl class="details">
-                        <dt>Risk Weight</dt>
-                        <dd><span class="badge" style="background:#FED7D7; color:#C53030;">50x</span></dd>
-                        <dt>Categories</dt>
-                        <dd><strong>Consensus</strong>, <strong>Cryptography</strong>.</dd>
-                        <dt>Rationale</dt>
-                        <dd>Bugs in these areas can cause chain splits, inflation events, or key leakage. The highest
-                            standard of review is required.</dd>
-                    </dl>
+                    <h4>Weighting Groups</h4>
+                    <div class="details-box">
+                        <dt>Security Group (50x)</dt>
+                        <dd><span class="weight-pill weight-high">50x</span> Consensus, Cryptography, Core Libs.</dd>
+                        <dt>Resilience Group (30x - 40x)</dt>
+                        <dd><span class="weight-pill weight-med">40x</span> P2P Network. <span
+                                class="weight-pill weight-med">30x</span> Database, Utilities.</dd>
+                        <dt>Usability Group (10x - 20x)</dt>
+                        <dd><span class="weight-pill weight-low">20x</span> Wallet. <span
+                                class="weight-pill weight-low">10x</span> Node & RPC, GUI.</dd>
+                        <dt>Quality & Education (1x - 5x)</dt>
+                        <dd><span class="weight-pill weight-low">5x</span> Tests, Build & CI. <span
+                                class="weight-pill weight-low">1x</span> Documentation.</dd>
+                    </div>
                 </div>
-
                 <div class="metric-card">
-                    <h4>2. Resilience (The Fabric)</h4>
-                    <p class="definition">The networking and validation infrastructure that keeps the system alive.</p>
-                    <dl class="details">
-                        <dt>Risk Weight</dt>
-                        <dd><span class="badge" style="background:#FEEBC8; color:#C05621;">40x - 30x</span></dd>
-                        <dt>Categories</dt>
-                        <dd><strong>P2P Network</strong> (40x), <strong>Database</strong> (30x),
-                            <strong>Utilities</strong> (30x).
-                        </dd>
-                        <dt>Rationale</dt>
-                        <dd>Failure here can lead to eclipse attacks, peer bans, or data corruption. Critical for
-                            network health.</dd>
-                    </dl>
-                </div>
-
-                <div class="metric-card">
-                    <h4>3. Usability (The Interface)</h4>
-                    <p class="definition">How humans and software interact with the node.</p>
-                    <dl class="details">
-                        <dt>Risk Weight</dt>
-                        <dd><span class="badge" style="background:#FEFCBF; color:#B7791F;">20x - 10x</span></dd>
-                        <dt>Categories</dt>
-                        <dd><strong>Wallet</strong> (20x), <strong>Node & RPC</strong> (10x), <strong>GUI</strong>
-                            (10x).</dd>
-                        <dt>Rationale</dt>
-                        <dd>Wallet bugs can lose user funds (local risk). RPC/GUI bugs break integration but don't
-                            threaten the network globally.</dd>
-                    </dl>
-                </div>
-
-                <div class="metric-card">
-                    <h4>4. Quality (The Safety Net)</h4>
-                    <p class="definition">Ensuring correctness and stability.</p>
-                    <dl class="details">
-                        <dt>Risk Weight</dt>
-                        <dd><span class="badge" style="background:#C6F6D5; color:#2F855A;">5x</span></dd>
-                        <dt>Categories</dt>
-                        <dd><strong>Tests (QA)</strong>, <strong>Build & CI</strong>.</dd>
-                        <dt>Rationale</dt>
-                        <dd>Vital for long-term velocity and safety, but do not affect the mainnet runtime directly.
-                        </dd>
-                    </dl>
-                </div>
-
-                <div class="metric-card">
-                    <h4>5. Education (The Knowledge Base)</h4>
-                    <p class="definition">Onboarding and explaining the system.</p>
-                    <dl class="details">
-                        <dt>Risk Weight</dt>
-                        <dd><span class="badge" style="background:#E2E8F0; color:#4A5568;">1x</span></dd>
-                        <dt>Categories</dt>
-                        <dd><strong>Documentation</strong>.</dd>
-                        <dt>Rationale</dt>
-                        <dd>Low technical risk, but high social value for maintaining open-source accessibility.</dd>
-                    </dl>
-                </div>
-
-                <div class="metric-card">
-                    <h4>Calculation Logic</h4>
-                    <p class="definition">How we compute the "Impact Score" for the Radar Chart.</p>
-                    <pre><code class="language-python">Impact Score = Σ (Commit × Weight × Fractional_Factor)</code></pre>
-                    <dl class="details">
-                        <dt>Variables</dt>
-                        <dd>
-                            <ul>
-                                <li><strong>Commit</strong>: 1 for each commit authored.</li>
-                                <li><strong>Weight</strong>: The Risk Weight of the primary category (e.g., 50 for
-                                    Consensus).</li>
-                                <li><strong>Fractional_Factor</strong>: <code>1 / N</code>, where N is the number of
-                                    categories touched by that commit.</li>
-                            </ul>
-                        </dd>
-                        <dt>Example</dt>
-                        <dd>A commit that touches <strong>Consensus (50x)</strong> and <strong>Tests (5x)</strong>:
-                            <br>
-                            <code>Score = (1 * 50 * 0.5) + (1 * 5 * 0.5) = 25 + 2.5 = 27.5</code>
-                        </dd>
-                    </dl>
-                </div>
-
-                <div class="metric-card">
-                    <h4>Model Analysis: Interpreting the Data</h4>
-                    <p class="definition">How to read the "Impact Score" and understand its trade-offs.</p>
-
-                    <h5 style="font-size: 0.95rem; color: #2D3748; margin: 1rem 0 0.5rem;">How to Interpret</h5>
-                    <ul style="list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; color: #4A5568;">
-                        <li><strong>Shape > Size:</strong> Focus on the <em>direction</em> of the chart. A skew toward
-                            "Security" indicates a Protocol Engineer. A skew toward "Usability" indicates a Product
-                            Engineer.</li>
-                        <li><strong>No "Best" Shape:</strong> A "Generalist" (circular shape) is not necessarily better
-                            than a "Specialist" (spiky shape). Bitcoin needs both.</li>
-                    </ul>
-
-                    <h5 style="font-size: 0.95rem; color: #2D3748; margin: 1rem 0 0.5rem;">Trade-offs (Pros & Cons)</h5>
-                    <dl class="details">
-                        <dt style="color: #38A169;">✅ Pros (Why we use it)</dt>
-                        <dd>
-                            <ul>
-                                <li><strong>Risk Awareness:</strong> Correctly identifies that a 1-line Consensus fix is
-                                    more critical than a 100-line documentation update.</li>
-                                <li><strong>Refactor Dampening:</strong> "Fractional Attribution" prevents score
-                                    inflation from scripts or refactors that touch hundreds of files (their weight is
-                                    diluted by 1/N).</li>
-                            </ul>
-                        </dd>
-                        <dt style="color: #E53E3E;">⚠️ Cons (Limitations)</dt>
-                        <dd>
-                            <ul>
-                                <li><strong>Subjective Weights:</strong> The choice of "50x" vs "20x" is a heuristic
-                                    judgment, not a law of physics.</li>
-                                <li><strong>Atomic Commit Sensitivity:</strong> Theoretically, score inflation is
-                                    possible by making many tiny, separate commits to critical files. (However, this is
-                                    rare and usually caught by maintainers).</li>
-                            </ul>
-                        </dd>
-                    </dl>
+                    <h4>The Formula</h4>
+                    <p>Impact scores are calculated using fractional attribution to prevent over-counting multi-category
+                        work.</p>
+                    <pre><code>Score = Σ (Commit × Weight × 1/N)</code></pre>
                 </div>
             </section>
 
-            <!-- Activity Section -->
-            <section id="activity">
-                <h2>Activity Patterns</h2>
+            <!-- Sources Section -->
+            <section id="sources">
+                <h2><i class="fas fa-database" style="color: var(--accent-orange)"></i> Data Sources</h2>
+                <p>Transparency is our priority. You can verify all static classification data directly via our
+                    repository.</p>
 
                 <div class="metric-card">
-                    <h4>Heatmap (Hour × Year)</h4>
-                    <p class="definition">Commit count binned by UTC hour and year, showing when development happens
-                        globally.</p>
-                    <dl class="details">
-                        <dt>Insight</dt>
-                        <dd>Early development was concentrated in US timezones. Over time, activity spread across
-                            European
-                            and Asian hours as the project globalized.</dd>
-                    </dl>
-                </div>
+                    <h4>Verified Data Assets</h4>
+                    <p>These JSON files provide the ground truth for our forensics. We invite the community to review
+                        and suggest improvements via PRs.</p>
 
-                <div class="metric-card">
-                    <h4>Weekend Ratio</h4>
-                    <p class="definition">Percentage of commits made on Saturday or Sunday (UTC) per year.</p>
-                    <dl class="details">
-                        <dt>What it indicates</dt>
-                        <dd>Higher ratio suggests hobbyist/passion-driven development. Lower ratio suggests
-                            professionalization and sponsored work during business hours.</dd>
-                        <dt>Caveat</dt>
-                        <dd>UTC "weekend" may be Friday night or Monday morning in some timezones. This metric uses a
-                            Western work-week assumption.</dd>
-                    </dl>
-                </div>
-            </section>
-
-            <!-- Social Section -->
-            <section id="social">
-                <h2>Social & Sponsorship</h2>
-
-                <div class="metric-card">
-                    <h4>Stars & Forks</h4>
-                    <p class="definition">GitHub stars (interest) and forks (derivative work or contribution intent)
-                        over
-                        time.</p>
-                    <dl class="details">
-                        <dt>Data source</dt>
-                        <dd>GitHub API with pagination. Early data is complete; recent data is extrapolated linearly to
-                            current totals.</dd>
-                    </dl>
-                </div>
-
-                <div class="metric-card">
-                    <h4>Corporate Era (Sponsorship %)</h4>
-                    <p class="definition">Approximate percentage of commits from developers with corporate/sponsored
-                        affiliations.</p>
-                    <dl class="details">
-                        <dt>Classification method</dt>
-                        <dd>
-                            <strong>Corporate:</strong> Developer has a company in GitHub profile, OR uses a corporate
-                            email
-                            domain (e.g., @chaincode.com, @blockstream.io).<br>
-                            <strong>Personal:</strong> Developer uses a personal email (gmail, hotmail, etc.) with no
-                            company affiliation.
+                    <div class="details-box">
+                        <dt>Identity & Aliases</dt>
+                        <dd>Unifies multiple developer identities (names/emails) into single human entities.
+                            <br><a
+                                href="https://raw.githubusercontent.com/sorukumar/orange-dev-tracker/main/data/aliases_lookup.json"
+                                class="static-link" target="_blank"><i class="fas fa-external-link-alt"></i>
+                                aliases_lookup.json</a>
                         </dd>
-                        <dt>Accuracy</dt>
-                        <dd>This is a heuristic. Some sponsored developers use personal emails; some .edu emails are not
-                            sponsorship-related. The trend direction is reliable; exact percentages are approximate.
+
+                        <dt>Maintainer Trust</dt>
+                        <dd>The whitelist of historical and active maintainers authorized to merge code.
+                            <br><a
+                                href="https://raw.githubusercontent.com/sorukumar/orange-dev-tracker/main/data/maintainers_lookup.json"
+                                class="static-link" target="_blank"><i class="fas fa-external-link-alt"></i>
+                                maintainers_lookup.json</a>
                         </dd>
-                    </dl>
-                </div>
 
-                <div class="callout success">
-                    <p><strong>Known Sponsors:</strong> Chaincode Labs, Spiral (Block/Square), Blockstream, MIT Digital
-                        Currency Initiative, Brink, Human Rights Foundation, and individual patrons via GitHub Sponsors
-                        or
-                        grants.</p>
-                </div>
-            </section>
-
-            <!-- Limitations Section -->
-            <section id="limitations">
-                <h2>Known Limitations</h2>
-
-                <div class="metric-card">
-                    <h4>What We Don't Capture</h4>
-                    <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
-                        <li><strong>Mailing List Contributions:</strong> Design discussions, BIP authorship, and concept
-                            development happen off-GitHub.</li>
-                        <li><strong>Testing Without Commits:</strong> Many contributors test releases without leaving a
-                            commit trail.</li>
-                        <li><strong>Pseudonymous Linking:</strong> Our alias list is incomplete. Some pseudonyms may be
-                            counted as separate people.</li>
-                    </ul>
-                </div>
-
-                <div class="metric-card">
-                    <h4>Data Freshness</h4>
-                    <dl class="details">
-                        <dt>Commit Data</dt>
-                        <dd>Refreshed monthly from the Bitcoin Core git repository.</dd>
-                        <dt>Enrichment Data</dt>
-                        <dd>GitHub profile information (company, location) is from a 2024 snapshot and may be stale.
+                        <dt>Corporate Sponsorship</dt>
+                        <dd>Heuristics for mapping emails and companies to sponsorship status.
+                            <br><a
+                                href="https://raw.githubusercontent.com/sorukumar/orange-dev-tracker/main/data/sponsors_lookup.json"
+                                class="static-link" target="_blank"><i class="fas fa-external-link-alt"></i>
+                                sponsors_lookup.json</a>
                         </dd>
-                        <dt>Social Data</dt>
-                        <dd>Stars/forks totals are live; historical curve is partially extrapolated.</dd>
-                    </dl>
+
+                        <dt>Regional Identification</dt>
+                        <dd>Verified geographical locations for contributors (where public).
+                            <br><a
+                                href="https://raw.githubusercontent.com/sorukumar/orange-dev-tracker/main/data/identified_locations.json"
+                                class="static-link" target="_blank"><i class="fas fa-external-link-alt"></i>
+                                identified_locations.json</a>
+                        </dd>
+                    </div>
                 </div>
-            </section>
-
-            <!-- Data Sources Section -->
-            <section id="data-sources">
-                <h2>Data Sources</h2>
-
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Source</th>
-                                <th>What We Extract</th>
-                                <th>Method</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Bitcoin Core Git Repository</td>
-                                <td>Commits, authors, timestamps, file changes</td>
-                                <td><code>git log --all --numstat</code></td>
-                            </tr>
-                            <tr>
-                                <td>Bitcoin Core Trusted Keys</td>
-                                <td>Active maintainer verification</td>
-                                <td>Verifying <code>contrib/verify-commits/trusted-keys</code></td>
-                            </tr>
-                            <tr>
-                                <td>Bitcoin StackExchange</td>
-                                <td>Historical maintainer lineage</td>
-                                <td>Curated community-led history of committers</td>
-                            </tr>
-                            <tr>
-                                <td>Repository HEAD</td>
-                                <td>Current file count, lines of code</td>
-                                <td>Static file system scan</td>
-                            </tr>
-                            <tr>
-                                <td>GitHub API</td>
-                                <td>Stars, forks, watchers, user profiles</td>
-                                <td>REST API with pagination</td>
-                            </tr>
-                            <tr>
-                                <td>Legacy Snapshot (2024)</td>
-                                <td>Contributor GitHub profiles, locations, companies</td>
-                                <td>Historical data fusion</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <h3>Technical Pipeline</h3>
-                <pre><code>1. ingest.py   → Parse git log → commits.parquet
-2. social.py   → GitHub API   → social_history.parquet  
-3. clean.py    → Identity graph resolution
-4. enrich.py   → Profile fusion → contributors_enriched.parquet
-5. process.py  → Aggregation  → JSON artifacts for dashboard</code></pre>
-
-                <p style="margin-top: 1.5rem;">For technical details, see the <a
-                        href="https://github.com/example/orange-dev-tracker" target="_blank">source repository</a> and
-                    <code>docs/project_context/metric_logic_review.md</code>.
-                </p>
             </section>
         </main>
     </div>
@@ -1060,6 +691,7 @@
     <script src="https://sorukumar.github.io/Bitcoin-Data-Labs/components/app-components.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize App Components
             if (typeof BitcoinLabsAppComponents !== 'undefined') {
                 BitcoinLabsAppComponents.init({
                     isApp: true,
@@ -1075,6 +707,23 @@
                     ]
                 });
             }
+
+            // Scroll Spy
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.sidebar a');
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= (sectionTop - 200)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (current && link.getAttribute('href').includes(current)) link.classList.add('active');
+                });
+            });
         });
     </script>
 </body>

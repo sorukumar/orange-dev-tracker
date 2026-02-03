@@ -21,7 +21,19 @@ venv/
 code/bitcoin/
 colab/
 
-# Data Snapshots
-data/Aug042024_Bitcoin_Contributors.html
-mask_generator/
+# Data Artifacts (Intermediate/Large)
+data/*.parquet
+data/enrichment_cache*.json
+data/contributors_missing_location.json
+data/reviewers_summary.json
+
+# Logs & Temp
 *.log
+background_enricher.log
+scripts/debug_*.py
+scripts/check_*.py
+temp/
+
+# Dashboards
+mask_generator/
+data/Aug042024_Bitcoin_Contributors.html

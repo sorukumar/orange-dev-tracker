@@ -1,39 +1,31 @@
-# Handoff Notes: Bitcoin Dashboard V1
+# Handoff Notes: Orange Dev Tracker (Feb 2026 Update)
 
 ## Current State
-- **Dashboard:** V1 is live at `index.html`. Served via `python -m http.server`.
+- **Dashboard:** Multi-tab application live at `dashboard.html`.
+- **Pages**:
+  - `dashboard.html`: High-level vital signs and 2026 roadmap.
+  - `contributors.html`: Deep dive into human identities and cohorts.
+  - `codebase.html`: Category evolution and tech stack metrics.
+  - `engineering.html`: PR Lead time and work-in-progress metrics.
+  - `health.html`: Geographical trends, retention, and social proof.
+  - `methodology.html`: Stripe-inspired documentation of logic and risk models.
 - **Data Pipeline:**
-  - `code/ingest.py`: Parses `git log` -> `data/commits.parquet`.
-  - `code/social.py`: Fetches GitHub Stars/Forks -> `data/social_history.parquet`.
-  - `code/process.py`: Aggregates Parquet -> `data/*.json`.
-- **Frontend:**
-  - `index.html`: Main entry point (Root).
-  - `js/app.js`: ECharts logic.
-  - `style.css`: Styles.
-  - `data/`: JSON data files used by the frontend.
+  - `code/ingest.py`: Git log forensics -> Parquet.
+  - `code/clean.py`: Identity resolution graph clustering.
+  - `code/process.py`: Aggregates and applies Risk-Weighted Impact Model -> JSON Artifacts.
 
-## User Feedback & Next Steps
-- **Status:** "At least we got something." (MVP is working).
-- **Next Session Goal:**
-  - Review current charts (User will provide specific feedback).
-  - Implement **new charts** (User has ideas for more insights).
-  - Refine aesthetics or data granularity based on review.
+## Key Methodology Shifts
+1. **Maintainer Validation**: Uses `data/maintainers_lookup.json` whitelist.
+2. **Prioritized Logic**: Subsystem tests (e.g., `/test/`) prioritized over feature components.
+3. **Risk Weighting**: Critical consensus code weighted 50x to reflect actual impact.
+4. **Transparency**: Methodology page now links directly to raw JSON source assets.
 
 ## Context Files
-- `implementation_plan.md`: Detailed architecture and schema.
-- `walkthrough.md`: Summary of V1 features and file structure.
-- `task.md`: Checklist of completed items.
-
-## Development Environment
-
-**Python Environment:**
-The project uses an Anaconda environment.
-*   **Python Executable:** Use `python` (which points to `/opt/anaconda3/bin/python` or similar), NOT `python3`.
-*   **Dependencies:** Libraries like `pandas`, `pyarrow`, `fastparquet` are installed in the Anaconda environment.
+- `logic_context.md`: The "Ontology" and classification rules.
+- `metric_logic_review.md`: Qualitative review of metric accuracy and trade-offs.
+- `implementation_plan.md`: Historical architecture notes.
 
 ## Usage
-Run scripts using:
-```bash
-python code/process.py
-```
-DO NOT use `python3` or `pip install` without checking the active environment.
+- **Update Data**: Run the full pipeline via ingestion scripts.
+- **Frontend**: Local development via `python -m http.server`.
+- **Git Hygiene**: Intermediate parquets and heavy caches are ignored via `.gitignore`.
