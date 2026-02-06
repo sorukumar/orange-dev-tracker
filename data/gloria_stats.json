@@ -2,7 +2,7 @@
   "name": "Gloria Zhao",
   "title": "Bitcoin Core Maintainer & Contributor",
   "summary": {
-    "total_authored": 502,
+    "total_authored": 503,
     "total_merged": 290,
     "first_merge": "2022-07-12",
     "last_merge": "2026-01-13"
@@ -1140,37 +1140,37 @@
       "month": "2025-05",
       "authored": 11,
       "merged": 5,
-      "baseline": 425
+      "baseline": 436
     },
     {
       "month": "2025-06",
       "authored": 8,
       "merged": 14,
-      "baseline": 263
+      "baseline": 264
     },
     {
       "month": "2025-07",
       "authored": 25,
       "merged": 16,
-      "baseline": 338
+      "baseline": 339
     },
     {
       "month": "2025-08",
       "authored": 8,
       "merged": 9,
-      "baseline": 238
+      "baseline": 242
     },
     {
       "month": "2025-09",
-      "authored": 2,
+      "authored": 3,
       "merged": 9,
-      "baseline": 223
+      "baseline": 224
     },
     {
       "month": "2025-10",
       "authored": 3,
       "merged": 20,
-      "baseline": 248
+      "baseline": 249
     },
     {
       "month": "2025-11",
@@ -1188,13 +1188,13 @@
       "month": "2026-01",
       "authored": 1,
       "merged": 10,
-      "baseline": 276
+      "baseline": 290
     },
     {
       "month": "2026-02",
       "authored": 0,
       "merged": 0,
-      "baseline": 9
+      "baseline": 44
     }
   ],
   "category_trends": [
@@ -2806,7 +2806,7 @@
     },
     {
       "category": "Core Libs",
-      "count": 21.62
+      "count": 22.62
     },
     {
       "category": "Wallet (Client App)",
@@ -2852,5 +2852,5 @@
       "desc": "Transaction orphan handling improvements"
     }
   ],
-  "generated_at": "2026-02-06T11:10:48.580943"
+  "generated_at": "2026-02-06T11:55:31.942707"
 }
