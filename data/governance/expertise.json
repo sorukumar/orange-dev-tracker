@@ -3,12 +3,12 @@
     {
       "canonical_id": "Pieter Wuille",
       "bips_authored": 26,
-      "commits_authored": 2927
+      "commits_authored": 2992
     },
     {
       "canonical_id": "Ava Chow",
       "bips_authored": 18,
-      "commits_authored": 393
+      "commits_authored": 420
     },
     {
       "canonical_id": "Gavin Andresen",
@@ -31,6 +31,11 @@
       "commits_authored": 81
     },
     {
+      "canonical_id": "Sebastian Falbesoner",
+      "bips_authored": 2,
+      "commits_authored": 766
+    },
+    {
       "canonical_id": "Gregory Maxwell",
       "bips_authored": 2,
       "commits_authored": 238
@@ -46,14 +51,9 @@
       "commits_authored": 2410
     },
     {
-      "canonical_id": "Sebastian Falbesoner",
-      "bips_authored": 1,
-      "commits_authored": 747
-    },
-    {
       "canonical_id": "Fabian Jahr",
       "bips_authored": 1,
-      "commits_authored": 365
+      "commits_authored": 387
     },
     {
       "canonical_id": "Jeff Garzik",
@@ -63,7 +63,7 @@
     {
       "canonical_id": "Antoine Poinsot",
       "bips_authored": 1,
-      "commits_authored": 278
+      "commits_authored": 279
     },
     {
       "canonical_id": "Jorge Tim\u00f3n",
@@ -92,11 +92,7 @@
     },
     {
       "canonical_id": "Gregory Maxwell",
-      "social_post_count": 826
-    },
-    {
-      "canonical_id": "Luke Dashjr",
-      "social_post_count": 703
+      "social_post_count": 763
     },
     {
       "canonical_id": "ZmnSCPxj",
@@ -108,39 +104,47 @@
     },
     {
       "canonical_id": "Pieter Wuille",
-      "social_post_count": 514
+      "social_post_count": 513
     },
     {
-      "canonical_id": "Jorge Tim\u00f3n",
-      "social_post_count": 427
-    },
-    {
-      "canonical_id": "Gavin Andresen",
-      "social_post_count": 419
+      "canonical_id": "=?UTF-8?B?Sm9yZ2UgVGltw7Nu?=",
+      "social_post_count": 438
     },
     {
       "canonical_id": "Matt Corallo",
       "social_post_count": 418
     },
     {
-      "canonical_id": "Wladimir J. van der Laan",
-      "social_post_count": 386
+      "canonical_id": "Gavin Andresen",
+      "social_post_count": 404
+    },
+    {
+      "canonical_id": "Luke Dashjr",
+      "social_post_count": 389
     },
     {
       "canonical_id": "Antoine Riard",
       "social_post_count": 332
     },
     {
+      "canonical_id": "Anthony Towns",
+      "social_post_count": 317
+    },
+    {
       "canonical_id": "Eric Voskuil",
       "social_post_count": 316
     },
     {
-      "canonical_id": "Anthony Towns",
+      "canonical_id": "Luke-Jr",
       "social_post_count": 314
     },
     {
       "canonical_id": "Mark Friedenbach",
       "social_post_count": 284
+    },
+    {
+      "canonical_id": "Wladimir",
+      "social_post_count": 274
     },
     {
       "canonical_id": "Erik Aronesty",
@@ -157,11 +161,7 @@
     {
       "canonical_id": "Russell O'Connor",
       "social_post_count": 212
-    },
-    {
-      "canonical_id": "Eric Lombrozo",
-      "social_post_count": 211
     }
   ],
-  "last_updated": "2026-02-06T16:56:08.646453"
+  "last_updated": "2026-03-21T23:00:30.353466"
 }

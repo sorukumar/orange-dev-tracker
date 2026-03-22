@@ -165,42 +165,42 @@
     "status": "active",
     "top_areas": {
       "test": 22.8,
-      "src/test": 18.9,
-      "src/qt": 14.7,
-      "src/wallet": 10.5,
-      "src/secp256k1": 8.7,
+      "src/test": 18.8,
+      "src/qt": 15.4,
+      "src/wallet": 10.4,
+      "src/secp256k1": 8.5,
       "depends": 8.4,
-      "contrib": 8.2,
-      "ci": 7.7
+      "contrib": 8.1,
+      "ci": 7.6
     }
   },
   "hebasto": {
     "name": "Hennadii Stepanov",
     "status": "active",
     "top_areas": {
-      "src/qt": 85.9,
-      "ci": 2.7,
-      "src/crypto": 2.4,
-      "src/wallet": 2.3,
-      ".github": 1.8,
-      "test": 1.8,
+      "src/qt": 84.1,
+      "ci": 3.5,
+      "src/wallet": 2.5,
+      ".github": 2.3,
+      "src/crypto": 2.3,
       "depends": 1.8,
-      "doc": 1.5
+      "test": 1.8,
+      "doc": 1.7
     }
   },
   "achow101": {
     "name": "Andrew Chow",
     "status": "active",
     "top_areas": {
-      "src/wallet": 38.5,
-      "test": 27.2,
-      "src/test": 11.1,
-      "doc": 4.9,
+      "src/wallet": 38.3,
+      "test": 26.9,
+      "src/test": 11.5,
+      "doc": 5.1,
       "src/qt": 4.2,
-      "src/bench": 3.9,
+      "src/bench": 3.8,
       "src/script": 3.7,
       "src/rpc": 3.0,
-      "src/node": 2.3,
+      "src/node": 2.4,
       "src/interfaces": 1.1
     }
   },
@@ -222,28 +222,28 @@
     "name": "Ryan Ofsky",
     "status": "active",
     "top_areas": {
-      "src/test": 34.5,
-      "test": 17.0,
-      "src/wallet": 14.5,
-      "src/node": 13.4,
-      "src/rpc": 10.1,
+      "src/test": 34.4,
+      "test": 17.4,
+      "src/wallet": 14.0,
+      "src/node": 13.8,
+      "src/rpc": 9.9,
       "doc": 4.0,
-      "src/util": 3.3,
-      "src/validation.cpp": 3.1
+      "src/validation.cpp": 3.3,
+      "src/util": 3.2
     }
   },
   "thecharlatan": {
     "name": "Sebastian Kung",
     "status": "active",
     "top_areas": {
-      "test": 20.7,
-      "src/test": 20.7,
-      "src/wallet": 15.6,
-      "src/util": 14.1,
-      "src/kernel": 9.6,
-      "ci": 7.4,
-      "src/node": 7.4,
-      "contrib": 4.4
+      "src/test": 28.6,
+      "test": 20.8,
+      "src/wallet": 14.5,
+      "src/util": 11.4,
+      "src/node": 6.7,
+      "ci": 6.3,
+      "src/kernel": 6.3,
+      "contrib": 5.5
     }
   }
 }

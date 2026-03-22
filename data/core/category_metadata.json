@@ -1,35 +1,35 @@
 {
   "Build & CI (DevOps)": {
-    "files": 153,
-    "loc": 16489,
+    "files": 158,
+    "loc": 17011,
     "languages": {
       ".txt": {
         "files": 22,
-        "loc": 3973
+        "loc": 4012
       },
       "(no_ext)": {
         "files": 6,
-        "loc": 530
+        "loc": 519
       },
       ".sh": {
-        "files": 8,
-        "loc": 356
+        "files": 7,
+        "loc": 346
       },
       ".md": {
         "files": 7,
-        "loc": 748
+        "loc": 760
       },
       ".py": {
         "files": 2,
-        "loc": 130
+        "loc": 132
       },
       ".in": {
         "files": 3,
-        "loc": 445
+        "loc": 446
       },
       ".mk": {
         "files": 41,
-        "loc": 1917
+        "loc": 1951
       },
       ".guess": {
         "files": 1,
@@ -40,8 +40,8 @@
         "loc": 2364
       },
       ".patch": {
-        "files": 26,
-        "loc": 954
+        "files": 32,
+        "loc": 1409
       },
       ".cmake": {
         "files": 1,
@@ -90,8 +90,8 @@
     }
   },
   "Core Libs": {
-    "files": 275,
-    "loc": 52139,
+    "files": 272,
+    "loc": 52330,
     "languages": {
       ".in": {
         "files": 6,
@@ -99,7 +99,7 @@
       },
       "(no_ext)": {
         "files": 24,
-        "loc": 3661
+        "loc": 3685
       },
       ".json": {
         "files": 2,
@@ -111,7 +111,7 @@
       },
       ".cmake": {
         "files": 32,
-        "loc": 2277
+        "loc": 2283
       },
       ".sh": {
         "files": 10,
@@ -119,11 +119,7 @@
       },
       ".py": {
         "files": 26,
-        "loc": 6261
-      },
-      ".supp": {
-        "files": 1,
-        "loc": 58
+        "loc": 6264
       },
       ".openrcconf": {
         "files": 1,
@@ -187,19 +183,19 @@
       },
       ".h": {
         "files": 66,
-        "loc": 14995
+        "loc": 15297
       },
       ".cpp": {
         "files": 61,
-        "loc": 20072
+        "loc": 20192
       },
       ".scm": {
         "files": 1,
-        "loc": 602
+        "loc": 425
       },
       ".patch": {
-        "files": 8,
-        "loc": 224
+        "files": 6,
+        "loc": 195
       },
       ".rc": {
         "files": 6,
@@ -208,16 +204,16 @@
     }
   },
   "Documentation": {
-    "files": 254,
-    "loc": 45676,
+    "files": 250,
+    "loc": 47181,
     "languages": {
       ".md": {
-        "files": 230,
-        "loc": 39560
+        "files": 226,
+        "loc": 39740
       },
       ".txt": {
         "files": 5,
-        "loc": 1338
+        "loc": 2663
       },
       ".in": {
         "files": 1,
@@ -246,28 +242,28 @@
     }
   },
   "Tests (QA)": {
-    "files": 946,
-    "loc": 192198,
+    "files": 954,
+    "loc": 194790,
     "languages": {
       ".txt": {
         "files": 12,
-        "loc": 776
+        "loc": 788
       },
       ".in": {
         "files": 1,
-        "loc": 30
-      },
-      ".md": {
-        "files": 8,
-        "loc": 1094
+        "loc": 31
       },
       ".py": {
         "files": 324,
-        "loc": 80631
+        "loc": 81241
+      },
+      ".md": {
+        "files": 8,
+        "loc": 1093
       },
       ".sh": {
         "files": 28,
-        "loc": 1150
+        "loc": 1177
       },
       ".toml": {
         "files": 1,
@@ -279,11 +275,15 @@
       },
       ".rs": {
         "files": 7,
-        "loc": 847
+        "loc": 838
       },
       "(no_ext)": {
         "files": 4,
-        "loc": 115
+        "loc": 114
+      },
+      ".supp": {
+        "files": 1,
+        "loc": 52
       },
       ".html": {
         "files": 1,
@@ -295,7 +295,7 @@
       },
       ".json": {
         "files": 94,
-        "loc": 12308
+        "loc": 12324
       },
       ".hex": {
         "files": 32,
@@ -310,12 +310,12 @@
         "loc": 600
       },
       ".cpp": {
-        "files": 379,
-        "loc": 82935
+        "files": 385,
+        "loc": 84771
       },
       ".h": {
-        "files": 45,
-        "loc": 7819
+        "files": 46,
+        "loc": 7867
       },
       ".raw": {
         "files": 2,
@@ -323,35 +323,35 @@
       },
       ".capnp": {
         "files": 2,
-        "loc": 100
+        "loc": 101
       }
     }
   },
   "Consensus (Domain Logic)": {
     "files": 97,
-    "loc": 35958,
+    "loc": 37397,
     "languages": {
       ".h": {
         "files": 58,
-        "loc": 14962
+        "loc": 16368
       },
       ".cpp": {
         "files": 39,
-        "loc": 20996
+        "loc": 21029
       }
     }
   },
   "P2P Network (Infrastructure)": {
     "files": 21,
-    "loc": 18664,
+    "loc": 18710,
     "languages": {
       ".h": {
         "files": 11,
-        "loc": 4314
+        "loc": 4350
       },
       ".cpp": {
         "files": 9,
-        "loc": 14301
+        "loc": 14311
       },
       ".svg": {
         "files": 1,
@@ -360,16 +360,20 @@
     }
   },
   "Node & RPC (App/Interface)": {
-    "files": 116,
-    "loc": 33647,
+    "files": 119,
+    "loc": 39414,
     "languages": {
       ".cpp": {
-        "files": 60,
-        "loc": 28001
+        "files": 61,
+        "loc": 28650
       },
       ".h": {
-        "files": 56,
-        "loc": 5646
+        "files": 57,
+        "loc": 5792
+      },
+      ".dat": {
+        "files": 1,
+        "loc": 4972
       }
     }
   },
@@ -417,15 +421,15 @@
   },
   "Cryptography (Primitives)": {
     "files": 234,
-    "loc": 92589,
+    "loc": 92599,
     "languages": {
       ".h": {
         "files": 125,
-        "loc": 30389
+        "loc": 30394
       },
       ".cpp": {
         "files": 39,
-        "loc": 10035
+        "loc": 10040
       },
       ".c": {
         "files": 22,
@@ -478,16 +482,16 @@
     }
   },
   "Utilities (Shared Libs)": {
-    "files": 194,
-    "loc": 23456,
+    "files": 196,
+    "loc": 24200,
     "languages": {
       ".h": {
-        "files": 116,
-        "loc": 13230
+        "files": 118,
+        "loc": 13849
       },
       ".cpp": {
         "files": 57,
-        "loc": 9527
+        "loc": 9646
       },
       ".in": {
         "files": 4,
@@ -507,7 +511,7 @@
       },
       ".capnp": {
         "files": 8,
-        "loc": 238
+        "loc": 244
       },
       ".mk": {
         "files": 1,
@@ -516,20 +520,20 @@
     }
   },
   "GUI (Presentation Layer)": {
-    "files": 352,
-    "loc": 332618,
+    "files": 354,
+    "loc": 341899,
     "languages": {
       ".h": {
         "files": 62,
-        "loc": 5440
+        "loc": 5439
       },
       ".cpp": {
         "files": 59,
-        "loc": 19212
+        "loc": 19197
       },
       ".qrc": {
         "files": 2,
-        "loc": 191
+        "loc": 193
       },
       ".mm": {
         "files": 3,
@@ -564,16 +568,16 @@
         "loc": 671
       },
       ".ts": {
-        "files": 98,
-        "loc": 286619
+        "files": 100,
+        "loc": 295906
       },
       ".xlf": {
         "files": 1,
-        "loc": 5620
+        "loc": 5626
       },
       ".cmake": {
         "files": 1,
-        "loc": 100
+        "loc": 102
       },
       ".ui": {
         "files": 19,
@@ -583,15 +587,15 @@
   },
   "Wallet (Client App)": {
     "files": 63,
-    "loc": 26989,
+    "loc": 26893,
     "languages": {
       ".cpp": {
         "files": 31,
-        "loc": 21001
+        "loc": 20908
       },
       ".h": {
         "files": 32,
-        "loc": 5988
+        "loc": 5985
       }
     }
   }
