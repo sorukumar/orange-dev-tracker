@@ -1,0 +1,6 @@
+[submodule "code/governance/bips_repo"]
+	path = code/governance/bips_repo
+	url = https://github.com/bitcoin/bips
+[submodule "code/governance/mailing_list_sample"]
+	path = code/governance/mailing_list_sample
+	url = https://gnusha.org/pi/bitcoindev
