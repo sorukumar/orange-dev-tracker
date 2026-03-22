@@ -35,5 +35,4 @@ scripts/check_*.py
 temp/
 
 # Dashboards
-mask_generator/
 data/Aug042024_Bitcoin_Contributors.html

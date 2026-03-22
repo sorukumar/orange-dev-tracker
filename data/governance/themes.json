@@ -1,0 +1,23 @@
+{
+  "bip_themes": {
+    "Other": 80,
+    "Consensus & Soft Forks": 63,
+    "P2P Network": 14,
+    "Wallet & Keys": 13,
+    "Privacy": 13,
+    "Script & Smart Contracts": 4,
+    "Mining": 3,
+    "Scaling & Lightning": 2
+  },
+  "social_themes": {
+    "Other": 15365,
+    "Consensus & Soft Forks": 2503,
+    "P2P Network": 1618,
+    "Mining": 1594,
+    "Privacy": 904,
+    "Wallet & Keys": 772,
+    "Script & Smart Contracts": 677,
+    "Scaling & Lightning": 662
+  },
+  "last_updated": "2026-02-06T16:56:06.804723"
+}

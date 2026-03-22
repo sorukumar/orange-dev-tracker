@@ -1,0 +1,70 @@
+{
+  "bip_counts": [
+    {
+      "name": "Other",
+      "value": 80
+    },
+    {
+      "name": "Consensus & Soft Forks",
+      "value": 63
+    },
+    {
+      "name": "P2P Network",
+      "value": 14
+    },
+    {
+      "name": "Wallet & Keys",
+      "value": 13
+    },
+    {
+      "name": "Privacy",
+      "value": 13
+    },
+    {
+      "name": "Script & Smart Contracts",
+      "value": 4
+    },
+    {
+      "name": "Mining",
+      "value": 3
+    },
+    {
+      "name": "Scaling & Lightning",
+      "value": 2
+    }
+  ],
+  "social_mentions": [
+    {
+      "name": "Consensus & Soft Forks",
+      "value": 725
+    },
+    {
+      "name": "Mining",
+      "value": 79
+    },
+    {
+      "name": "Other",
+      "value": 749
+    },
+    {
+      "name": "P2P Network",
+      "value": 506
+    },
+    {
+      "name": "Privacy",
+      "value": 3
+    },
+    {
+      "name": "Scaling & Lightning",
+      "value": 75
+    },
+    {
+      "name": "Script & Smart Contracts",
+      "value": 23
+    },
+    {
+      "name": "Wallet & Keys",
+      "value": 571
+    }
+  ]
+}

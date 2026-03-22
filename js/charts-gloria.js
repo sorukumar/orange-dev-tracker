@@ -5,7 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('data/gloria_stats.json');
+        const response = await fetch(DATA_PATH_PREFIX + 'data/lab/gloria_stats.json');
         if (!response.ok) throw new Error('Failed to load data');
         const data = await response.json();
 

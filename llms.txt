@@ -8,7 +8,8 @@ Orange Dev Tracker is an analytical platform by Bitcoin Data Labs dedicated to d
 - [Contributors](https://sorukumar.github.io/orange-dev-tracker/contributors.html): Detailed analysis of the "Decentralized Army," including the Engagement Pyramid and geographic distribution.
 - [Codebase](https://sorukumar.github.io/orange-dev-tracker/codebase.html): Breakdown of the software by lines of code, programming languages (C++, Python), and functional areas.
 - [Health & Culture](https://sorukumar.github.io/orange-dev-tracker/health.html): Metrics on developer retention, bus factor, and the cultural heartbeat of the project.
-- [Methodology](https://sorukumar.github.io/orange-dev-tracker/methodology.html): Explanation of data sources (GitHub/Git logs), processing pipelines, and metric definitions.
+- [Governance Layer](https://sorukumar.github.io/orange-dev-tracker/lab/bips/): Real-time maturation tracking of BIPs and technical research.
+- [Methodology](https://sorukumar.github.io/orange-dev-tracker/methodology.html): Explanation of data sources (GitHub/Git logs and mailing lists).
 
 ## Key Data Insights
 - **Codebase Size**: Over 480,000 lines of code.

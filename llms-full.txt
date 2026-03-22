@@ -15,7 +15,7 @@ The codebase has grown from a handful of files in 2009 to a complex system.
 
 ### 2. Contributor Dynamics
 Analysis of the human effort behind Bitcoin.
-- **The Engagement Pyramid**: Categorizes contributors into Core (Top 5%), Regulars (Top 15%), Occasional (Top 30%), and Casual (Remaining 50%).
+- **The Engagement Pyramid**: Categorizes contributors into The Core (Top 1%), The Contributors (Top 20%), and The Prospects (Remaining 80%).
 - **Recruitment Velocity**: Tracks how many new developers join the project over time.
 - **Maintainer Concentration**: Discusses the role of 'Maintainers' who have merging privileges vs. 'Contributors' who submit PRs.
 

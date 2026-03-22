@@ -1,4 +1,16 @@
 /**
+ * Shared data path prefix resolver for multi-level navigation (root vs lab)
+ */
+const DATA_PATH_PREFIX = (function () {
+    const path = window.location.pathname;
+    // If the path contains '/lab/', we are 2 levels deep
+    if (path.includes('/lab/')) {
+        return '../../';
+    }
+    return '';
+})();
+
+/**
  * Shared utility functions for Bitcoin Data Labs
  */
 

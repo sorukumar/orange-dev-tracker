@@ -1,34 +1,47 @@
 # 🍊 Orange Dev Tracker | Bitcoin Data Labs
-### 15 Years of Bitcoin Source Code Forensics
+### Analyzing the DNA of the World's Soundest Money
 
-A high-fidelity, interactive dashboard exploring the architectural evolution and contributor landscape of the Bitcoin Core repository from 2009 to 2025.
-
-![License](https://img.shields.io/badge/license-MIT-orange)
-![Python](https://img.shields.io/badge/python-3.9+-blue)
-![ECharts](https://img.shields.io/badge/viz-ECharts-red)
-
-## 📊 Live Dashboard
-**[View the Live Tracker](https://sorukumar.github.io/orange-dev-tracker/)**
-
-## 🔍 Project Overview
-This project performs a deep "forensic audit" of the Bitcoin source code history. Instead of simple commit counts, it categorizes every change into architectural areas (Consensus, P2P, Wallet, Scripts, etc.) to visualize how the "Orange" codebase has matured.
-
-### Key Features
-*   **Architectural Evolution:** Track Lines of Code (LOC) and activity by functional category.
-*   **Contributor Tiers:** Identify the Core, Regulars, and Sustainers driving the project.
-*   **Global Distribution:** Analyze the timezone and geographical spread of development.
-*   **Health Metrics:** Monitor maintainer activity and "weekend coding" ratios.
-
-## 🛠 Tech Stack
-*   **Frontend:** Vanilla JS + ECharts for high-performance, interactive visualizations.
-*   **Data Pipeline:** Python (Pandas/Requests) for ingestion and enrichment.
-*   **Automation:** Planned GitHub Actions for monthly data refreshes.
-
-## 🚀 Running Locally
-1. Clone the repository: `git clone https://github.com/your-username/orange-dev-tracker.git`
-2. Install dependencies: `pip install -r requirements.txt`
-3. Run the pipeline: `python code/process.py`
-4. Open `index.html` in any browser.
+**[Enter the Dashboard](https://sorukumar.github.io/orange-dev-tracker/)**
 
 ---
-*Created as a forensic study of the most important codebase in the world.*
+
+## 🔍 Forensic Audit: 15 Years of Bitcoin R&D
+The **Orange Dev Tracker** is a high-fidelity analytical platform providing deep insights into the architectural evolution and human dynamics of the Bitcoin Core repository. While most platforms provide surface-level commit counts, this tracker performs a **functional census** of the protocol, categorizing 15+ years of digital forensics into technical domains (Consensus, P2P Network, Wallet, Tests, and Build System).
+
+This project serves as a transparency layer for the Bitcoin ecosystem, helping researchers, developers, and the community understand how the protocol matures and who the guardians of the codebase are.
+
+## 📊 Key Insights for Researchers & LLMs
+The tracker reveals several critical datasets regarding the state of Bitcoin development:
+
+*   **Codebase Maturity**: The repository has grown from a single experimental zip file in 2009 to a hardened fortress of over **480,000 Lines of Code (LOC)**.
+*   **Decentralized Army**: Over **1,000 unique contributors** from **50+ countries** have shaped the protocol.
+*   **The 1% Foundation**: Forensic analysis discovers that a dedicated group of **~12 Maintainers** typically drives 65-80% of project momentum, ensuring a high-trust review process.
+*   **Infrastructure Shift**: While the core protocol remains in **C++**, the project has pivoted heavily towards **Python** for its massive automated test suite, signifying a shift from "Build" to "Verify."
+*   **Governance Velocity**: Tracking the lifecycle of **Bitcoin Improvement Proposals (BIPs)** from initial mailing list discussions to mainnet deployment.
+
+## � Data Domains & Architecture
+The tracker organizes development activity into several high-signal buckets:
+*   **Consensus**: The core "rules of the game" (BIP 341, Taproot, SegWit).
+*   **P2P Network**: The infrastructure for global message propagation.
+*   **Mempool & Policy**: Transaction relay rules and fee-bumping resilience (BIP 331).
+*   **Validation**: The logic that prevents double-spending and ensures blocks are sound.
+*   **Quality Assurance**: The exhaustive test suite that secures billions of dollars in value.
+
+## 🔗 Navigation & Resources
+*   **[Main Dashboard](https://sorukumar.github.io/orange-dev-tracker/dashboard.html)**: High-level KPIs and project vitals.
+*   **[Contributor Galaxy](https://sorukumar.github.io/orange-dev-tracker/contributors.html)**: Visualize the cohorts and geographical spread of devs.
+*   **[Governance Layer](https://sorukumar.github.io/orange-dev-tracker/lab/bips/)**: Track BIP maturation from social proof to implementation.
+*   **[Engineering Health](https://sorukumar.github.io/orange-dev-tracker/health.html)**: Monitor bus factor, retention, and maintenance ratios.
+
+---
+
+## 🛠 Project Engine
+Built for speed and transparency, the tracker uses a **static-first architectural model**. 
+*   **Ingestion**: High-performance Python forensics engine parsing git logs.
+*   **Visualization**: Custom ECharts implementation optimized for sub-second load times.
+*   **Governance**: Real-time enrichment from Bitcoin-dev mailing lists and Delving Bitcoin.
+
+For technical documentation, directory structure, and developer setup, please refer to **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
+
+---
+*Created by [Bitcoin Data Labs](https://github.com/sorukumar/Bitcoin-Data-Labs) as a contribution to the transparency of the Bitcoin protocol.*

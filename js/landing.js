@@ -76,10 +76,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadData() {
     try {
         const [stackRes, growthRes, heatmapRes, contribRes] = await Promise.all([
-            fetch('data/stats_stack_evolution.json').then(r => r.json()),
-            fetch('data/stats_contributor_growth.json').then(r => r.json()),
-            fetch('data/stats_heatmap.json').then(r => r.json()),
-            fetch('data/contributors_rich.json').then(r => r.json())
+            fetch(DATA_PATH_PREFIX + 'data/core/stats_stack_evolution.json').then(r => r.json()),
+            fetch(DATA_PATH_PREFIX + 'data/core/stats_contributor_growth.json').then(r => r.json()),
+            fetch(DATA_PATH_PREFIX + 'data/core/stats_heatmap.json').then(r => r.json()),
+            fetch(DATA_PATH_PREFIX + 'data/core/contributors_rich.json').then(r => r.json())
         ]);
 
         dataCache.stackEvolution = stackRes;

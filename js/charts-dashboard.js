@@ -4,7 +4,7 @@
 
 async function loadVitalSigns() {
     try {
-        const res = await fetch('data/dashboard_vital_signs.json');
+        const res = await fetch(DATA_PATH_PREFIX + 'data/core/dashboard_vital_signs.json');
         const data = await res.json();
 
         if (document.getElementById('kpi-contributors')) {
@@ -52,7 +52,7 @@ async function loadSnapshots() {
     // Shared between Dashboard and Codebase
     if (charts.snapshotWork) {
         try {
-            const resWork = await fetch('data/stats_work_distribution.json');
+            const resWork = await fetch(DATA_PATH_PREFIX + 'data/core/stats_work_distribution.json');
             const dataWork = await resWork.json();
             charts.snapshotWork.setOption({
                 backgroundColor: 'transparent',
@@ -104,7 +104,7 @@ async function loadSnapshots() {
     // Volume (Codebase Page Only)
     if (charts.snapshotVolume) {
         try {
-            const resVol = await fetch('data/stats_code_volume.json');
+            const resVol = await fetch(DATA_PATH_PREFIX + 'data/core/stats_code_volume.json');
             const dataVol = await resVol.json();
             charts.snapshotVolume.setOption({
                 backgroundColor: 'transparent',
@@ -134,7 +134,7 @@ async function loadSnapshots() {
     // Tech Stack (Codebase Page Only)
     if (charts.snapshotStack) {
         try {
-            const resStack = await fetch('data/stats_tech_stack.json');
+            const resStack = await fetch(DATA_PATH_PREFIX + 'data/core/stats_tech_stack.json');
             const dataStack = await resStack.json();
             charts.snapshotStack.setOption({
                 backgroundColor: 'transparent',
@@ -171,7 +171,7 @@ let currentCategoryView = 'total';
 
 async function loadCategory() {
     try {
-        const res = await fetch('data/stats_category_evolution.json');
+        const res = await fetch(DATA_PATH_PREFIX + 'data/core/stats_category_evolution.json');
         categoryData = await res.json();
 
         setupCategoryToggles();
@@ -291,7 +291,7 @@ function renderCategory(view) {
 
 async function loadGrowth() {
     try {
-        const res = await fetch('data/stats_contributor_growth.json');
+        const res = await fetch(DATA_PATH_PREFIX + 'data/core/stats_contributor_growth.json');
         const data = await res.json();
         const newSeries = data.series.find(s => s.name === "New Contributors");
         if (newSeries) {
@@ -331,7 +331,7 @@ let currentPyramidView = 'total';
 
 async function loadEngagementTiers() {
     try {
-        const res = await fetch('data/stats_engagement_tiers.json');
+        const res = await fetch(DATA_PATH_PREFIX + 'data/core/stats_engagement_tiers.json');
         pyramidData = await res.json();
 
         setupPyramidToggles();
@@ -440,7 +440,7 @@ function renderPyramid(view) {
 
 async function loadSocial() {
     try {
-        const res = await fetch('data/stats_social_proof.json');
+        const res = await fetch(DATA_PATH_PREFIX + 'data/core/stats_social_proof.json');
         const data = await res.json();
         const filteredX = data.xAxis;
         const filteredStars = data.stars;
@@ -484,21 +484,63 @@ async function loadSocial() {
 
 async function loadMaintainers() {
     try {
-        const res = await fetch('data/stats_maintainer_independence.json?t=' + Date.now());
+        const res = await fetch(DATA_PATH_PREFIX + 'data/core/stats_maintainer_independence.json?t=' + Date.now());
         const data = await res.json();
         const validMaintainers = data.maintainers.filter(m => m.active_years && m.active_years.length > 0);
-        validMaintainers.sort((a, b) => Math.min(...a.active_years) - Math.min(...b.active_years));
+        validMaintainers.sort((a, b) => {
+            const aStart = a.segments && a.segments.length > 0
+                ? new Date(a.segments[0].start).getFullYear()
+                : Math.min(...a.active_years);
+            const bStart = b.segments && b.segments.length > 0
+                ? new Date(b.segments[0].start).getFullYear()
+                : Math.min(...b.active_years);
+            return aStart - bStart;
+        });
         const names = validMaintainers.map(m => m.name);
 
-        const seriesData = validMaintainers.map((m, idx) => {
-            const start = Math.min(...m.active_years);
-            const end = Math.max(...m.active_years);
+        const seriesData = [];
+        validMaintainers.forEach((m, idx) => {
             const isLatest = m.status === 'active';
-            return {
-                name: m.name,
-                value: [idx, new Date(start, 0, 1).getTime(), new Date(end, 11, 31).getTime(), m.status, m.sponsor, m.active_years.length, m.merges_count || 0],
-                itemStyle: { color: isLatest ? GHIBLI_PALETTE[2] : '#94A3B8', opacity: isLatest ? 0.9 : 0.6 }
-            };
+
+            if (m.segments && m.segments.length > 0) {
+                // Multi-segment rendering
+                m.segments.forEach(seg => {
+                    const startTs = new Date(seg.start).getTime();
+                    // For active maintainers, the open-ended segment should go to the end of the year (2026) for visual consistency
+                    const endTs = seg.end ? new Date(seg.end).getTime() : new Date(2026, 11, 31).getTime();
+                    const isCommitter = seg.type === 'committer';
+
+                    seriesData.push({
+                        name: m.name,
+                        value: [idx, startTs, endTs, m.status, m.sponsor, m.active_years.length, m.merges_count || 0, isCommitter],
+                        itemStyle: {
+                            color: isCommitter ? (isLatest ? GHIBLI_PALETTE[2] : '#94A3B8') : 'transparent',
+                            opacity: isLatest ? 0.9 : 0.6,
+                            borderType: isCommitter ? 'solid' : 'dashed',
+                            borderWidth: 1.5,
+                            borderColor: isCommitter ? 'transparent' : '#CBD5E0'
+                        }
+                    });
+                });
+            } else {
+                // Single bar legacy logic
+                const start = Math.min(...m.active_years);
+                const end = Math.max(...m.active_years);
+                const holdsKeys = m.merge_authority;
+                const endTs = isLatest ? new Date(2026, 11, 31).getTime() : new Date(end, 11, 31).getTime();
+
+                seriesData.push({
+                    name: m.name,
+                    value: [idx, new Date(start, 0, 1).getTime(), endTs, m.status, m.sponsor, m.active_years.length, m.merges_count || 0, holdsKeys],
+                    itemStyle: {
+                        color: holdsKeys ? (isLatest ? GHIBLI_PALETTE[2] : '#94A3B8') : 'transparent',
+                        opacity: isLatest ? 0.9 : 0.6,
+                        borderType: holdsKeys ? 'solid' : 'dashed',
+                        borderWidth: 1.5,
+                        borderColor: holdsKeys ? 'transparent' : '#CBD5E0'
+                    }
+                });
+            }
         });
 
         charts.maintainers.setOption({
@@ -506,25 +548,60 @@ async function loadMaintainers() {
             tooltip: {
                 ...tooltipStyle,
                 formatter: function (params) {
-                    const status = params.value[3], sponsor = params.value[4], years_len = params.value[5], merges = params.value[6];
+                    const m = validMaintainers[params.value[0]];
+                    const status = m.status, sponsor = m.sponsor, merges = m.merges_count || 0;
                     const start = new Date(params.value[1]).getFullYear(), end = new Date(params.value[2]).getFullYear();
                     const statusColor = status === 'active' ? '#48BB78' : '#718096';
 
+                    const roleInfo = m.role ? `
+                        <div style="color:${COLORS.textSecondary}; font-size:12px; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:6px;">
+                            <b>${m.role.title}</b><br/>
+                            <span style="font-size:10px; opacity:0.8;">Area: ${m.role.primary_area}</span>
+                        </div>
+                    ` : '';
+
+                    let footprintHtml = '';
+                    if (m.footprint) {
+                        const topAreas = Object.entries(m.footprint)
+                            .sort((a, b) => b[1] - a[1])
+                            .slice(0, 3)
+                            .map(([area, pct]) => `<div style="display:flex; justify-content:space-between; width:100%;"><span style="opacity:0.7">${area}</span><b>${pct}%</b></div>`)
+                            .join('');
+
+                        footprintHtml = `
+                            <div style="margin-top:10px; padding-top:8px; border-top:1px dashed #cbd5e0;">
+                                <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.6; margin-bottom:4px;">Technical Footprint (Merges)</div>
+                                <div style="font-size:10px; line-height:1.4;">${topAreas}</div>
+                            </div>
+                        `;
+                    }
+
+                    const holdsKeys = m.merge_authority;
+                    const authorityLabel = holdsKeys ? 'Committer (Merge Access)' : 'Maintainer (Security & Build)';
+                    const authorityIcon = holdsKeys ? '🔑' : '🛡️';
+
                     let html = `
-                        <div style="font-weight:bold; font-size:14px; margin-bottom:4px;">${params.name}</div>
-                        <div style="color:${statusColor}; font-size:11px; font-weight:600; text-transform:uppercase; margin-bottom:8px;">${status}</div>
-                        <div style="display:grid; grid-template-columns: 1fr; gap:4px; font-size:12px;">
-                            <div>📅 <b>${start} — ${end}</b> (${years_len} years)</div>
-                            <div>🏢 Sponsored by <b>${sponsor}</b></div>
-                            <div>📝 <b>${merges}</b> merge${merges !== 1 ? 's' : ''}</div>
+                        <div style="min-width:180px;">
+                            <div style="font-weight:bold; font-size:14px; margin-bottom:2px;">${m.name}</div>
+                            <div style="color:${statusColor}; font-size:10px; font-weight:700; text-transform:uppercase; margin-bottom:8px;">${status}</div>
+                            
+                            <div style="font-size:11px; margin-bottom:10px; background:rgba(0,0,0,0.03); padding:4px 6px; border-radius:4px; border-left:3px solid ${holdsKeys ? '#48BB78' : '#E8916B'}">
+                                ${authorityIcon} <b>${authorityLabel}</b>
+                            </div>
+
+                            ${roleInfo}
+
+                            <div style="display:grid; grid-template-columns: 1fr; gap:6px; font-size:12px;">
+                                <div>📅 <b>${start} — ${end}</b></div>
+                                <div>🏢 <b>${sponsor}</b></div>
+                                <div>📝 <b>${merges}</b> merge${merges !== 1 ? 's' : ''}</div>
+                            </div>
+
+                            ${m.evidence ? `<div style="margin-top:8px; font-size:11px; color:#4A5568; line-height:1.4; border-top:1px solid #eee; padding-top:6px;"><i>"${m.evidence}"</i></div>` : ''}
+
+                            ${footprintHtml}
                         </div>
                     `;
-
-                    if (merges === 0 && status === 'active') {
-                        html += `<div style="color:#E8916B; font-size:10px; margin-top:8px; border-top:1px dashed #eee; padding-top:6px; font-style:italic;">
-                                    Authorized with push access, but no merges recorded in the current dataset logs.
-                                 </div>`;
-                    }
                     return html;
                 }
             },
@@ -546,10 +623,17 @@ async function loadMaintainers() {
                     const categoryIndex = api.value(0);
                     const start = api.coord([api.value(1), categoryIndex]), end = api.coord([api.value(2), categoryIndex]);
                     const height = api.size([0, 1])[1] * 0.5;
+                    const holdsKeys = api.value(7);
+
                     return {
                         type: 'rect',
                         shape: { x: start[0], y: start[1] - height / 2, width: Math.max(end[0] - start[0], 4), height: height, r: 4 },
-                        style: api.style()
+                        style: {
+                            ...api.style(),
+                            fill: holdsKeys ? api.visual('color') : 'transparent',
+                            stroke: holdsKeys ? 'transparent' : '#CBD5E0',
+                            lineWidth: 1
+                        }
                     };
                 },
                 itemStyle: { emphasis: { opacity: 1, shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.2)' } },
@@ -562,7 +646,7 @@ async function loadMaintainers() {
 
 async function loadStory() {
     try {
-        const resHM = await fetch('data/stats_heatmap.json');
+        const resHM = await fetch(DATA_PATH_PREFIX + 'data/core/stats_heatmap.json');
         const dataHM = await resHM.json();
         const filteredYears = dataHM.years;
         const filteredDataHM = dataHM.data;
@@ -581,7 +665,7 @@ async function loadStory() {
             series: [{ type: 'heatmap', data: filteredDataHM, itemStyle: { emphasis: { shadowBlur: 10, shadowColor: 'rgba(0, 0, 0, 0.5)' } } }]
         });
 
-        const resW = await fetch('data/stats_weekend.json');
+        const resW = await fetch(DATA_PATH_PREFIX + 'data/core/stats_weekend.json');
         const dataW = await resW.json();
         const filteredXW = dataW.xAxis;
         const filteredSeriesW = dataW.series.map(s => ({
