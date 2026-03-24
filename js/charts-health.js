@@ -4,7 +4,7 @@
 
 async function loadCorporateEra() {
     try {
-        const response = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_corporate.json');
+        const response = await fetch(DATA_PATH_PREFIX + 'data/core/stats_corporate.json');
         if (!response.ok) return;
         const data = await response.json();
         const chart = echarts.init(document.getElementById('chart-corporate'));
@@ -36,7 +36,7 @@ async function loadCorporateEra() {
 
 async function loadMaintainerIndependence() {
     try {
-        const response = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_maintainer_independence.json');
+        const response = await fetch(DATA_PATH_PREFIX + 'data/core/stats_maintainer_independence.json');
         if (!response.ok) return;
         const data = await response.json();
         const chartEl = document.getElementById('chart-maintainer-independence');
@@ -123,7 +123,7 @@ async function loadMaintainerIndependence() {
 
 async function loadGeography() {
     try {
-        const response = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_geography.json');
+        const response = await fetch(DATA_PATH_PREFIX + 'data/core/stats_geography.json');
         if (!response.ok) return;
         const json = await response.json();
         const data = json.data.reverse();
@@ -146,7 +146,7 @@ async function loadGeography() {
 
 async function loadEmergingRegions() {
     try {
-        const response = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_emerging_regions.json');
+        const response = await fetch(DATA_PATH_PREFIX + 'data/core/stats_emerging_regions.json');
         if (!response.ok) return;
         const data = await response.json();
         const chart = echarts.init(document.getElementById('chart-emerging-regions'));
@@ -192,7 +192,7 @@ async function loadEmergingRegions() {
 
 async function loadRegionalEvolution() {
     try {
-        const response = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_regional_evolution.json');
+        const response = await fetch(DATA_PATH_PREFIX + 'data/core/stats_regional_evolution.json');
         if (!response.ok) return;
         const data = await response.json();
         const chart = echarts.init(document.getElementById('chart-regional-evolution'));

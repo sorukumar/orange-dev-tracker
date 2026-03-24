@@ -11,7 +11,7 @@ async function loadChurnMetrics() {
 
     chart.showLoading();
     try {
-        const resp = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_churn.json');
+        const resp = await fetch(DATA_PATH_PREFIX + 'data/core/stats_churn.json');
         const data = await resp.json();
 
         const option = {
@@ -122,7 +122,7 @@ async function loadRetentionMetrics() {
 
     chart.showLoading();
     try {
-        const resp = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_retention.json?t=' + Date.now());
+        const resp = await fetch(DATA_PATH_PREFIX + 'data/core/stats_retention.json?t=' + Date.now());
         retentionData = await resp.json();
 
         // Initial render with Workforce
@@ -270,7 +270,7 @@ async function loadReviewersMetrics() {
     console.log("Loading Reviewers Metrics...");
     chart.showLoading();
     try {
-        const resp = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_reviewers.json?t=' + Date.now());
+        const resp = await fetch(DATA_PATH_PREFIX + 'data/core/stats_reviewers.json?t=' + Date.now());
         if (!resp.ok) throw new Error(`HTTP error! status: ${resp.status}`);
         const data = await resp.json();
         console.log(`Loaded ${data.length} reviewers`);

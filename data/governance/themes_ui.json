@@ -36,7 +36,7 @@
   "social_mentions": [
     {
       "name": "Consensus & Soft Forks",
-      "value": 755
+      "value": 747
     },
     {
       "name": "Mining",
@@ -44,7 +44,7 @@
     },
     {
       "name": "Other",
-      "value": 750
+      "value": 748
     },
     {
       "name": "P2P Network",
@@ -56,7 +56,7 @@
     },
     {
       "name": "Scaling & Lightning",
-      "value": 76
+      "value": 75
     },
     {
       "name": "Script & Smart Contracts",
