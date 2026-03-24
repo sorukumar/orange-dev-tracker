@@ -104,7 +104,7 @@
     },
     {
       "canonical_id": "Pieter Wuille",
-      "social_post_count": 513
+      "social_post_count": 515
     },
     {
       "canonical_id": "=?UTF-8?B?Sm9yZ2UgVGltw7Nu?=",
@@ -112,7 +112,7 @@
     },
     {
       "canonical_id": "Matt Corallo",
-      "social_post_count": 418
+      "social_post_count": 429
     },
     {
       "canonical_id": "Gavin Andresen",
@@ -124,11 +124,11 @@
     },
     {
       "canonical_id": "Antoine Riard",
-      "social_post_count": 332
+      "social_post_count": 335
     },
     {
       "canonical_id": "Anthony Towns",
-      "social_post_count": 317
+      "social_post_count": 318
     },
     {
       "canonical_id": "Eric Voskuil",
@@ -148,7 +148,7 @@
     },
     {
       "canonical_id": "Erik Aronesty",
-      "social_post_count": 263
+      "social_post_count": 269
     },
     {
       "canonical_id": "Jeremy",
@@ -163,5 +163,5 @@
       "social_post_count": 212
     }
   ],
-  "last_updated": "2026-03-21T23:00:30.353466"
+  "last_updated": "2026-03-22T06:30:34.180849"
 }

@@ -1,14 +1,7 @@
 /**
- * Shared data path prefix resolver for multi-level navigation (root vs lab)
+ * Centralized data source prefix (Stateless Architecture)
  */
-const DATA_PATH_PREFIX = (function () {
-    const path = window.location.pathname;
-    // If the path contains '/lab/', we are 2 levels deep
-    if (path.includes('/lab/')) {
-        return '../../';
-    }
-    return '';
-})();
+const DATA_PATH_PREFIX = 'https://raw.githubusercontent.com/sorukumar/orange-dev-data/main/';
 
 /**
  * Shared utility functions for Bitcoin Data Labs

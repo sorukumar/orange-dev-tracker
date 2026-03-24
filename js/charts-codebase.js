@@ -5,14 +5,14 @@
 async function loadCodebaseSnapshots() {
     try {
         try {
-            const resVital = await fetch(DATA_PATH_PREFIX + 'data/core/dashboard_vital_signs.json');
+            const resVital = await fetch(DATA_PATH_PREFIX + 'output/tracker/dashboard_vital_signs.json');
             const dataVital = await resVital.json();
             if (document.getElementById('kpi-total-lines')) {
                 document.getElementById('kpi-total-lines').innerText = (dataVital.current_codebase_size / 1000000).toFixed(2) + "M";
             }
         } catch (e) { }
 
-        const res = await fetch(DATA_PATH_PREFIX + 'data/core/stats_codebase_snapshots.json');
+        const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_codebase_snapshots.json');
         if (!res.ok) return;
         const data = await res.json();
 
@@ -72,7 +72,7 @@ async function loadCodebaseSnapshots() {
 
 async function loadStreamgraph() {
     try {
-        const res = await fetch(DATA_PATH_PREFIX + 'data/core/stats_stack_evolution.json');
+        const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_stack_evolution.json');
         if (!res.ok) return;
         const data = await res.json();
         const validIndices = data.xAxis.map((x, i) => parseInt(x) <= 2026 ? i : -1).filter(i => i !== -1);
@@ -129,7 +129,7 @@ async function loadStreamgraph() {
 
 async function loadCategoryHistory() {
     try {
-        const res = await fetch(DATA_PATH_PREFIX + 'data/core/stats_category_history.json');
+        const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_category_history.json');
         if (!res.ok) return;
         const data = await res.json();
         const validIndices = data.xAxis.map((x, i) => parseInt(x) <= 2026 ? i : -1).filter(i => i !== -1);

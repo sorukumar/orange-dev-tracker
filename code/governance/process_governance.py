@@ -6,7 +6,7 @@ import sys
 GOVERNANCE_SCRIPTS = [
     "code/governance/ingest_bips.py",
     "code/governance/ingest_delving.py",
-    # "code/governance/ingest_mailing_list.py", # Skipping as requested
+    "code/governance/ingest_mailing_list.py",
     "code/governance/process_social.py",
     "code/governance/enrich_governance.py",
     "code/governance/map_expertise.py",
