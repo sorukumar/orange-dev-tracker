@@ -4,7 +4,7 @@
 
 const Navigation = {
     links: [
-        { name: 'Dashboard', url: 'dashboard.html' },
+        { name: 'Dashboard', url: 'index.html' },
         { name: 'Contributors', url: 'contributors.html' },
         { name: 'Codebase', url: 'codebase.html' },
         { name: 'Engineering', url: 'engineering.html' },
@@ -16,7 +16,7 @@ const Navigation = {
         const container = document.getElementById('main-nav');
         if (!container) return;
 
-        const currentPath = window.location.pathname.split('/').pop() || 'dashboard.html';
+        const currentPath = window.location.pathname.split('/').pop() || 'index.html';
 
         const navHtml = `
             <button class="mobile-nav-toggle" aria-label="Toggle navigation">

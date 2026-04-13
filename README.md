@@ -28,7 +28,8 @@ The tracker organizes development activity into several high-signal buckets:
 *   **Quality Assurance**: The exhaustive test suite that secures billions of dollars in value.
 
 ## 🔗 Navigation & Resources
-*   **[Main Dashboard](https://sorukumar.github.io/orange-dev-tracker/dashboard.html)**: High-level KPIs and project vitals.
+*   **[Main Dashboard](https://sorukumar.github.io/orange-dev-tracker/index.html)**: High-level KPIs and project vitals.
+*   **[The Story](https://sorukumar.github.io/orange-dev-tracker/story.html)**: A scrollytelling narrative of Bitcoin's evolution.
 *   **[Contributor Galaxy](https://sorukumar.github.io/orange-dev-tracker/contributors.html)**: Visualize the cohorts and geographical spread of devs.
 *   **[Governance Layer](https://sorukumar.github.io/orange-dev-tracker/lab/bips/)**: Track BIP maturation from social proof to implementation.
 *   **[Engineering Health](https://sorukumar.github.io/orange-dev-tracker/health.html)**: Monitor bus factor, retention, and maintenance ratios.

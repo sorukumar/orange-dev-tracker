@@ -19,14 +19,14 @@ All data artifacts are partitioned to prevent experimental data from polluting p
 
 ### 3. `lab/` (The Sandbox)
 This is the area for rapid UI and functional prototyping. Each sub-folder is a "Feature Bundle":
-*   **`lab/gloria/`**: Experimental Maintainer Spotlight. Contains its own `index.html` and `prep.py`.
+*   **`lab/gloria/`**: Experimental Maintainer Spotlight. Contains its own `story.html` and `prep.py`.
 *   **`lab/bips/`**: Early-stage Governance Dashboard.
 
 ### 4. `analysis/` (The Scratchpad)
 One-off research scripts, debug tools, and insight generators that are not part of the monthly production cron job.
 
 ### 5. Root Directory (The Showroom)
-Only stable, deployment-ready HTML files live in the root (e.g., `index.html`, `dashboard.html`).
+Only stable, deployment-ready HTML files live in the root (e.g., `story.html`, `index.html`).
 
 ---
 
@@ -37,11 +37,11 @@ New features should follow this lifecycle to ensure the repository remains clean
 1.  **Exploration**: Create a script in `analysis/` to test a hypothesis or extract a new dataset.
 2.  **Sandbox (The Lab)**:
     *   Create a folder in `lab/feature_name/`.
-    *   Develop the UI (`index.html`) and local data prep logic (`prep.py`) there.
+    *   Develop the UI (`story.html`) and local data prep logic (`prep.py`) there.
     *   Write experimental data to `data/lab/`.
 3.  **Refinement**: Iterate until the feature is stable and visually polished.
 4.  **Graduation (Production)**:
-    *   Move the HTML from `lab/.../index.html` to root (e.g., `feature.html`).
+    *   Move the HTML from `lab/.../story.html` to root (e.g., `feature.html`).
     *   Move logic from `lab/.../prep.py` to `code/core/`.
     *   Update data outputs to write to `data/core/`.
     *   Integrate the graduated script into the main `rebuild.py`.

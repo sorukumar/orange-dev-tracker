@@ -36,8 +36,8 @@ The tracker is a static site built with:
 - **Data Layers**: Pre-processed JSON snapshots stored in the `data/` directory.
 
 ## Site Structure
-- `/index.html`: Scrollytelling landing page.
-- `/dashboard.html`: Main KPI dashboard.
+- `/story.html`: Scrollytelling landing page.
+- `/index.html`: Main KPI dashboard.
 - `/contributors.html`: Deep dive into developers.
 - `/codebase.html`: Code distribution and language stats.
 - `/health.html`: Project sustainability metrics.
