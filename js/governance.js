@@ -2,11 +2,11 @@ async function initGovernance() {
     console.log("Initializing Governance Dashboard...");
 
     // Data paths
-    const STATS_URL = DATA_PATH_PREFIX + 'data/governance/stats_ui.json';
-    const THEMES_URL = DATA_PATH_PREFIX + 'data/governance/themes_ui.json';
-    const FUNNEL_URL = DATA_PATH_PREFIX + 'data/governance/funnel_ui.json';
-    const BIPS_URL = DATA_PATH_PREFIX + 'data/governance/bips_ui.json';
-    const EXPERTISE_URL = DATA_PATH_PREFIX + 'data/governance/expertise.json';
+    const STATS_URL = DATA_PATH_PREFIX + 'output/tracker/stats_ui.json';
+    const THEMES_URL = DATA_PATH_PREFIX + 'output/tracker/themes_ui.json';
+    const FUNNEL_URL = DATA_PATH_PREFIX + 'output/tracker/funnel_ui.json';
+    const BIPS_URL = DATA_PATH_PREFIX + 'output/tracker/bips_ui.json';
+    const EXPERTISE_URL = DATA_PATH_PREFIX + 'output/tracker/expertise.json';
 
     try {
         const [stats, themes, funnel, bips, expertise] = await Promise.all([

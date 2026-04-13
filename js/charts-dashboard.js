@@ -4,7 +4,7 @@
 
 async function loadVitalSigns() {
     try {
-        const res = await fetch(DATA_PATH_PREFIX + 'data/core/dashboard_vital_signs.json');
+        const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/dashboard_vital_signs.json');
         const data = await res.json();
 
         if (document.getElementById('kpi-contributors')) {
@@ -52,7 +52,7 @@ async function loadSnapshots() {
     // Shared between Dashboard and Codebase
     if (charts.snapshotWork) {
         try {
-            const resWork = await fetch(DATA_PATH_PREFIX + 'data/core/stats_work_distribution.json');
+            const resWork = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_work_distribution.json');
             const dataWork = await resWork.json();
             charts.snapshotWork.setOption({
                 backgroundColor: 'transparent',
@@ -104,7 +104,7 @@ async function loadSnapshots() {
     // Volume (Codebase Page Only)
     if (charts.snapshotVolume) {
         try {
-            const resVol = await fetch(DATA_PATH_PREFIX + 'data/core/stats_code_volume.json');
+            const resVol = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_code_volume.json');
             const dataVol = await resVol.json();
             charts.snapshotVolume.setOption({
                 backgroundColor: 'transparent',
@@ -134,7 +134,7 @@ async function loadSnapshots() {
     // Tech Stack (Codebase Page Only)
     if (charts.snapshotStack) {
         try {
-            const resStack = await fetch(DATA_PATH_PREFIX + 'data/core/stats_tech_stack.json');
+            const resStack = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_tech_stack.json');
             const dataStack = await resStack.json();
             charts.snapshotStack.setOption({
                 backgroundColor: 'transparent',
@@ -171,7 +171,7 @@ let currentCategoryView = 'total';
 
 async function loadCategory() {
     try {
-        const res = await fetch(DATA_PATH_PREFIX + 'data/core/stats_category_evolution.json');
+        const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_category_evolution.json');
         categoryData = await res.json();
 
         setupCategoryToggles();
@@ -291,7 +291,7 @@ function renderCategory(view) {
 
 async function loadGrowth() {
     try {
-        const res = await fetch(DATA_PATH_PREFIX + 'data/core/stats_contributor_growth.json');
+        const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_contributor_growth.json');
         const data = await res.json();
         const newSeries = data.series.find(s => s.name === "New Contributors");
         if (newSeries) {
@@ -331,7 +331,7 @@ let currentPyramidView = 'total';
 
 async function loadEngagementTiers() {
     try {
-        const res = await fetch(DATA_PATH_PREFIX + 'data/core/stats_engagement_tiers.json');
+        const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_engagement_tiers.json');
         pyramidData = await res.json();
 
         setupPyramidToggles();
@@ -440,7 +440,7 @@ function renderPyramid(view) {
 
 async function loadSocial() {
     try {
-        const res = await fetch(DATA_PATH_PREFIX + 'data/core/stats_social_proof.json');
+        const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_social_proof.json');
         const data = await res.json();
         const filteredX = data.xAxis;
         const filteredStars = data.stars;
@@ -484,7 +484,7 @@ async function loadSocial() {
 
 async function loadMaintainers() {
     try {
-        const res = await fetch(DATA_PATH_PREFIX + 'data/core/stats_maintainer_independence.json?t=' + Date.now());
+        const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_maintainer_independence.json?t=' + Date.now());
         const data = await res.json();
         const validMaintainers = data.maintainers.filter(m => m.active_years && m.active_years.length > 0);
         validMaintainers.sort((a, b) => {
@@ -646,7 +646,7 @@ async function loadMaintainers() {
 
 async function loadStory() {
     try {
-        const resHM = await fetch(DATA_PATH_PREFIX + 'data/core/stats_heatmap.json');
+        const resHM = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_heatmap.json');
         const dataHM = await resHM.json();
         const filteredYears = dataHM.years;
         const filteredDataHM = dataHM.data;
@@ -665,7 +665,7 @@ async function loadStory() {
             series: [{ type: 'heatmap', data: filteredDataHM, itemStyle: { emphasis: { shadowBlur: 10, shadowColor: 'rgba(0, 0, 0, 0.5)' } } }]
         });
 
-        const resW = await fetch(DATA_PATH_PREFIX + 'data/core/stats_weekend.json');
+        const resW = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_weekend.json');
         const dataW = await resW.json();
         const filteredXW = dataW.xAxis;
         const filteredSeriesW = dataW.series.map(s => ({

@@ -12,7 +12,7 @@ async function loadContributorLandscape() {
         if (!charts.landscape) return;
 
         if (!galaxyData) {
-            const res = await fetch(DATA_PATH_PREFIX + 'data/core/contributors_rich.json');
+            const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/contributors_rich.json');
             galaxyData = await res.json();
             setupGalaxyToggles();
         }

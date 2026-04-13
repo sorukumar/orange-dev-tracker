@@ -7,7 +7,7 @@ const DATA_PATH_PREFIX = (function () {
     if (path.includes('/lab/')) {
         return '../../';
     }
-    return '';
+    return 'https://raw.githubusercontent.com/sorukumar/orange-dev-data/main/';
 })();
 
 /**
