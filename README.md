@@ -44,4 +44,4 @@ Built for speed and transparency, the tracker uses a **static-first architectura
 For technical documentation, directory structure, and developer setup, please refer to **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
 
 ---
-*Created by [Bitcoin Data Labs](https://github.com/sorukumar/Bitcoin-Data-Labs) as a contribution to the transparency of the Bitcoin protocol.*
+*Created by [Bitcoin Data Labs](https://bitcoindatalabs.org) as a contribution to the transparency of the Bitcoin protocol.*
