@@ -87,13 +87,22 @@
         <section class="card" style="margin-bottom: 30px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h3 style="margin: 0;">Evolution of Functional Areas (Commit Trends) <span
-                        class="partial-year-badge">2026 Partial</span></h3>
-                <div class="toggle-group"
-                    style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 11px; font-weight: 600;">
-                    <button id="btn-category-total" class="active"
-                        style="padding: 4px 10px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); color: inherit;">Total</button>
-                    <button id="btn-category-authored"
-                        style="padding: 4px 10px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">Authored</button>
+                        id="badge-category-partial" class="partial-year-badge" style="display: none;">2026 Partial</span></h3>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div class="toggle-group"
+                        style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 11px; font-weight: 600;">
+                        <button id="btn-category-year-full" class="active"
+                            style="padding: 4px 10px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); color: inherit;">Full Years</button>
+                        <button id="btn-category-year-ytd"
+                            style="padding: 4px 10px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">YTD 2026</button>
+                    </div>
+                    <div class="toggle-group"
+                        style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 11px; font-weight: 600;">
+                        <button id="btn-category-total" class="active"
+                            style="padding: 4px 10px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); color: inherit;">Total</button>
+                        <button id="btn-category-authored"
+                            style="padding: 4px 10px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">Authored</button>
+                    </div>
                 </div>
             </div>
             <div id="chart-category" style="height: 450px; width: 100%;"></div>
@@ -103,7 +112,16 @@
         <section style="display: flex; gap: 20px; margin-bottom: 30px; min-height: 400px; flex-wrap: wrap;">
             <!-- Full Width: Recruitment Velocity -->
             <div class="card" style="flex: 1; width: 100%; display: flex; flex-direction: column;">
-                <h3>Recruitment Velocity <span class="partial-year-badge">2026 Partial</span></h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0;">Recruitment Velocity <span id="badge-growth-partial" class="partial-year-badge" style="display: none;">2026 Partial</span></h3>
+                    <div class="toggle-group"
+                        style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 11px; font-weight: 600;">
+                        <button id="btn-growth-year-full" class="active"
+                            style="padding: 4px 10px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); color: inherit;">Full Years</button>
+                        <button id="btn-growth-year-ytd"
+                            style="padding: 4px 10px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">YTD 2026</button>
+                    </div>
+                </div>
                 <div id="chart-growth" style="flex: 1; height: 350px;"></div>
             </div>
         </section>

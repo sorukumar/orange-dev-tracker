@@ -173,6 +173,7 @@ async function loadSnapshots() {
 
 let categoryData = null;
 let currentCategoryView = 'total';
+let currentCategoryYearView = 'full';
 
 async function loadCategory() {
     try {
@@ -180,7 +181,8 @@ async function loadCategory() {
         categoryData = await res.json();
 
         setupCategoryToggles();
-        renderCategory('total');
+        setupCategoryYearToggles();
+        renderCategory(currentCategoryView);
 
     } catch (e) {
         console.error("Category Evolution Error:", e);
@@ -223,6 +225,47 @@ function setupCategoryToggles() {
     });
 }
 
+function setupCategoryYearToggles() {
+    const btnFull = document.getElementById('btn-category-year-full');
+    const btnYtd = document.getElementById('btn-category-year-ytd');
+
+    if (!btnFull || !btnYtd) return;
+
+    const updateUI = (view) => {
+        [btnFull, btnYtd].forEach(btn => {
+            btn.classList.remove('active');
+            btn.style.background = 'transparent';
+            btn.style.color = '#718096';
+            btn.style.boxShadow = 'none';
+        });
+
+        const activeBtn = view === 'full' ? btnFull : btnYtd;
+        activeBtn.classList.add('active');
+        activeBtn.style.background = '#fff';
+        activeBtn.style.color = 'inherit';
+        activeBtn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+
+        const badge = document.getElementById('badge-category-partial');
+        if (badge) {
+            badge.style.display = view === 'ytd' ? 'inline-block' : 'none';
+        }
+    };
+
+    btnFull.addEventListener('click', () => {
+        if (currentCategoryYearView === 'full') return;
+        currentCategoryYearView = 'full';
+        updateUI('full');
+        renderCategory(currentCategoryView);
+    });
+
+    btnYtd.addEventListener('click', () => {
+        if (currentCategoryYearView === 'ytd') return;
+        currentCategoryYearView = 'ytd';
+        updateUI('ytd');
+        renderCategory(currentCategoryView);
+    });
+}
+
 function renderCategory(view) {
     if (!charts.category || !categoryData) return;
 
@@ -234,6 +277,7 @@ function renderCategory(view) {
 
     dataset.series.forEach(s => {
         dataset.xAxis.forEach((datePart, idx) => {
+            if (currentCategoryYearView === 'full' && datePart.startsWith('2026')) return;
             const date = datePart + "-12-31";
             const val = s.data[idx];
             if (val > 0) riverData.push([date, val, s.name]);
@@ -294,41 +338,97 @@ function renderCategory(view) {
     }, true); // Use 'true' to clear previous
 }
 
+let growthData = null;
+let currentGrowthYearView = 'full';
+
 async function loadGrowth() {
     try {
         const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_contributor_growth.json');
-        const data = await res.json();
-        const newSeries = data.series.find(s => s.name === "New Contributors");
-        if (newSeries) {
-            const filteredX = data.xAxis;
-            const filteredData = newSeries.data;
-
-            charts.growth.setOption({
-                backgroundColor: 'transparent',
-                tooltip: { ...tooltipStyle, trigger: 'axis' },
-                grid: { left: '4%', right: '4%', bottom: '10%', containLabel: true },
-                xAxis: {
-                    ...axisStyle,
-                    type: 'category',
-                    boundaryGap: false,
-                    data: filteredX.map(x => x === '2026' ? '2026 (Partial)' : x)
-                },
-                yAxis: { ...axisStyle, type: 'value', name: 'New Devs' },
-                series: [{
-                    name: 'New Contributors',
-                    type: 'line', smooth: true, symbol: 'circle', symbolSize: 6,
-                    areaStyle: {
-                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                            { offset: 0, color: 'rgba(224, 122, 95, 0.4)' },
-                            { offset: 1, color: 'rgba(224, 122, 95, 0.05)' }
-                        ])
-                    },
-                    lineStyle: { color: GHIBLI_PALETTE[4], width: 3 },
-                    data: filteredData
-                }]
-            });
-        }
+        growthData = await res.json();
+        setupGrowthYearToggles();
+        renderGrowth();
     } catch (e) { }
+}
+
+function setupGrowthYearToggles() {
+    const btnFull = document.getElementById('btn-growth-year-full');
+    const btnYtd = document.getElementById('btn-growth-year-ytd');
+
+    if (!btnFull || !btnYtd) return;
+
+    const updateUI = (view) => {
+        [btnFull, btnYtd].forEach(btn => {
+            btn.classList.remove('active');
+            btn.style.background = 'transparent';
+            btn.style.color = '#718096';
+            btn.style.boxShadow = 'none';
+        });
+
+        const activeBtn = view === 'full' ? btnFull : btnYtd;
+        activeBtn.classList.add('active');
+        activeBtn.style.background = '#fff';
+        activeBtn.style.color = 'inherit';
+        activeBtn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+
+        const badge = document.getElementById('badge-growth-partial');
+        if (badge) {
+            badge.style.display = view === 'ytd' ? 'inline-block' : 'none';
+        }
+    };
+
+    btnFull.addEventListener('click', () => {
+        if (currentGrowthYearView === 'full') return;
+        currentGrowthYearView = 'full';
+        updateUI('full');
+        renderGrowth();
+    });
+
+    btnYtd.addEventListener('click', () => {
+        if (currentGrowthYearView === 'ytd') return;
+        currentGrowthYearView = 'ytd';
+        updateUI('ytd');
+        renderGrowth();
+    });
+}
+
+function renderGrowth() {
+    if (!charts.growth || !growthData) return;
+    const newSeries = growthData.series.find(s => s.name === "New Contributors");
+    if (!newSeries) return;
+
+    let filteredX = growthData.xAxis;
+    let filteredData = newSeries.data;
+
+    if (currentGrowthYearView === 'full') {
+        const validIndices = filteredX.map((x, i) => x.startsWith('2026') ? -1 : i).filter(i => i !== -1);
+        filteredX = validIndices.map(i => filteredX[i]);
+        filteredData = validIndices.map(i => filteredData[i]);
+    }
+
+    charts.growth.setOption({
+        backgroundColor: 'transparent',
+        tooltip: { ...tooltipStyle, trigger: 'axis' },
+        grid: { left: '4%', right: '4%', bottom: '10%', containLabel: true },
+        xAxis: {
+            ...axisStyle,
+            type: 'category',
+            boundaryGap: false,
+            data: filteredX.map(x => x === '2026' ? '2026 (Partial)' : x)
+        },
+        yAxis: { ...axisStyle, type: 'value', name: 'New Devs' },
+        series: [{
+            name: 'New Contributors',
+            type: 'line', smooth: true, symbol: 'circle', symbolSize: 6,
+            areaStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: 'rgba(224, 122, 95, 0.4)' },
+                    { offset: 1, color: 'rgba(224, 122, 95, 0.05)' }
+                ])
+            },
+            lineStyle: { color: GHIBLI_PALETTE[4], width: 3 },
+            data: filteredData
+        }]
+    }, true);
 }
 
 let pyramidData = null;
