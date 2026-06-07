@@ -3,7 +3,13 @@
  */
 const DATA_PATH_PREFIX = (function () {
     const path = window.location.pathname;
-    // If the path contains '/lab/', we are 2 levels deep
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+    if (isLocal) {
+        if (path.includes('/lab/')) {
+            return '../../';
+        }
+        return '';
+    }
     if (path.includes('/lab/')) {
         return '../../';
     }

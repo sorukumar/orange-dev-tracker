@@ -11,6 +11,11 @@ async function loadVitalSigns() {
             document.getElementById('kpi-contributors').innerText = data.unique_contributors.toLocaleString();
         }
 
+        if (document.getElementById('freshness-line')) {
+            const dateStr = data.generated_at ? new Date(data.generated_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Unknown';
+            document.getElementById('freshness-line').innerText = `Updated ${dateStr} | ${data.unique_contributors.toLocaleString()} contributors tracked`;
+        }
+
         // Maintainers: Total / Active
         if (document.getElementById('kpi-maintainers')) {
             const total = data.total_maintainers || "-";

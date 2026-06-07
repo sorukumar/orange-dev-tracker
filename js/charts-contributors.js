@@ -99,13 +99,19 @@ function renderGalaxy(viewType = 'total') {
     const groupedSeries = {};
     Object.keys(rankStyles).forEach(rank => groupedSeries[rank] = []);
 
-    galaxyData.filter(item => item && item.cohort_year).forEach(item => {
-        const p = item.percentile_raw || 0;
+    const filteredData = galaxyData.filter(item => item && item.cohort_year && item.total_commits > 0);
+    filteredData.sort((a, b) => (b.total_commits || 0) - (a.total_commits || 0));
+    
+    // Assign dynamic percentiles (0 to 100, where 100 is rank 1)
+    const count = filteredData.length;
+    filteredData.forEach((item, index) => {
+        const dynamic_percentile = 100 - ((index / count) * 100);
+        
         let rank;
-        if (p >= 99) rank = 'The Core (Top 1%)';
-        else if (p >= 80) rank = 'The Contributors (Top 20%)';
+        if (dynamic_percentile >= 99) rank = 'The Core (Top 1%)';
+        else if (dynamic_percentile >= 80) rank = 'The Contributors (Top 20%)';
         else rank = 'The Prospects (Bottom 80%)';
-
+        
         const style = rankStyles[rank];
         const isActive = (item.last_active_year >= 2024); // Show a glow for recently active
         const portraitUrl = portraits[item.name];

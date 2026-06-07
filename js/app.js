@@ -41,6 +41,7 @@ async function init() {
     charts.churn = initChart('chart-churn');
     charts.retention = initChart('chart-retention');
     charts.reviewers = initChart('chart-reviewers');
+    charts.regionalEvolution = initChart('chart-regional-evolution');
 
     window.addEventListener('resize', () => {
         Object.values(charts).forEach(c => c && c.resize());

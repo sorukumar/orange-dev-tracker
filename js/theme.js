@@ -14,23 +14,23 @@ const COLORS = {
 
 const categoryColors = {
     // Security & Core (Warm spectrum)
-    'Consensus (Domain Logic)': '#E07A5F',
-    'Cryptography (Primitives)': '#C53030',
-    'Core Libs': '#F6AD55',
+    'Consensus': '#E07A5F',
+    'Cryptography': '#C53030',
+    'Script': '#F6AD55',
 
     // Usability & App (Amber spectrum)
-    'Node & RPC (App/Interface)': '#ED8936',
-    'GUI (Presentation Layer)': '#F4A261',
-    'Wallet (Client App)': '#D69E2E',
+    'Node & RPC': '#ED8936',
+    'GUI': '#F4A261',
+    'Wallet': '#D69E2E',
 
     // Resilience & Infrastructure (Cool spectrum)
-    'P2P Network (Infrastructure)': '#2B6CB0',
-    'Database (Persistence)': '#4A5568',
-    'Utilities (Shared Libs)': '#9F86C0',
+    'P2P Network': '#2B6CB0',
+    'Database': '#4A5568',
+    'Utilities': '#9F86C0',
 
     // Quality & Education (Natural spectrum)
-    'Tests (QA)': '#81B29A',
-    'Build & CI (DevOps)': '#3D405B',
+    'Tests': '#81B29A',
+    'Build & CI': '#3D405B',
     'Documentation': '#F2CC8F'
 };
 

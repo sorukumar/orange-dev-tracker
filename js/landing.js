@@ -126,20 +126,21 @@ async function loadData() {
 function processPyramid(data) {
     if (!data) return;
 
-    // Sort desc by commits
-    data.sort((a, b) => b.total_commits - a.total_commits);
-    const count = data.length;
+    // Sort desc by commits and filter 0 commits
+    let filteredData = data.filter(d => d.total_commits > 0);
+    filteredData.sort((a, b) => b.total_commits - a.total_commits);
+    const count = filteredData.length;
 
     // Tiers: 1%, 19% (Top 20%), 80% (Bottom 80%)
     const i1 = Math.ceil(count * 0.01);
     const i20 = Math.ceil(count * 0.20);
 
     // Group 1: 0 to i1
-    const group1 = data.slice(0, i1);
+    const group1 = filteredData.slice(0, i1);
     // Group 2: i1 to i20
-    const group2 = data.slice(i1, i20);
+    const group2 = filteredData.slice(i1, i20);
     // Group 3: i20 to end
-    const group3 = data.slice(i20);
+    const group3 = filteredData.slice(i20);
 
     dataCache.processed.pyramid = [
         { value: group1.length, name: `The Core (Top 1%)`, itemStyle: { color: VISUAL_OPTS.accentColor } },

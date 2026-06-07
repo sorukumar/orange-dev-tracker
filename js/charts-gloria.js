@@ -3,6 +3,39 @@
  * Uses Shared Theme and High-Contrast Dark Mode settings
  */
 
+const CATEGORY_NAME_NORMALIZATION = {
+    'Consensus (Domain Logic)':      'Consensus',
+    'Cryptography (Primitives)':     'Cryptography',
+    'Node & RPC (App/Interface)':    'Node & RPC',
+    'GUI (Presentation Layer)':      'GUI',
+    'Wallet (Client App)':           'Wallet',
+    'P2P Network (Infrastructure)':  'P2P Network',
+    'Utilities (Shared Libs)':       'Utilities',
+    'Tests (QA)':                    'Tests',
+    'Build & CI (DevOps)':           'Build & CI',
+};
+
+const CATEGORY_COLORS = {
+    'Consensus':      '#E07A5F',
+    'Cryptography':   '#C53030',
+    'Script':         '#f59e0b',
+    'Node & RPC':     '#ED8936',
+    'GUI':            '#F4A261',
+    'Wallet':         '#D69E2E',
+    'P2P Network':    '#2B6CB0',
+    'Database':       '#4A5568',
+    'Utilities':      '#9F86C0',
+    'Mempool':        '#6366f1',
+    'Tests':          '#81B29A',
+    'Build & CI':     '#3D405B',
+    'Documentation':  '#F2CC8F',
+    'Merge':          '#94A3B8',
+};
+
+function normalizeCategoryName(category) {
+    return CATEGORY_NAME_NORMALIZATION[category] || category;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch(DATA_PATH_PREFIX + 'data/lab/gloria_stats.json');
@@ -43,7 +76,8 @@ function generateStrategicAlignment(data) {
 
     const stats = {};
     categories.forEach(c => {
-        stats[c.category] = (c.count / total) * 100;
+        const category = normalizeCategoryName(c.category);
+        stats[category] = (c.count / total) * 100;
     });
 
     let archetype = "Core Contributor";
@@ -51,10 +85,10 @@ function generateStrategicAlignment(data) {
     let bullets = [];
 
     // Gloria specific precision logic
-    const testPct = Math.round(stats['Tests (QA)'] || 0);
-    const consensusPct = Math.round(stats['Consensus (Domain Logic)'] || 0);
-    const nodePct = Math.round(stats['Node & RPC (App/Interface)'] || 0);
-    const p2pPct = Math.round(stats['P2P Network (Infrastructure)'] || 0);
+    const testPct = Math.round(stats['Tests'] || 0);
+    const consensusPct = Math.round(stats['Consensus'] || 0);
+    const nodePct = Math.round(stats['Node & RPC'] || 0);
+    const p2pPct = Math.round(stats['P2P Network'] || 0);
 
     // Baseline Narrative
     bullets.push(`Gloria's journey began in 2020, focusing on rigorous codebase hardening through <b>Testing (QA)</b> and co-organizing the <b>Bitcoin Core PR Review Club</b>.`);
@@ -350,11 +384,14 @@ function initCategoryDistributionChart(categories) {
                 }
             },
             labelLine: { show: false },
-            data: categories.map(c => ({
-                name: c.category,
-                value: c.count,
-                itemStyle: { color: categoryColors[c.category] || GHIBLI_PALETTE[0] }
-            }))
+            data: categories.map(c => {
+                const category = normalizeCategoryName(c.category);
+                return {
+                    name: category,
+                    value: c.count,
+                    itemStyle: { color: CATEGORY_COLORS[category] || GHIBLI_PALETTE[0] }
+                };
+            })
         }]
     };
     chart.setOption(option);

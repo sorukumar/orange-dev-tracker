@@ -157,3 +157,10 @@ h3 {
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
+.freshness-line {
+    font-size: 0.9rem;
+    color: #a0aec0;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 500;
+}
