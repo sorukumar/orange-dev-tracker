@@ -38,9 +38,9 @@ The tracker organizes development activity into several high-signal buckets:
 
 ## 🛠 Project Engine
 Built for speed and transparency, the tracker uses a **static-first architectural model**. 
-*   **Ingestion**: High-performance Python forensics engine parsing git logs.
+*   **Data Pipeline**: Heavy lifting (ingestion, parsing, and aggregation) is handled externally in the [Orange Dev Data](https://github.com/sorukumar/orange-dev-data) repository.
 *   **Visualization**: Custom ECharts implementation optimized for sub-second load times.
-*   **Governance**: Real-time enrichment from Bitcoin-dev mailing lists and Delving Bitcoin.
+*   **Governance**: Real-time enrichment data from Bitcoin-dev mailing lists and Delving Bitcoin is fetched dynamically.
 
 For technical documentation, directory structure, and developer setup, please refer to **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
 

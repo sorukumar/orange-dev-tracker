@@ -33,7 +33,7 @@ Analysis of the human effort behind Bitcoin.
 The tracker is a static site built with:
 - **Frontend**: Vanilla JS, HTML5, CSS3.
 - **Visualizations**: Apache ECharts and D3.js.
-- **Data Layers**: Pre-processed JSON snapshots stored in the `data/` directory.
+- **Data Layers**: Pre-processed JSON snapshots fetched remotely from the `orange-dev-data` repository.
 
 ## Site Structure
 - `/story.html`: Scrollytelling landing page.
@@ -44,4 +44,4 @@ The tracker is a static site built with:
 - `/methodology.html`: Detailed technical explanation of data processing.
 
 ---
-*Created on 2026-01-27 for the benefit of LLM agents and web crawlers.*
+*Created on 2026-06-07 for the benefit of LLM agents and web crawlers.*

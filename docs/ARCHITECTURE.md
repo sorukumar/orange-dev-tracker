@@ -10,12 +10,8 @@ This is where the logic lives. It is partitioned by stability:
 *   **`code/governance/`**: Logic for high-complexity domain data (BIPs, Mailing Lists). This is "Infrastructure" that supports both core and lab features.
 *   **`code/lib/`**: Shared Python utilities, constants, and logging handlers.
 
-### 2. `data/` (The Warehouse)
-All data artifacts are partitioned to prevent experimental data from polluting production:
-*   **`data/core/`**: Final `.json` and `.parquet` files used by the root dashboard.
-*   **`data/governance/`**: Intermediate and final governance artifacts.
-*   **`data/lab/`**: Data generated specifically for experimental pages.
-*   **`data/cache/`**: API caches, lookup files (aliases, sponsors), and persistent metadata.
+### 2. Remote Data Integration
+The tracker does not store data locally. Instead, it relies on pre-processed artifacts fetched directly from the [Orange Dev Data](https://github.com/sorukumar/orange-dev-data) repository. The frontend uses a dynamic `DATA_PATH_PREFIX` (defined in `js/utils.js`) to point to the remote `output/` directory, ensuring the visualizations always reflect the latest processed statistics.
 
 ### 3. `lab/` (The Sandbox)
 This is the area for rapid UI and functional prototyping. Each sub-folder is a "Feature Bundle":
@@ -52,4 +48,4 @@ New features should follow this lifecycle to ensure the repository remains clean
 
 *   **Respect the Prefix**: Frontend JS must use `DATA_PATH_PREFIX` (defined in `js/utils.js`) for all `fetch` calls to ensure they work at any directory depth.
 *   **No Root Pollution**: Do not add new `.html` files to the root until they have been validated in the `lab/`.
-*   **Data Isolation**: Never write experimental data directly to `data/core/`. Use `data/lab/` or specialized subdirectories.
+*   **Data Isolation**: All data generation happens in the `orange-dev-data` repository. Ensure that local lab scripts fetch data from the appropriate remote paths or use local mock data temporarily.
