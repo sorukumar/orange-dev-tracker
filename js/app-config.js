@@ -6,13 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
             appHomeUrl: 'index.html',
             navLinks: [
                 { name: 'Dashboard', url: 'index.html' },
-                { name: 'The Story', url: 'story.html' },
                 { name: 'Contributors', url: 'contributors.html' },
                 { name: 'Codebase', url: 'codebase.html' },
                 { name: 'Engineering', url: 'engineering.html' },
                 { name: 'Health & Culture', url: 'health.html' },
                 { name: 'Methodology', url: 'methodology.html' },
                 { name: 'Roadmap & Feedback', url: 'roadmap.html' }
+            ],
+            suiteLinks: [
+                { name: 'Network', url: 'https://sorukumar.github.io/orange-dev-network', icon: 'fas fa-project-diagram' }
             ]
         });
     }
