@@ -37,7 +37,7 @@
                 <!-- Segments added by JS -->
             </div>
             <div style="display: flex; gap: 15px; font-size: 10px; font-weight: 700;">
-                <span id="label-nonprofit" style="color: #F7931A;">-- Nonprofit</span>
+                <span id="label-nonprofit" style="color: #E8916B;">-- Nonprofit</span>
                 <span id="label-corporate" style="color: #3E6073;">-- Corporate</span>
                 <span id="label-academic" style="color: #89B449;">-- Academic</span>
             </div>
@@ -53,7 +53,7 @@
                             Breadth</b> vs. <b>Experience Depth</b>.</p>
                 </div>
                 <div style="display: flex; gap: 20px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">
-                    <span style="color: #F7931A;"><i class="fas fa-circle"></i> Nonprofit</span>
+                    <span style="color: #E8916B;"><i class="fas fa-circle"></i> Nonprofit</span>
                     <span style="color: #3E6073;"><i class="fas fa-circle"></i> Corporate</span>
                     <span style="color: #89B449;"><i class="fas fa-circle"></i> Academic</span>
                 </div>
@@ -180,7 +180,7 @@
             const total = Object.values(comp).reduce((a, b) => a + b, 0);
 
             const types = [
-                { key: 'nonprofit', color: '#F7931A', label: 'Nonprofit' },
+                { key: 'nonprofit', color: '#E8916B', label: 'Nonprofit' },
                 { key: 'corporate', color: '#3E6073', label: 'Corporate' },
                 { key: 'academic', color: '#89B449', label: 'Academic' }
             ];
@@ -214,7 +214,7 @@
                 tooltip: {
                     formatter: function (param) {
                         return `<div style="padding: 12px; background: #161B22; border: 1px solid #30363D; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.4);">
-                            <b style="color: #f7931a; font-size: 1.1rem;">${param.data[3]}</b><br/>
+                            <b style="color: #e8916b; font-size: 1.1rem;">${param.data[3]}</b><br/>
                             <div style="margin-top: 8px;">
                                 <span style="color: #94A3B8">Core Devs Supported:</span> <b style="color: #fff">${param.data[2]}</b><br/>
                                 <span style="color: #94A3B8">Portfolio Breadth:</span> <b style="color: #fff">${param.data[0]} domains</b><br/>
@@ -253,7 +253,7 @@
                     },
                     itemStyle: {
                         color: function (param) {
-                            const types = { 'nonprofit': '#F7931A', 'corporate': '#3E6073', 'academic': '#89B449' };
+                            const types = { 'nonprofit': '#E8916B', 'corporate': '#3E6073', 'academic': '#89B449' };
                             return types[param.data[4]] || '#718096';
                         },
                         opacity: 0.8,
@@ -355,7 +355,7 @@
                                 </div>
                                 <div class="dev-meta" style="margin-top: 5px;">
                                     <span style="font-size: 11px;">Ex: <b>${dev.total_commits.toLocaleString()}</b></span>
-                                    ${dev.is_maintainer ? '<span style="background: rgba(247,147,26,0.1); color: #f7931a; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; letter-spacing: 0.5px;">MAINTAINER</span>' : ''}
+                                    ${dev.is_maintainer ? '<span style="background: rgba(247,147,26,0.1); color: #e8916b; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; letter-spacing: 0.5px;">MAINTAINER</span>' : ''}
                                 </div>
                             </div>
                         `).join('')}
@@ -445,7 +445,7 @@
 
                 tr.innerHTML = `
                     <td style="padding: 24px; border-bottom: 1px solid var(--border);">
-                        <div style="font-weight: 700; color: #fff; font-size: 1.1rem;">${dev.name} ${dev.is_maintainer ? '<i class="fas fa-star" title="Core Maintainer" style="color: #F7931A; font-size: 0.8rem; margin-left: 5px;"></i>' : ''}</div>
+                        <div style="font-weight: 700; color: #fff; font-size: 1.1rem;">${dev.name} ${dev.is_maintainer ? '<i class="fas fa-star" title="Core Maintainer" style="color: #E8916B; font-size: 0.8rem; margin-left: 5px;"></i>' : ''}</div>
                         <div style="font-size: 0.75rem; color: #718096; margin-top: 4px;">@${dev.github} • Cohort ${dev.cohort_year || '---'}</div>
                     </td>
                     <td style="padding: 24px; border-bottom: 1px solid var(--border);">
@@ -495,7 +495,7 @@
                         }
                         return `<div style="padding: 10px; background: #161B22; border: 1px solid #30363D; border-radius: 8px;">
                             <span style="color: #94A3B8">${params.data.source} → ${params.data.target}</span><br/>
-                            <b style="color: #f7931a; font-size: 1.1rem;">${Math.round(params.data.value).toLocaleString()} Commits</b>
+                            <b style="color: #e8916b; font-size: 1.1rem;">${Math.round(params.data.value).toLocaleString()} Commits</b>
                         </div>`;
                     }
                 },

@@ -115,7 +115,7 @@ function generateStrategicAlignment(data) {
     narrativeContainer.innerHTML = `
         <ul style="margin: 0; padding-left: 20px; list-style-type: none;">
             ${bullets.map(b => `<li style="margin-bottom: 15px; position: relative;">
-                <span style="position: absolute; left: -20px; color: #f7931a;">•</span>
+                <span style="position: absolute; left: -20px; color: #e8916b;">•</span>
                 ${b}
             </li>`).join('')}
         </ul>
@@ -171,7 +171,7 @@ function initResilienceChart(trends, milestones, milestoneMap) {
                 });
                 const m = milestoneMap[params[0].name];
                 if (m) {
-                    res += `<div style="margin-top:12px;padding-top:10px;border-top:1px dashed #f7931a;color:#f7931a">
+                    res += `<div style="margin-top:12px;padding-top:10px;border-top:1px dashed #e8916b;color:#e8916b">
                         <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:0.8;margin-bottom:2px">Key Milestone</div>
                         <div style="font-weight:bold;font-size:13px">${m.label}</div>
                         <div style="font-size:12px;color:#cbd5e1;white-space:normal;width:220px;margin-top:4px">${m.desc}</div>
@@ -215,7 +215,7 @@ function initResilienceChart(trends, milestones, milestoneMap) {
             backgroundColor: 'rgba(255,255,255,0.02)',
             borderColor: 'rgba(255,255,255,0.05)',
             fillerColor: 'rgba(247, 147, 26, 0.1)',
-            handleStyle: { color: '#f7931a' },
+            handleStyle: { color: '#e8916b' },
             textStyle: { color: '#475569' }
         }],
         series: [
@@ -224,7 +224,7 @@ function initResilienceChart(trends, milestones, milestoneMap) {
                 type: 'bar',
                 stack: 'gloria',
                 data: trends.map(t => t.authored),
-                itemStyle: { color: '#f7931a', borderRadius: [2, 2, 0, 0] },
+                itemStyle: { color: '#e8916b', borderRadius: [2, 2, 0, 0] },
                 markLine: { symbol: ['none', 'none'], data: milestoneLines, silent: true }
             },
             {
@@ -286,7 +286,7 @@ function initCategoryTrendChart(categoryTrends, milestones, milestoneMap) {
                 });
                 const m = milestoneMap[params[0].name];
                 if (m) {
-                    res += `<div style="margin-top:12px;padding-top:10px;border-top:1px dashed #f7931a;color:#f7931a">
+                    res += `<div style="margin-top:12px;padding-top:10px;border-top:1px dashed #e8916b;color:#e8916b">
                         <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:0.8">Technical Highlight</div>
                         <div style="font-weight:bold">${m.label}</div>
                     </div>`;
@@ -313,7 +313,7 @@ function initCategoryTrendChart(categoryTrends, milestones, milestoneMap) {
             backgroundColor: 'rgba(255,255,255,0.02)',
             borderColor: 'rgba(255,255,255,0.05)',
             fillerColor: 'rgba(247, 147, 26, 0.1)',
-            handleStyle: { color: '#f7931a' },
+            handleStyle: { color: '#e8916b' },
             textStyle: { color: '#475569' }
         }],
         series: categories.map((cat, idx) => ({
@@ -375,7 +375,7 @@ function initCategoryDistributionChart(categories) {
                     show: true,
                     fontSize: '16',
                     fontWeight: '800',
-                    color: '#f7931a',
+                    color: '#e8916b',
                     formatter: '{b}'
                 },
                 itemStyle: {

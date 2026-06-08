@@ -22,7 +22,7 @@
         :root {
             --stripe-slate: #0a2540;
             --stripe-text: #424770;
-            --accent-orange: #F7931A;
+            --accent-orange: #E8916B;
             --sidebar-width: 260px;
             --section-gap: 5rem;
             --app-bg: #fcfbf9;
@@ -34,6 +34,10 @@
             color: var(--stripe-text);
             line-height: 1.6;
             font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
         }
 
         .layout-wrapper {
@@ -41,8 +45,9 @@
             max-width: 1300px;
             margin: 0 auto;
             position: relative;
-            background: white;
-            /* Unified background */
+            flex: 1;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         /* Sidebar Navigation */
@@ -53,8 +58,6 @@
             top: 120px;
             padding: 2rem 1.5rem;
             overflow-y: auto;
-            background: white;
-            /* Match main content */
         }
 
         @media (max-width: 1024px) {
@@ -117,9 +120,7 @@
             flex: 1;
             padding: 3rem 4rem;
             max-width: 850px;
-            background: white;
             min-height: 100vh;
-            border-left: 1px solid #f3f4f6;
         }
 
         .page-header {

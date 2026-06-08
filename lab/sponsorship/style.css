@@ -7,7 +7,7 @@
     --text-secondary: #94A3B8;
     --bg-primary: #0B0E14;
     --bg-secondary: #131A26;
-    --accent: #F7931A;
+    --accent: #E8916B;
     --border: rgba(255, 255, 255, 0.08);
     --card-bg: #161B22;
 }
@@ -287,7 +287,7 @@ body {
 
 .viz-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #F7931A, #FFB04D);
+    background: linear-gradient(90deg, #E8916B, #FFB04D);
     border-radius: 5px;
     box-shadow: 0 0 20px rgba(247, 147, 26, 0.4);
 }

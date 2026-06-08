@@ -1,9 +1,9 @@
 :root {
-    --bg-color: #0B0E14; /* Deep, deep blue/black */
-    --text-primary: #F8FAFC;
-    --text-secondary: #94A3B8;
-    --accent: #F7931A; /* Bitcoin Orange */
-    --accent-glow: rgba(247, 147, 26, 0.3);
+    --bg-color: #FCFBF9; /* Warm off-white */
+    --text-primary: #0A2540; /* Deep Slate */
+    --text-secondary: #424770;
+    --accent: #E8916B; /* Terracotta */
+    --accent-glow: rgba(232, 145, 107, 0.3);
     
     --font-main: 'Inter', system-ui, -apple-system, sans-serif;
     --container-max: 1200px;
@@ -36,7 +36,7 @@ body {
     width: 100%;
     height: 100vh;
     z-index: 0;
-    background: radial-gradient(circle at center, #131A26 0%, #0B0E14 70%);
+    background: radial-gradient(circle at center, #FFFFFF 0%, #F5F1EE 70%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -92,7 +92,7 @@ body {
 h1 {
     font-size: 4rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #fff 0%, #94A3B8 100%);
+    background: linear-gradient(135deg, #0A2540 0%, #424770 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -0.02em;
@@ -116,12 +116,12 @@ p.lead {
 }
 
 .text-box {
-    background: rgba(11, 14, 20, 0.85);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(10, 37, 64, 0.05);
     padding: 2rem;
     border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 24px rgba(42, 51, 66, 0.05);
     transform: translateY(20px);
     opacity: 0;
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
@@ -156,7 +156,7 @@ p.lead {
 
 .btn-secondary {
     display: inline-block;
-    background: rgba(255,255,255,0.1);
+    background: rgba(10, 37, 64, 0.05);
     color: var(--text-primary);
     padding: 14px 28px;
     border-radius: 50px;
@@ -168,7 +168,7 @@ p.lead {
 }
 
 .btn-secondary:hover {
-    background: rgba(255,255,255,0.2);
+    background: rgba(10, 37, 64, 0.1);
 }
 
 /* Scroll indicator */

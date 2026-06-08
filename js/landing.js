@@ -3,7 +3,7 @@
 // --- Configuration ---
 const VISUAL_OPTS = {
     textColor: '#94A3B8',
-    accentColor: '#F7931A',
+    accentColor: '#E8916B',
     backgroundColor: 'transparent',
     fontFamily: 'Inter, sans-serif'
 };

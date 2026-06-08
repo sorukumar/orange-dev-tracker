@@ -22,33 +22,9 @@ object {
 }
 
 :root {
-    /* Ghibli Nature Palette tokens */
-    --ghibli-sky: #7BA9CC;
-    --ghibli-sky-light: #B9D4E7;
-    --ghibli-leaf: #5B8266;
-    --ghibli-leaf-light: #A2C5AC;
-    --ghibli-sunset: #E07A5F;
-    --ghibli-sunset-light: #F4A261;
-    --ghibli-gold: #D4AF37;
-    --ghibli-gold-light: #E9C46A;
-    --ghibli-rose: #6D597A;
-    --ghibli-rose-light: #B5838D;
-    --ghibli-ocean: #3E6073;
-    --ghibli-ocean-light: #8BBEE8;
-    --ghibli-meadow: #89B449;
-    --ghibli-meadow-light: #C5D86D;
-    --ghibli-sakura: #E27396;
-    --ghibli-sakura-light: #FFB3C1;
-    --ghibli-moss: #585123;
-    --ghibli-earth: #DDA15E;
-    --ghibli-twilight: #384D48;
-    --ghibli-cloud: #ACD7EC;
-
     /* Compatibility with old names */
     --bg-color: var(--bg-primary);
-    --card-bg: #ffffff;
     --text-accent: var(--primary);
-    --border-color: #ececec;
 }
 
 /* Base body styles */
