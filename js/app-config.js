@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { name: 'Roadmap & Feedback', url: 'roadmap.html' }
             ],
             suiteLinks: [
-                { name: 'Network', url: 'https://sorukumar.github.io/orange-dev-network', icon: 'fas fa-project-diagram' }
+                { name: 'orange-dev-network', url: 'https://sorukumar.github.io/orange-dev-network', icon: 'fas fa-project-diagram' }
             ]
         });
     }
