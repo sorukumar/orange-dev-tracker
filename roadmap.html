@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roadmap | Orange Dev Tracker | Bitcoin Data Labs</title>
+    <meta name="description" content="Community roadmap for Bitcoin Data Labs. See what we are building next.">
+    <link rel="canonical" href="https://sorukumar.github.io/orange-dev-tracker/roadmap.html">
+    <link rel="stylesheet" href="https://bitcoindatalabs.org/styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="https://bitcoindatalabs.org/favicon.png">
+    <link rel="stylesheet" href="styles/style.css">
+
+    <style>
+        :root {
+            --stripe-slate: #0a2540;
+            --stripe-text: #424770;
+            --app-bg: #fcfbf9;
+            --primary: #F7931A;
+        }
+
+        body {
+            background-color: var(--app-bg);
+            color: var(--stripe-text);
+            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .layout-wrapper {
+            max-width: 900px;
+            margin: 40px auto;
+            position: relative;
+            background: white;
+            padding: 3rem 4rem;
+            border-radius: 12px;
+            border: 1px solid #e6ebf1;
+            min-height: 60vh;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 1.5rem;
+        }
+
+        .header-text h1 {
+            font-size: 2.75rem;
+            color: var(--stripe-slate);
+            font-weight: 800;
+            margin: 0 0 0.5rem 0;
+            letter-spacing: -0.02em;
+        }
+
+        .header-text p {
+            font-size: 1.15rem;
+            color: var(--stripe-text);
+            opacity: 0.85;
+            margin: 0;
+        }
+
+        .btn-propose {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(247, 147, 26, 0.3);
+            white-space: nowrap;
+        }
+
+        .btn-propose:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(247, 147, 26, 0.4);
+        }
+
+        #roadmap-content {
+            margin-top: 2rem;
+        }
+
+        .issue-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .issue-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 1rem 1.5rem;
+            background: #f8fafc;
+            border: 1px solid #edf2f7;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            transition: border-color 0.2s, background 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .issue-item:hover {
+            border-color: #e2e8f0;
+            background: #f1f5f9;
+        }
+
+        .issue-icon {
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+
+        .issue-details {
+            flex: 1;
+        }
+
+        .issue-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--stripe-slate);
+            margin: 0 0 4px 0;
+        }
+
+        .issue-meta {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin: 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #64748b;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .layout-wrapper {
+                padding: 2rem 1.5rem;
+                margin: 20px;
+            }
+            .page-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body class="has-fixed-header">
+    <div id="header"></div>
+
+    <div class="layout-wrapper">
+        <header class="page-header">
+            <div class="header-text">
+                <h1>Tracker Roadmap</h1>
+                <p>Features actively prioritized for Data Pipeline & Codebase Analytics.</p>
+            </div>
+            <a href="https://github.com/sorukumar/orange-dev-tracker/issues/new?template=tracker-feature.md" target="_blank" class="btn-propose">
+                <i class="fas fa-plus"></i> Suggest Feature
+            </a>
+        </header>
+
+        <main id="roadmap-content">
+            <div id="loading" class="empty-state">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Syncing roadmap with GitHub...</p>
+            </div>
+            <ul id="issue-list" class="issue-list"></ul>
+        </main>
+    </div>
+
+    <div id="footer"></div>
+
+    <script src="https://bitcoindatalabs.org/components/app-components.js"></script>
+    <script src="js/app-config.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const listEl = document.getElementById('issue-list');
+            const loadEl = document.getElementById('loading');
+            
+            try {
+                // Fetch issues labeled "Tracker"
+                const response = await fetch('https://api.github.com/repos/sorukumar/orange-dev-tracker/issues?state=open&labels=Tracker&sort=created&direction=asc');
+                if (!response.ok) throw new Error('Failed to fetch from GitHub API');
+                
+                const issues = await response.json();
+                
+                loadEl.style.display = 'none';
+
+                if (issues.length === 0) {
+                    listEl.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-check-circle"></i>
+                            <p>No open roadmap items for Tracker currently.</p>
+                            <p>Got an idea? Click <strong>Suggest Feature</strong> above to kickstart the discussion!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                issues.forEach(issue => {
+                    // Ignore pull requests if any accidentally have the label
+                    if(issue.pull_request) return;
+
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <a href="${issue.html_url}" target="_blank" class="issue-item">
+                            <div class="issue-icon">
+                                <i class="far fa-dot-circle"></i>
+                            </div>
+                            <div class="issue-details">
+                                <h3 class="issue-title">${issue.title}</h3>
+                                <p class="issue-meta">#${issue.number} opened by ${issue.user.login}</p>
+                            </div>
+                            <i class="fas fa-external-link-alt" style="color: #cbd5e1; font-size: 0.85rem;"></i>
+                        </a>
+                    `;
+                    listEl.appendChild(li);
+                });
+
+            } catch (error) {
+                console.error(error);
+                loadEl.innerHTML = `
+                    <i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i>
+                    <p>Unable to load roadmap from GitHub.</p>
+                    <a href="https://github.com/sorukumar/orange-dev-tracker/issues?q=is%3Aissue+is%3Aopen+label%3ATracker" target="_blank" style="color: var(--primary); font-weight: 600;">View directly on GitHub →</a>
+                `;
+            }
+        });
+    </script>
+</body>
+
+</html>
