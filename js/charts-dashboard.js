@@ -12,8 +12,8 @@ async function loadVitalSigns() {
         }
 
         if (document.getElementById('freshness-line')) {
-            const dateStr = data.generated_at ? new Date(data.generated_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Unknown';
-            document.getElementById('freshness-line').innerText = `Updated ${dateStr} | ${data.unique_contributors.toLocaleString()} contributors tracked`;
+            const dateStr = data.generated_at ? new Date(data.generated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown';
+            document.getElementById('freshness-line').innerText = `Data refreshed: ${dateStr}`;
         }
 
         // Maintainers: Total / Active
