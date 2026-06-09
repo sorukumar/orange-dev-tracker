@@ -7,7 +7,8 @@ async function loadCorporateEra() {
         const response = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_corporate.json');
         if (!response.ok) return;
         const data = await response.json();
-        const chart = echarts.init(document.getElementById('chart-corporate'));
+        const chart = charts.corporate || echarts.init(document.getElementById('chart-corporate'));
+        charts.corporate = chart;
         chart.setOption({
             backgroundColor: 'transparent',
             tooltip: {
