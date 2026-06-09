@@ -14,7 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 { name: 'Roadmap & Feedback', url: 'roadmap.html' }
             ],
             suiteLinks: [
-                { name: 'orange-dev-network', url: 'https://sorukumar.github.io/orange-dev-network', icon: 'fas fa-project-diagram' }
+                { name: 'orange-dev-network', url: 'https://sorukumar.github.io/orange-dev-network', icon: 'fas fa-project-diagram' },
+                { name: 'this-week-in-bitcoin', url: 'https://sorukumar.github.io/this-week-in-bitcoin', icon: 'fas fa-newspaper' }
             ]
         });
     }
