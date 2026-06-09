@@ -117,6 +117,13 @@ h3 {
         padding: 15px;
         width: 100%;
     }
+
+    /* Fix mobile menu overlay covering the header */
+    body.has-nav .nav-links-wrapper {
+        z-index: 9999 !important;
+        justify-content: flex-start !important;
+        padding-top: calc(var(--header-height, 90px) + 2rem) !important;
+    }
 }
 
 .partial-year-badge {
