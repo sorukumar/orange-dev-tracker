@@ -124,6 +124,19 @@ h3 {
         justify-content: flex-start !important;
         padding-top: calc(var(--header-height, 90px) + 2rem) !important;
     }
+
+    /* Brand the suite menu section with Terracotta */
+    .mobile-suite-content > div > div:first-child {
+        color: var(--primary) !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        letter-spacing: 1px !important;
+    }
+
+    .mobile-suite-content .suite-link-mobile:hover {
+        color: var(--primary) !important;
+        background-color: rgba(232, 145, 107, 0.1) !important;
+    }
 }
 
 .partial-year-badge {
