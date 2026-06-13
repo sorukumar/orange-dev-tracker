@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -26,7 +26,7 @@
 
     <div class="container">
         <!-- The shared header now handles the app navigation links automatically -->
-        
+
         <div id="freshness-line" class="freshness-line">Data refreshed: -</div>
 
         <!-- Vital Signs: KPIs -->
@@ -71,12 +71,9 @@
             <div class="card" style="flex: 3; min-width: 300px; display: flex; flex-direction: column;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 style="margin: 0;">The Engagement Pyramid</h3>
-                    <div class="toggle-group"
-                        style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 11px; font-weight: 600;">
-                        <button id="btn-pyramid-total" class="active"
-                            style="padding: 4px 10px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); color: inherit;">Total</button>
-                        <button id="btn-pyramid-authored"
-                            style="padding: 4px 10px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">Authored</button>
+                    <div class="toggle-group">
+                        <button id="btn-pyramid-total" class="active">Total</button>
+                        <button id="btn-pyramid-authored">Authored</button>
                     </div>
                 </div>
                 <div id="chart-engagement-tiers" style="flex: 1; height: 350px; width: 100%;"></div>
@@ -86,22 +83,16 @@
         <!-- Row 2: The Hero Narrative (Historial Context) -->
         <section class="card" style="margin-bottom: 30px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 style="margin: 0;">Evolution of Functional Areas (Commit Trends) <span
-                        id="badge-category-partial" class="partial-year-badge" style="display: none;">2026 Partial</span></h3>
+                <h3 style="margin: 0;">Evolution of Functional Areas (Commit Trends) <span id="badge-category-partial"
+                        class="partial-year-badge" style="display: none;">2026 Partial</span></h3>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <div class="toggle-group"
-                        style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 11px; font-weight: 600;">
-                        <button id="btn-category-year-full" class="active"
-                            style="padding: 4px 10px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); color: inherit;">Full Years</button>
-                        <button id="btn-category-year-ytd"
-                            style="padding: 4px 10px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">YTD 2026</button>
+                    <div class="toggle-group">
+                        <button id="btn-category-year-full" class="active">Full Years</button>
+                        <button id="btn-category-year-ytd">YTD 2026</button>
                     </div>
-                    <div class="toggle-group"
-                        style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 11px; font-weight: 600;">
-                        <button id="btn-category-total" class="active"
-                            style="padding: 4px 10px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); color: inherit;">Total</button>
-                        <button id="btn-category-authored"
-                            style="padding: 4px 10px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">Authored</button>
+                    <div class="toggle-group">
+                        <button id="btn-category-total" class="active">Total</button>
+                        <button id="btn-category-authored">Authored</button>
                     </div>
                 </div>
             </div>
@@ -113,13 +104,11 @@
             <!-- Full Width: Recruitment Velocity -->
             <div class="card" style="flex: 1; width: 100%; display: flex; flex-direction: column;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="margin: 0;">Recruitment Velocity <span id="badge-growth-partial" class="partial-year-badge" style="display: none;">2026 Partial</span></h3>
-                    <div class="toggle-group"
-                        style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 11px; font-weight: 600;">
-                        <button id="btn-growth-year-full" class="active"
-                            style="padding: 4px 10px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05); color: inherit;">Full Years</button>
-                        <button id="btn-growth-year-ytd"
-                            style="padding: 4px 10px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">YTD 2026</button>
+                    <h3 style="margin: 0;">Recruitment Velocity <span id="badge-growth-partial"
+                            class="partial-year-badge" style="display: none;">2026 Partial</span></h3>
+                    <div class="toggle-group">
+                        <button id="btn-growth-year-full" class="active">Full Years</button>
+                        <button id="btn-growth-year-ytd">YTD 2026</button>
                     </div>
                 </div>
                 <div id="chart-growth" style="flex: 1; height: 350px;"></div>

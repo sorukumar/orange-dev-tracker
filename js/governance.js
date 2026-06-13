@@ -55,7 +55,7 @@ function renderThemeChart(data) {
                 type: 'pie',
                 radius: ['40%', '70%'],
                 avoidLabelOverlap: false,
-                itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
+                itemStyle: { borderRadius: 8, borderColor: '#1A202C', borderWidth: 2 },
                 label: { show: false, position: 'center' },
                 emphasis: { label: { show: true, fontSize: '14', fontWeight: 'bold' } },
                 labelLine: { show: false },
@@ -86,7 +86,7 @@ function renderFunnelChart(data) {
                 gap: 2,
                 label: { show: true, position: 'inside' },
                 labelLine: { show: false },
-                itemStyle: { opacity: 0.8, borderColor: '#fff', borderWidth: 1 },
+                itemStyle: { opacity: 0.8, borderColor: '#1A202C', borderWidth: 1 },
                 emphasis: { label: { fontSize: 14 } },
                 data: data.sort((a, b) => b.value - a.value).slice(0, 8)
             }

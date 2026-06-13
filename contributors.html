@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -37,16 +37,9 @@
                         </p>
                     </div>
                     <div style="display: flex; gap: 20px; align-items: flex-end;">
-                        <div class="toggle-group"
-                            style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-bottom: 2px;">
-                            <button id="btn-galaxy-total" class="active"
-                                style="padding: 5px 12px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                                Total Activity
-                            </button>
-                            <button id="btn-galaxy-authored"
-                                style="padding: 5px 12px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">
-                                Authored Work
-                            </button>
+                        <div class="toggle-group" style="margin-bottom: 2px;">
+                            <button id="btn-galaxy-total" class="active">Total Activity</button>
+                            <button id="btn-galaxy-authored">Authored Work</button>
                         </div>
                         <div style="display: flex; gap: 15px;">
                             <div style="border-left: 3px solid #E07A5F; padding-left: 10px;">
@@ -93,11 +86,10 @@
                     </div>
                 </div>
 
-                <div
-                    style="margin-top: 20px; padding: 20px; background: #F7FAFC; border-radius: 12px; border: 1px solid #E2E8F0;">
-                    <h4 style="margin-bottom: 10px; color: #4A5568;"><i class="fas fa-info-circle"
+                <div class="info-box">
+                    <h4 style="margin-bottom: 10px; color: inherit;"><i class="fas fa-info-circle"
                             style="margin-right: 8px;"></i> Understanding the Data</h4>
-                    <p style="font-size: 13px; color: #4A5568; line-height: 1.6;">
+                    <p style="font-size: 13px; line-height: 1.6;">
                         <strong>Note on Methodology:</strong> We use <em>Fractional Attribution</em> to ensure accuracy.
                         If a single commit touches multiple categories (e.g., both "GUI" and "Tests"), we split its
                         credit evenly (e.g., 0.5 each).

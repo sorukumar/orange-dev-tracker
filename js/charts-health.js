@@ -82,7 +82,7 @@ async function loadMaintainerIndependence() {
                 legend: { ...legendStyle, orient: 'horizontal', bottom: 0, left: 'center', type: 'scroll', data: pieData.map(d => d.name) },
                 series: [{
                     type: 'pie', radius: ['45%', '70%'], center: ['50%', '45%'], avoidLabelOverlap: true,
-                    itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+                    itemStyle: { borderRadius: 6, borderColor: '#1A202C', borderWidth: 2 },
                     label: { show: false },
                     emphasis: {
                         label: { show: true, fontSize: 14, fontWeight: 'bold', formatter: '{d}%' },

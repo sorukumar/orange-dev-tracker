@@ -5,11 +5,11 @@
 const COLORS = {
     primary: '#E8916B',
     secondary: '#2A3342',
-    textPrimary: '#2D3748',
-    textSecondary: '#4A5568',
+    textPrimary: '#F7FAFC',
+    textSecondary: '#A0AEC0',
     textLight: '#718096',
-    border: '#E2E8F0',
-    gridLine: 'rgba(226, 232, 240, 0.6)'
+    border: '#2D3748',
+    gridLine: 'rgba(255, 255, 255, 0.05)'
 };
 
 const categoryColors = {
@@ -53,14 +53,14 @@ function getGhibliPalette() {
 }
 
 const tooltipStyle = {
-    backgroundColor: 'rgba(255, 255, 255, 0.98)',
-    borderColor: COLORS.border,
+    backgroundColor: '#1A202C',
+    borderColor: '#2D3748',
     borderWidth: 1,
     padding: [10, 14],
     textStyle: { color: COLORS.textPrimary, fontFamily: 'Inter', fontSize: 13 },
     shadowBlur: 10,
-    shadowColor: 'rgba(0,0,0,0.1)',
-    extraCssText: 'border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);'
+    shadowColor: 'rgba(0,0,0,0.5)',
+    extraCssText: 'border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);'
 };
 
 const axisStyle = {

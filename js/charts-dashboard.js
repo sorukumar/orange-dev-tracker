@@ -75,7 +75,7 @@ async function loadSnapshots() {
                     type: 'pie',
                     radius: ['50%', '75%'],
                     avoidLabelOverlap: false,
-                    itemStyle: { borderRadius: 8, borderColor: '#ffffff', borderWidth: 2 },
+                    itemStyle: { borderRadius: 8, borderColor: '#1A202C', borderWidth: 2 },
                     label: { show: false, position: 'center' },
                     emphasis: {
                         label: {
@@ -129,7 +129,7 @@ async function loadSnapshots() {
                     radius: '65%',
                     label: { color: COLORS.textSecondary, fontSize: 11 },
                     data: dataVol.data,
-                    itemStyle: { borderRadius: 4, borderColor: '#ffffff', borderWidth: 1 }
+                    itemStyle: { borderRadius: 4, borderColor: '#1A202C', borderWidth: 1 }
                 }],
                 color: GHIBLI_PALETTE
             });
@@ -163,7 +163,7 @@ async function loadSnapshots() {
                     radius: '65%',
                     label: { color: COLORS.textSecondary, fontSize: 11 },
                     data: dataStack.data,
-                    itemStyle: { borderRadius: 4, borderColor: '#ffffff', borderWidth: 1 }
+                    itemStyle: { borderRadius: 4, borderColor: '#1A202C', borderWidth: 1 }
                 }],
                 color: GHIBLI_PALETTE.slice(2)
             });
