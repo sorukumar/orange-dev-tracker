@@ -139,20 +139,7 @@ h3 {
     }
 }
 
-.partial-year-badge {
-    display: inline-block;
-    background: #FFEDD5;
-    color: #9A3412;
-    border: 1px solid #FED7AA;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 6px;
-    vertical-align: middle;
-    margin-left: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
+
 .freshness-line {
     font-size: 0.75rem;
     color: var(--text-secondary);
@@ -163,4 +150,73 @@ h3 {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     opacity: 0.8;
+}
+
+/* Dark Mode Overrides to align with Orange Dev Network */
+[data-theme="dark"] {
+    --bg-primary: #05070A;
+    --bg-secondary: #0D0F14;
+    --surface: #0D0F14;
+    --card-bg: #080A0F;
+    --text-primary: #FDF6E3;
+    --text-secondary: #94A3B8;
+    --border-color: rgba(253, 246, 227, 0.08);
+}
+
+[data-theme="dark"] body {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .card, 
+[data-theme="dark"] .kpi-card,
+[data-theme="dark"] .chart-box,
+[data-theme="dark"] .issue-item,
+[data-theme="dark"] .empty-state,
+[data-theme="dark"] .metric-card,
+[data-theme="dark"] .details-box,
+[data-theme="dark"] th {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-secondary) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-theme="dark"] .header-text h1,
+[data-theme="dark"] section h2 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] h3,
+[data-theme="dark"] section h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] section h4,
+[data-theme="dark"] .metric-card h4,
+[data-theme="dark"] .chart-header,
+[data-theme="dark"] .issue-title {
+    color: var(--text-secondary) !important;
+    font-weight: 600;
+}
+
+[data-theme="dark"] .header-text p,
+[data-theme="dark"] .issue-meta,
+[data-theme="dark"] section p,
+[data-theme="dark"] .sidebar a,
+[data-theme="dark"] .details-box dt {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: var(--primary) !important;
+}
+
+[data-theme="dark"] .sidebar a.active {
+    background-color: rgba(232, 145, 107, 0.1) !important;
+    color: var(--primary) !important;
+}
+
+[data-theme="dark"] pre {
+    background-color: #000 !important;
+    border: 1px solid var(--border-color) !important;
 }

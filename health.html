@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -45,7 +45,7 @@
                 <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-top: 20px;">
                     <!-- Chart 1: Contributor Sponsorship (Commits over time) -->
                     <div style="flex: 2; min-width: 300px;">
-                        <h4 style="margin-bottom: 10px; color: #4A5568; font-size: 14px;">
+                        <h4 style="margin-bottom: 10px; color: inherit; font-size: 14px;">
                             <i class="fas fa-users" style="margin-right: 8px; opacity: 0.7;"></i>
                             The Shift to Sponsored Development <span class="partial-year-badge">2026 Partial</span>
                         </h4>
@@ -59,16 +59,13 @@
                     <div style="flex: 1; min-width: 300px;">
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <h4 style="margin-bottom: 0; color: #4A5568; font-size: 14px;">
+                            <h4 style="margin-bottom: 0; color: inherit; font-size: 14px;">
                                 <i class="fas fa-shield-alt" style="margin-right: 8px; opacity: 0.7;"></i>
                                 Funding the Gatekeepers
                             </h4>
-                            <div class="toggle-group"
-                                style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 10px; font-weight: 600;">
-                                <button id="btn-maintainer-active" class="active"
-                                    style="padding: 4px 8px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">Active</button>
-                                <button id="btn-maintainer-all"
-                                    style="padding: 4px 8px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">All-Time</button>
+                            <div class="toggle-group">
+                                <button id="btn-maintainer-active" class="active">Active</button>
+                                <button id="btn-maintainer-all">All-Time</button>
                             </div>
                         </div>
                         <p style="font-size: 12px; color: #718096; margin-bottom: 15px;">
@@ -90,7 +87,7 @@
                 <div style="display:flex; gap:30px; height: 450px; flex-wrap: wrap; margin-top: 20px;">
                     <!-- Heatmap: The 24/7 Proof -->
                     <div style="flex: 2; min-width: 300px; display: flex; flex-direction: column;">
-                        <h4 style="margin-bottom: 15px; color: #4A5568; font-size: 14px;">
+                        <h4 style="margin-bottom: 15px; color: inherit; font-size: 14px;">
                             <i class="fas fa-clock" style="margin-right: 8px; opacity: 0.7;"></i>
                             Hourly Activity by Year (UTC)
                         </h4>
@@ -108,7 +105,7 @@
                             <div style="margin-bottom: 25px;">
                                 <div
                                     style="display: flex; justify-content: space-between; border-bottom: 1px dashed #CBD5E0; padding-bottom: 8px; margin-bottom: 12px;">
-                                    <span style="font-size: 13px; color: #4A5568;">Hourly Coverage</span>
+                                    <span style="font-size: 13px; color: inherit;">Hourly Coverage</span>
                                     <span style="font-size: 13px; font-weight: 700; color: var(--color-success);">24 /
                                         24 hrs</span>
                                 </div>
@@ -121,7 +118,7 @@
                             <div style="margin-bottom: 25px;">
                                 <div
                                     style="display: flex; justify-content: space-between; border-bottom: 1px dashed #CBD5E0; padding-bottom: 8px; margin-bottom: 12px;">
-                                    <span style="font-size: 13px; color: #4A5568;">Vested Interests</span>
+                                    <span style="font-size: 13px; color: inherit;">Vested Interests</span>
                                     <span style="font-size: 13px; font-weight: 700; color: #E8916B;">9-to-5 Shift</span>
                                 </div>
                                 <p style="font-size: 13px; line-height: 1.5; color: #718096; margin: 0;">
@@ -136,16 +133,16 @@
                                     Key Hubs</h5>
                                 <div style="display: flex; flex-wrap: wrap; gap: 8px;">
                                     <span
-                                        style="background: #EDF2F7; padding: 4px 10px; border-radius: 12px; font-size: 11px; color: #4A5568; font-weight: 600;">San
+                                        style="background: #EDF2F7; padding: 4px 10px; border-radius: 12px; font-size: 11px; color: inherit; font-weight: 600;">San
                                         Francisco (UTC-8)</span>
                                     <span
-                                        style="background: #EDF2F7; padding: 4px 10px; border-radius: 12px; font-size: 11px; color: #4A5568; font-weight: 600;">London
+                                        style="background: #EDF2F7; padding: 4px 10px; border-radius: 12px; font-size: 11px; color: inherit; font-weight: 600;">London
                                         (UTC+0)</span>
                                     <span
-                                        style="background: #EDF2F7; padding: 4px 10px; border-radius: 12px; font-size: 11px; color: #4A5568; font-weight: 600;">Berlin
+                                        style="background: #EDF2F7; padding: 4px 10px; border-radius: 12px; font-size: 11px; color: inherit; font-weight: 600;">Berlin
                                         (UTC+1)</span>
                                     <span
-                                        style="background: #EDF2F7; padding: 4px 10px; border-radius: 12px; font-size: 11px; color: #4A5568; font-weight: 600;">Sydney
+                                        style="background: #EDF2F7; padding: 4px 10px; border-radius: 12px; font-size: 11px; color: inherit; font-weight: 600;">Sydney
                                         (UTC+10)</span>
                                 </div>
                             </div>
@@ -155,7 +152,7 @@
 
                 <!-- Weekend Ratio: The Professionalization Proof -->
                 <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #EDF2F7;">
-                    <h4 style="margin-bottom: 15px; color: #4A5568; font-size: 14px;">
+                    <h4 style="margin-bottom: 15px; color: inherit; font-size: 14px;">
                         <i class="fas fa-briefcase" style="margin-right: 8px; opacity: 0.7;"></i>
                         The Death of the Hobbyist Era: Weekend Coding Ratio
                     </h4>
@@ -174,7 +171,7 @@
 
                 <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-top: 20px;">
                     <div style="flex: 2; min-width: 300px;">
-                        <h4 style="margin-bottom: 10px; color: #4A5568; font-size: 14px;">
+                        <h4 style="margin-bottom: 10px; color: inherit; font-size: 14px;">
                             <i class="fas fa-chart-area" style="margin-right: 8px; opacity: 0.7;"></i>
                             Recruitment Velocity by Region <span class="partial-year-badge">2026 Partial</span>
                         </h4>
@@ -225,16 +222,9 @@
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 style="margin: 0;">Retention</h3>
-                    <div class="toggle-group"
-                        style="display: flex; background: #EDF2F7; padding: 2px; border-radius: 6px; font-size: 11px; font-weight: 600;">
-                        <button id="btn-retention-workforce" class="active"
-                            style="padding: 5px 12px; border: none; background: #fff; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            Workforce Stability
-                        </button>
-                        <button id="btn-retention-loyalty"
-                            style="padding: 5px 12px; border: none; background: transparent; border-radius: 4px; cursor: pointer; color: #718096;">
-                            New Joiner Loyalty
-                        </button>
+                    <div class="toggle-group">
+                        <button id="btn-retention-workforce" class="active">Workforce Stability</button>
+                        <button id="btn-retention-loyalty">New Joiner Loyalty</button>
                     </div>
                 </div>
 
