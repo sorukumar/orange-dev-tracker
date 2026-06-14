@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
             appName: 'orange-dev-tracker',
             appHomeUrl: 'index.html',
             navLinks: [
-                { name: 'Dashboard', url: 'index.html' },
-                { name: 'Contributors', url: 'contributors.html' },
+                { name: 'Home', url: 'index.html' },
+                { name: 'Dashboard', url: 'dashboard.html' },
                 { name: 'Protocol Pulse', url: 'pulse.html' },
                 { name: 'Codebase', url: 'codebase.html' },
                 { name: 'Engineering', url: 'engineering.html' },
