@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
             navLinks: [
                 { name: 'Dashboard', url: 'index.html' },
                 { name: 'Contributors', url: 'contributors.html' },
+                { name: 'Protocol Pulse', url: 'pulse.html' },
                 { name: 'Codebase', url: 'codebase.html' },
                 { name: 'Engineering', url: 'engineering.html' },
                 { name: 'Health & Culture', url: 'health.html' },
