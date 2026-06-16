@@ -235,13 +235,13 @@ body.landing-layout .landing-layout {
     color: var(--text-secondary);
 }
 
-/* Call to Action Buttons */
-.cta-container {
+/* Suite Pillars Container */
+.pillars-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
     max-width: 1060px;
-    margin: 24px auto 40px auto;
+    margin: 32px auto 40px auto;
     padding: 0 20px;
 }
 
@@ -411,58 +411,91 @@ body.landing-layout .landing-layout {
     background: rgba(232, 145, 107, 0.08);
 }
 
-.cta-card {
-    display: block;
+.pillar-card {
+    display: flex;
+    flex-direction: column;
     text-decoration: none;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 28px 24px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 32px 24px;
     text-align: center;
-    transition: all 0.3s;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-.cta-card::before {
+.pillar-card::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    height: 4px;
-    background: var(--primary);
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(232, 145, 107, 0.1), transparent 70%);
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.4s ease;
+    z-index: 0;
 }
 
-.cta-card:hover {
-    transform: translateY(-8px);
-    background: var(--bg-secondary);
-    border-color: var(--primary);
+.pillar-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: rgba(232, 145, 107, 0.4);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 0 20px rgba(232, 145, 107, 0.1);
 }
 
-.cta-card:hover::before {
+.pillar-card:hover::before {
     opacity: 1;
 }
 
-.cta-icon {
-    font-size: 32px;
+.pillar-icon {
+    font-size: 36px;
     color: var(--primary);
+    margin-bottom: 20px;
+    z-index: 1;
+    position: relative;
+    transition: transform 0.4s ease;
+}
+
+.pillar-card:hover .pillar-icon {
+    transform: scale(1.1);
+}
+
+.pillar-content {
+    z-index: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pillar-badge {
+    background: rgba(232, 145, 107, 0.15);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 4px 10px;
+    border-radius: 100px;
     margin-bottom: 16px;
 }
 
-.cta-card h2 {
-    font-size: 20px;
-    font-weight: 700;
+.pillar-card h2 {
+    font-size: 22px;
+    font-weight: 800;
     color: var(--text-primary);
-    margin-bottom: 8px;
+    margin: 0 0 12px 0;
 }
 
-.cta-card p {
+.pillar-card p {
     color: var(--text-secondary);
-    font-size: 14px;
-    line-height: 1.4;
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0;
 }
 
 /* Focus Bar */
@@ -524,7 +557,7 @@ body.landing-layout .landing-layout {
 
 /* 📱 Landing Mobile Polish 📱 */
 @media screen and (max-width: 900px) {
-    .cta-container {
+    .pillars-container {
         grid-template-columns: 1fr 1fr;
     }
 
@@ -543,7 +576,7 @@ body.landing-layout .landing-layout {
         font-size: 1.1rem;
     }
 
-    .cta-container {
+    .pillars-container {
         grid-template-columns: 1fr;
     }
 

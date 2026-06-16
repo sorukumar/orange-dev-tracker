@@ -220,3 +220,39 @@ h3 {
     background-color: #000 !important;
     border: 1px solid var(--border-color) !important;
 }
+
+/* ── Global Toggles ── */
+.window-toggle {
+    display: flex;
+    gap: 8px;
+    margin: 4px auto 20px auto;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 4px;
+    width: fit-content;
+}
+
+.window-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    letter-spacing: 0.3px;
+}
+
+.window-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.window-btn.active {
+    background: var(--primary);
+    color: #fff;
+}

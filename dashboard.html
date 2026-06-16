@@ -22,77 +22,80 @@
 </head>
 
 <body class="has-fixed-header">
-    <div id="header"></div>
+    <div id="main-container">
+        <div id="header"></div>
 
-    <div class="container">
-        <!-- The shared header now handles the app navigation links automatically -->
+        <div id="app-content">
+            <div class="hero-section" style="text-align: center; margin-bottom: 30px;">
+                <h1 style="margin-bottom: 10px;">Orange Dev Tracker</h1>
+                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 20px auto;">Track pull requests, BIPs, and mailing lists to understand what is being built.</p>
 
-        <div id="freshness-line" class="freshness-line">Data refreshed: -</div>
-
-        <!-- Vital Signs: KPIs -->
-        <section id="vital-signs" style="margin-bottom: 30px;">
-            <div class="kpi-grid">
-                <div class="kpi-card">
-                    <div class="kpi-label">Unique Contributors</div>
-                    <div class="kpi-value" id="kpi-contributors">-</div>
-                    <div class="kpi-sub">All-time Authors</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Maintainers</div>
-                    <div class="kpi-value" id="kpi-maintainers">-</div>
-                    <div class="kpi-sub">Total / Active</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Codebase Size</div>
-                    <div class="kpi-value" id="kpi-codebase">-</div>
-                    <div class="kpi-sub">Lines of Code</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Total Commits</div>
-                    <div class="kpi-value" id="kpi-total-commits">-</div>
-                    <div class="kpi-sub">History Length</div>
-                </div>
-                <div class="kpi-card">
-                    <div class="kpi-label">Social Interest</div>
-                    <div class="kpi-value" id="kpi-social" style="font-size: 1.8em;">-</div>
-                    <div class="kpi-sub">Stars / Forks / Watchers</div>
-                </div>
             </div>
-        </section>
+
+            <div class="container" style="padding-top: 0;">
+                <div id="freshness-line" class="freshness-line">Data refreshed: -</div>
+
+                <!-- Vital Signs: KPIs -->
+                <section id="vital-signs" style="margin-bottom: 30px;">
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Contributors</div>
+                            <div class="kpi-value" id="kpi-contributors">-</div>
+                            <div class="kpi-sub" id="kpi-contributors-sub">Code Contributors</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Maintainers</div>
+                            <div class="kpi-value" id="kpi-maintainers">-</div>
+                            <div class="kpi-sub">Total / Active</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">PRs Merged</div>
+                            <div class="kpi-value" id="kpi-prs-merged">-</div>
+                            <div class="kpi-sub" id="kpi-prs-merged-sub">in last 30 days</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Total Commits</div>
+                            <div class="kpi-value" id="kpi-total-commits">-</div>
+                            <div class="kpi-sub" id="kpi-codebase-sub">Lines of Code</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">BIPs</div>
+                            <div class="kpi-value" id="kpi-bips">-</div>
+                            <div class="kpi-sub" id="kpi-bips-sub">Active / Discussed recently</div>
+                        </div>
+                    </div>
+                </section>
 
         <!-- Row 1: Structural Distribution (Status Quo) -->
         <section style="display: flex; gap: 20px; margin-bottom: 30px; min-height: 400px; flex-wrap: wrap;">
             <!-- Left 2/5: Work Snapshot -->
             <div class="card" style="flex: 2; min-width: 300px; display: flex; flex-direction: column;">
-                <h3>Unique Commits by Area (Current Snapshot)</h3>
+                <h3 style="margin: 0 0 5px 0;">Unique Commits by Area (Current Snapshot)</h3>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0 0 15px 0; line-height: 1.4;">Shows the distribution of engineering effort across the codebase right now. Useful for identifying which subsystems are currently receiving the most active development.</p>
                 <div id="chart-snapshot-work" style="flex: 1; height: 350px; width: 100%;"></div>
             </div>
             <!-- Right 3/5: Human Pyramid -->
             <div class="card" style="flex: 3; min-width: 300px; display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="margin: 0;">The Engagement Pyramid</h3>
-                    <div class="toggle-group">
-                        <button id="btn-pyramid-total" class="active">Total</button>
-                        <button id="btn-pyramid-authored">Authored</button>
-                    </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                    <h3 style="margin: 0;">The Engagement Pyramid (Authored Commits)</h3>
                 </div>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0 0 15px 0; line-height: 1.4;">Categorizes contributors by their lifetime commit volume. Highlights the project's reliance on core maintainers versus the broader long-tail of casual contributors.</p>
                 <div id="chart-engagement-tiers" style="flex: 1; height: 350px; width: 100%;"></div>
             </div>
         </section>
 
         <!-- Row 2: The Hero Narrative (Historial Context) -->
         <section class="card" style="margin-bottom: 30px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 style="margin: 0;">Evolution of Functional Areas (Commit Trends) <span id="badge-category-partial"
-                        class="partial-year-badge" style="display: none;">2026 Partial</span></h3>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <div>
+                    <h3 style="margin: 0 0 5px 0;">Evolution of Functional Areas (Authored Commits) <span id="badge-category-partial"
+                            class="partial-year-badge" style="display: none;">2026 Partial</span></h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0; line-height: 1.4; max-width: 700px;">Tracks how development focus shifts over time. Shows the historical velocity of code authored in different subsystems, revealing evolving technical priorities.</p>
+                </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <div class="toggle-group">
-                        <button id="btn-category-year-full" class="active">Full Years</button>
-                        <button id="btn-category-year-ytd">YTD 2026</button>
-                    </div>
-                    <div class="toggle-group">
-                        <button id="btn-category-total" class="active">Total</button>
-                        <button id="btn-category-authored">Authored</button>
+                    <div class="window-toggle" style="margin: 0;">
+                        <button id="btn-category-year-full" class="window-btn active">Full Years</button>
+                        <button id="btn-category-year-ytd" class="window-btn">YTD 2026</button>
                     </div>
                 </div>
             </div>
@@ -103,17 +106,23 @@
         <section style="display: flex; gap: 20px; margin-bottom: 30px; min-height: 400px; flex-wrap: wrap;">
             <!-- Full Width: Recruitment Velocity -->
             <div class="card" style="flex: 1; width: 100%; display: flex; flex-direction: column;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="margin: 0;">Recruitment Velocity <span id="badge-growth-partial"
-                            class="partial-year-badge" style="display: none;">2026 Partial</span></h3>
-                    <div class="toggle-group">
-                        <button id="btn-growth-year-full" class="active">Full Years</button>
-                        <button id="btn-growth-year-ytd">YTD 2026</button>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                    <div>
+                        <h3 style="margin: 0 0 5px 0;">Recruitment Velocity <span id="badge-growth-partial"
+                                class="partial-year-badge" style="display: none;">2026 Partial</span></h3>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0; line-height: 1.4; max-width: 700px;">Measures the onboarding rate of new developers making their first commit. Indicates the ecosystem's ability to attract and integrate fresh talent over time.</p>
+                    </div>
+                    <div class="window-toggle" style="margin: 0;">
+                        <button id="btn-growth-year-full" class="window-btn active">Full Years</button>
+                        <button id="btn-growth-year-ytd" class="window-btn">YTD 2026</button>
                     </div>
                 </div>
                 <div id="chart-growth" style="flex: 1; height: 350px;"></div>
             </div>
         </section>
+    </div>
+
+        </div>
     </div>
 
     <div id="footer"></div>

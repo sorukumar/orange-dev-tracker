@@ -1,45 +1,9 @@
 /* ── Protocol Pulse Page Styles ── */
 
-/* Window toggle */
-.window-toggle {
-    display: flex;
-    gap: 8px;
-    margin: 4px auto 20px auto;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 4px;
-    width: fit-content;
-}
-
-.window-btn {
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 8px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
-    letter-spacing: 0.3px;
-}
-
-.window-btn:hover {
-    color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.window-btn.active {
-    background: var(--primary);
-    color: #fff;
-}
-
 /* Top-line stat row */
 .pulse-stats-row {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     max-width: 860px;
     margin: 0 auto 28px auto;
@@ -464,7 +428,7 @@
     }
 
     .pulse-stats-row {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
     }
 
     .thread-card-top {

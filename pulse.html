@@ -27,22 +27,25 @@
     <link rel="icon" type="image/png" href="https://bitcoindatalabs.org/favicon.png">
 </head>
 
-<body class="has-fixed-header landing-layout">
+<body class="has-fixed-header">
     <div id="main-container">
         <!-- Bitcoin Data Labs Header -->
         <div id="header"></div>
 
-        <div id="app-content" class="landing-layout">
-            <div class="hero-section">
+        <div id="app-content">
+            <div class="hero-section" style="text-align: center; margin-bottom: 30px;">
+                <h1 style="margin-bottom: 10px;">Protocol Pulse</h1>
+                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 20px auto;">Track what devs are debating across Delving and the mailing list.</p>
 
-                <h1>Protocol Pulse</h1>
-                <p>Track what devs are debating across Delving and the mailing list.</p>
 
-                <!-- Window toggle -->
-                <div class="window-toggle">
-                    <button class="window-btn active" data-window="90d">Last 90 Days</button>
-                    <button class="window-btn" data-window="30d">Last 30 Days</button>
+                <!-- Time Window toggle -->
+                <div style="display: flex; justify-content: center; width: 100%;">
+                    <div class="window-toggle">
+                        <button class="window-btn active" data-window="90d">Last 90 Days</button>
+                        <button class="window-btn" data-window="30d">Last 30 Days</button>
+                    </div>
                 </div>
+            </div>
 
                 <!-- Top-line stats row -->
                 <div class="pulse-stats-row" id="pulse-stats-row">
@@ -56,14 +59,7 @@
                     </div>
                     <div class="pulse-stat">
                         <div class="pulse-stat-value" id="stat-voices">—</div>
-                        <div class="pulse-stat-label">Unique Voices</div>
-                    </div>
-                    <div class="pulse-stat" id="stat-source-split-wrap">
-                        <div id="stat-venues"
-                            style="font-size:13px; font-weight:700; color:var(--text-primary); line-height:1.6;">—</div>
-                        <div class="pulse-stat-label" style="margin-top:4px;">By Venue</div>
-                        <div id="stat-venues-note"
-                            style="font-size:11px; color:var(--text-secondary); margin-top:4px; line-height:1.4;"></div>
+                        <div class="pulse-stat-label">Unique Participants</div>
                     </div>
                 </div>
 
@@ -81,7 +77,7 @@
                 <div class="pulse-section">
                     <div class="pulse-section-header">
                         <h2>Hottest Threads</h2>
-                        <p>Ranked by engagement breadth — reply count multiplied by unique voices. A thread with ten
+                        <p>Ranked by engagement breadth — reply count multiplied by unique participants. A thread with ten
                             replies from ten different people signals broader community interest than ten replies from
                             one.</p>
                         <div class="thread-tabs">
@@ -104,7 +100,7 @@
                     </div>
                     <div class="pulse-section pulse-col">
                         <div class="pulse-section-header">
-                            <h2>Voices in the Room</h2>
+                            <h2>Active Participants</h2>
                             <p>Researchers and developers most active in this window.</p>
                         </div>
                         <div id="top-voices" class="top-voices-list"></div>

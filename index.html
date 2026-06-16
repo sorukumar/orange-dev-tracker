@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitcoin Data Labs | Suite Home</title>
+    <title>Orange Dev Suite | Bitcoin Data Labs</title>
     <meta name="description"
         content="Dive into the technical expertise, social authority, and ecosystem flow of Bitcoin development.">
 
@@ -33,99 +33,98 @@
 
         <div id="app-content" class="landing-layout">
             <div class="hero-section">
-                <h1>The People Behind Bitcoin</h1>
-                <p>Every commit, code review, BIP, and Delving & Mailing list thread - mapped to the real humans shaping
-                    Bitcoin.</p>
-                <div id="freshness-line" class="freshness-line">Updated - Contributors tracked -</div>
+                <h1>See How Bitcoin is Built.</h1>
+                <p>Providing transparency, accountability, and foresight into the world's most important open-source project.</p>
 
-                <div class="summary-section">
-                    <h2>Who's building Bitcoin</h2>
-                    <div id="summary-insight" class="summary-insight">Loading current contributor coverage...</div>
-                    <ul id="domain-count-list" class="summary-list">
-                        <li>Loading contributor counts...</li>
-                    </ul>
-                </div>
+
 
                 <section class="snapshot-panel" aria-label="Network Snapshot">
                     <div class="snapshot-panel-head">
-                        <h2>This Month in Bitcoin Dev</h2>
-                        <p>What changed across Bitcoin development since the previous monthly window.</p>
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <h2 style="margin: 0;">Ecosystem Pulse</h2>
+                            <span id="freshness-line" class="freshness-line" style="margin: 0; font-size: 11px; font-weight: 600; padding: 4px 10px; background: rgba(255,255,255,0.05); border-radius: 20px;"></span>
+                        </div>
+                        <p>Live signals from across the Bitcoin development ecosystem.</p>
                     </div>
                     <div class="live-widgets">
+                        <!-- Card 1: Network Participants -->
                         <article class="live-widget">
-                            <h3>Active Contributors</h3>
+                            <h3>Network Participants (Last 30 days)</h3>
                             <div id="widget-active-count" class="live-widget-value">-</div>
-                            <p id="widget-active-note" class="live-widget-note">Loading current activity...</p>
+                            <p class="live-widget-note" style="margin-bottom: 12px;">Total active developers across code and review.</p>
+                            <ul class="simple-list" style="padding-left: 0; list-style: none; margin-bottom: 12px;">
+                                <li><i class="fas fa-users" style="width: 16px; opacity: 0.6;"></i> <strong id="widget-voices-count">-</strong> research participants</li>
+                                <li><i class="fas fa-seedling" style="width: 16px; opacity: 0.6;"></i> <strong id="widget-newcomers">-</strong> newly onboarded</li>
+                            </ul>
+                            
+                            <div id="widget-spotlight-container" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 8px; font-size: 12px;">
+                                <div style="color: var(--primary); font-weight: 700; margin-bottom: 4px;"><i class="fas fa-star" style="margin-right: 4px;"></i> Contributor Spotlight</div>
+                                <div id="widget-spotlight-content" style="color: var(--text-secondary); line-height: 1.4;">Loading spotlight...</div>
+                            </div>
                         </article>
+                        
+                        <!-- Card 2: Code Velocity -->
                         <article class="live-widget">
-                            <h3>Research Activity</h3>
-                            <div id="widget-mailing-spark" class="sparkline-text">Loading signal...</div>
-                            <p id="widget-mailing-note" class="live-widget-note"></p>
-                        </article>
-                        <article class="live-widget">
-                            <h3>Distinct Discussion Participants</h3>
-                            <div id="widget-voices-count" class="live-widget-value">-</div>
-                            <p id="widget-voices-note" class="live-widget-note">Loading discussion breadth...</p>
-                        </article>
-                        <article class="live-widget">
-                            <h3>Most Active Topics</h3>
-                            <ol id="widget-topics" class="rank-list">
-                                <li>Loading topic momentum...</li>
-                            </ol>
-                        </article>
-                        <article class="live-widget">
-                            <h3>Most Discussed BIPs</h3>
-                            <ul id="widget-bips" class="simple-list">
-                                <li>Loading BIP activity...</li>
+                            <h3>Code Velocity (Last 30 days)</h3>
+                            <div id="widget-prs-count" class="live-widget-value">-</div>
+                            <p id="widget-prs-note" class="live-widget-note" style="margin-bottom: 12px;">Loading merge velocity...</p>
+                            
+                            <ul class="simple-list" style="padding-left: 0; list-style: none;">
+                                <li><i class="fas fa-code-commit" style="width: 16px; opacity: 0.6;"></i> <strong id="widget-commits-count">-</strong> commits pushed</li>
                             </ul>
                         </article>
+                        
+                        <!-- Card 3: Hot Topics & Research -->
                         <article class="live-widget">
-                            <h3>New Contributors (Last 90 days)</h3>
-                            <div id="widget-newcomers" class="live-widget-value">-</div>
-                            <p id="widget-newcomers-note" class="live-widget-note">Loading onboarding trend...</p>
+                            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+                                <h3 style="margin: 0;">Hot Topics & Research (Last 30 days)</h3>
+                            </div>
+                            <p id="widget-mailing-spark" class="live-widget-note" style="margin-bottom: 12px; font-weight: 600; color: var(--text-primary);">Loading signal...</p>
+                            
+                            <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin: 0 0 6px 0;">Trending Topics</h4>
+                            <ol id="widget-topics" class="rank-list" style="margin-bottom: 12px; padding-left: 14px;">
+                                <li>Loading...</li>
+                            </ol>
+                            
+                            <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin: 0 0 6px 0;">High-Velocity BIPs</h4>
+                            <ul id="widget-bips" class="simple-list" style="padding-left: 0; list-style: none;">
+                                <li>Loading...</li>
+                            </ul>
                         </article>
                     </div>
                 </section>
 
-                <div class="cta-container">
-                    <a href="https://sorukumar.github.io/orange-dev-network/network.html" class="cta-card">
-                        <div class="cta-icon"><i class="fas fa-project-diagram"></i></div>
-                        <h2>Influence Map</h2>
-                        <p>Nodes are developers. Edges show who replied to whom. See who shapes the conversation.</p>
+                <div class="pillars-container">
+                    <a href="dashboard.html" class="pillar-card pillar-what">
+                        <div class="pillar-icon"><i class="fas fa-code-branch"></i></div>
+                        <div class="pillar-content">
+                            <span class="pillar-badge">The "What"</span>
+                            <h2>Orange Dev Tracker</h2>
+                            <p>Track pull requests, BIPs, and mailing lists to understand what is being built.</p>
+                        </div>
                     </a>
-                    <a href="https://sorukumar.github.io/orange-dev-network/directory.html" class="cta-card">
-                        <div class="cta-icon"><i class="fas fa-users"></i></div>
-                        <h2>Meet the Builders</h2>
-                        <p>Explore contributor profiles to find who builds, reviews, and proposes protocol changes.</p>
+                    <a href="https://sorukumar.github.io/orange-dev-network/" target="_blank" rel="noopener noreferrer" class="pillar-card pillar-who">
+                        <div class="pillar-icon"><i class="fas fa-project-diagram"></i></div>
+                        <div class="pillar-content">
+                            <span class="pillar-badge">The "Who"</span>
+                            <h2>Orange Dev Network</h2>
+                            <p>Navigate developer directories and influence maps to see who shapes consensus.</p>
+                        </div>
                     </a>
-                    <a href="dashboard.html" class="cta-card">
-                        <div class="cta-icon"><i class="fas fa-chart-line"></i></div>
-                        <h2>Ecosystem Dashboard</h2>
-                        <p>Track high-level metrics and macro-trends across the entire Bitcoin Core codebase.</p>
+                    <a href="https://sorukumar.github.io/this-week-in-bitcoin/" target="_blank" rel="noopener noreferrer" class="pillar-card pillar-now">
+                        <div class="pillar-icon"><i class="fas fa-bolt"></i></div>
+                        <div class="pillar-content">
+                            <span class="pillar-badge">The "Now"</span>
+                            <h2>This Week in Bitcoin</h2>
+                            <p>Read weekly ecosystem reports for actionable intelligence on immediate momentum.</p>
+                        </div>
                     </a>
                 </div>
 
-                <section class="why-this-matters" aria-label="Why This Matters">
-                    <h2>Why This Matters</h2>
-                    <p>Bitcoin's roadmap emerges from thousands of distributed technical decisions. This network view
-                        helps researchers, builders, and capital allocators separate durable engineering signal from
-                        short-lived hype.</p>
-                    <p>By mapping code, review, standards, and discussion into one contributor graph, Orange Dev Network
-                        surfaces who is actively shaping consensus and where protocol attention is moving next.</p>
-                </section>
-
                 <section class="secondary-cta" aria-label="Follow and feedback">
-                    <a href="https://x.com/BitcoinDataLabs" target="_blank" rel="noopener noreferrer"
-                        class="secondary-link">Follow updates on X</a>
+                    <a href="https://x.com/BitcoinDataLabs" target="_blank" rel="noopener noreferrer" class="secondary-link">Follow updates on X</a>
                     <a href="roadmap.html" class="secondary-link">View Roadmap & Give Feedback</a>
-                </section>
-
-                <section class="methodology-note" aria-label="Data and Methodology">
-                    <h2>Data & Methodology</h2>
-                    <p>Sources: GitHub activity, Delving Bitcoin, and the bitcoin-dev mailing list. Contributor
-                        identities are resolved to canonical profiles in orange-dev-data before any dashboard
-                        aggregation. Artifacts are rebuilt on a daily and monthly cadence depending on pipeline stage.
-                    </p>
+                    <a href="methodology.html" class="secondary-link">Data Methodology</a>
                 </section>
 
             </div>

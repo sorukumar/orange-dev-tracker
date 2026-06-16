@@ -78,8 +78,7 @@ function renderFreshnessLine(stats, snapshot) {
     const count = snapshot ? snapshot.contributors_tracked : null;
 
     const stamp = generated ? formatMonthYear(generated) : 'Unknown date';
-    const countText = count != null ? count.toLocaleString() : 'N/A';
-    el.textContent = `Updated ${stamp} | ${countText} contributors tracked`;
+    el.textContent = `Updated ${stamp}`;
 }
 
 function renderLiveWidgets(stats, snapshot) {
@@ -89,17 +88,17 @@ function renderLiveWidgets(stats, snapshot) {
     renderTopicMomentumWidget(snapshot);
     renderRecentBipsWidget(snapshot);
     renderNewcomersWidget(stats);
+    renderMergedPrsWidget(stats);
+    renderSpotlightWidget(stats);
 }
 
 function renderActiveContributorsWidget(snapshot) {
     const valueEl = document.getElementById('widget-active-count');
-    const noteEl = document.getElementById('widget-active-note');
-    if (!valueEl || !noteEl) return;
+    if (!valueEl) return;
 
     const widget = snapshot && snapshot.widgets ? snapshot.widgets.active_contributors_30d : null;
     if (!widget) {
         valueEl.textContent = '-';
-        noteEl.textContent = 'No recent contributor timestamps available.';
         return;
     }
 
@@ -108,7 +107,29 @@ function renderActiveContributorsWidget(snapshot) {
     const delta = Number(widget.delta_30d || (current - previous));
 
     valueEl.textContent = current.toLocaleString();
-    noteEl.textContent = `Change vs previous 30d: ${formatDelta(delta)}.`;
+}
+
+function renderMergedPrsWidget(stats) {
+    const valueEl = document.getElementById('widget-prs-count');
+    const noteEl = document.getElementById('widget-prs-note');
+    const commitsEl = document.getElementById('widget-commits-count');
+    if (!valueEl || !noteEl) return;
+
+    if (!stats || !stats.prs) {
+        valueEl.textContent = '-';
+        noteEl.textContent = 'PR metrics unavailable.';
+        return;
+    }
+
+    const merged30d = Number(stats.prs.merged_30d || 0);
+    const total = Number(stats.prs.total_merged || 0);
+
+    valueEl.textContent = merged30d.toLocaleString();
+    noteEl.textContent = `Sustaining velocity with ${total.toLocaleString()} cumulative PRs merged to date.`;
+    
+    if (commitsEl && stats.commits) {
+        commitsEl.textContent = Number(stats.commits.commits_30d || 0).toLocaleString();
+    }
 }
 
 function renderTopicMomentumWidget(snapshot) {
@@ -116,7 +137,7 @@ function renderTopicMomentumWidget(snapshot) {
     if (!el) return;
 
     const widget = snapshot && snapshot.widgets ? snapshot.widgets.topic_momentum_30d : null;
-    const items = widget ? (widget.items || []) : [];
+    const items = widget ? (widget.items || []).slice(0, 3) : [];
     if (!items.length) {
         el.innerHTML = '<li>Topic momentum unavailable.</li>';
         return;
@@ -135,7 +156,7 @@ function renderRecentBipsWidget(snapshot) {
     if (!el) return;
 
     const items = snapshot && snapshot.widgets && snapshot.widgets.recent_bips
-        ? (snapshot.widgets.recent_bips.items || [])
+        ? (snapshot.widgets.recent_bips.items || []).slice(0, 3)
         : [];
     if (!items.length) {
         el.innerHTML = '<li>No recent BIP discussions in this window.</li>';
@@ -147,10 +168,10 @@ function renderRecentBipsWidget(snapshot) {
         const title = escHtml(item.title || `BIP ${bipId}`);
         const author = escHtml(item.primary_author || 'Unknown');
         const authorLink = item.primary_author_uuid
-            ? `profile.html?uuid=${encodeURIComponent(item.primary_author_uuid)}`
+            ? `https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${encodeURIComponent(item.primary_author_uuid)}`
             : null;
         const authorHtml = authorLink
-            ? `<a class="bip-link" href="${authorLink}">${author}</a>`
+            ? `<a class="bip-link" href="${authorLink}" target="_blank" rel="noopener noreferrer">${author}</a>`
             : author;
 
         const delta = Number(item.delta_30d || 0);
@@ -161,13 +182,11 @@ function renderRecentBipsWidget(snapshot) {
 
 function renderResearchActivityWidget(snapshot) {
     const sparkEl = document.getElementById('widget-mailing-spark');
-    const noteEl = document.getElementById('widget-mailing-note');
-    if (!sparkEl || !noteEl) return;
+    if (!sparkEl) return;
 
     const widget = snapshot && snapshot.widgets ? snapshot.widgets.research_activity_30d : null;
     if (!widget) {
         sparkEl.textContent = 'Signal unavailable';
-        noteEl.textContent = 'Discussion windows are currently missing.';
         return;
     }
 
@@ -175,19 +194,16 @@ function renderResearchActivityWidget(snapshot) {
     const prev30 = Number(widget.previous_30d || 0);
     const delta = Number(widget.delta_30d || (ml30 - prev30));
     const paceLabel = widget.momentum || 'steady';
-    sparkEl.textContent = `30d ${ml30.toLocaleString()} msgs | Prev 30d ${prev30.toLocaleString()} msgs`;
-    noteEl.textContent = `Change vs previous 30d: ${formatDelta(delta)}.`;
+    sparkEl.textContent = `${ml30.toLocaleString()} messages (Δ ${formatDelta(delta)})`;
 }
 
 function renderDiscussionVoicesWidget(snapshot) {
     const valueEl = document.getElementById('widget-voices-count');
-    const noteEl = document.getElementById('widget-voices-note');
-    if (!valueEl || !noteEl) return;
+    if (!valueEl) return;
 
     const widget = snapshot && snapshot.widgets ? snapshot.widgets.discussion_voices_30d : null;
     if (!widget) {
         valueEl.textContent = '-';
-        noteEl.textContent = 'Voice coverage unavailable.';
         return;
     }
 
@@ -195,34 +211,58 @@ function renderDiscussionVoicesWidget(snapshot) {
     const previous = Number(widget.previous_30d || 0);
     const delta = Number(widget.delta_30d || (current - previous));
     valueEl.textContent = current.toLocaleString();
-    noteEl.textContent = `Change vs previous 30d: ${formatDelta(delta)}.`;
 }
 
 function renderNewcomersWidget(stats) {
     const valueEl = document.getElementById('widget-newcomers');
-    const noteEl = document.getElementById('widget-newcomers-note');
-    if (!valueEl || !noteEl) return;
+    if (!valueEl) return;
 
     const onboarding = stats && stats.onboarding ? stats.onboarding : null;
     if (!onboarding) {
         valueEl.textContent = '-';
-        noteEl.textContent = 'Onboarding metrics unavailable.';
         return;
     }
 
-    const coders = Number(onboarding.new_coders_90d || 0);
-    const discussants = Number(onboarding.new_discussants_90d || 0);
+    const coders = onboarding.new_coders_30d !== undefined 
+        ? Number(onboarding.new_coders_30d) 
+        : Math.round(Number(onboarding.new_coders_90d || 0) / 3);
+        
+    const discussants = onboarding.new_discussants_30d !== undefined 
+        ? Number(onboarding.new_discussants_30d) 
+        : Math.round(Number(onboarding.new_discussants_90d || 0) / 3);
+        
     const total = coders + discussants;
-    const days = Number(onboarding.window_days || 90);
 
     valueEl.textContent = total.toLocaleString();
-    noteEl.textContent = `${coders.toLocaleString()} new coders and ${discussants.toLocaleString()} new researchers/discussants in last ${days} days.`;
+}
+
+function renderSpotlightWidget(stats) {
+    const container = document.getElementById('widget-spotlight-container');
+    const content = document.getElementById('widget-spotlight-content');
+    if (!container || !content) return;
+
+    if (stats && stats.spotlight) {
+        const name = escHtml(stats.spotlight.name || 'Unknown');
+        const desc = escHtml(stats.spotlight.description || '');
+        const uuid = stats.spotlight.uuid;
+        
+        let nameHtml = `<strong style="color: var(--text-primary);">${name}</strong>`;
+        if (uuid && uuid !== 'nan' && uuid !== 'None') {
+            const profileLink = `https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${encodeURIComponent(uuid)}`;
+            nameHtml = `<a class="reviewer-link" href="${profileLink}" target="_blank" rel="noopener noreferrer"><strong>${name}</strong></a>`;
+        }
+        
+        content.innerHTML = `${nameHtml} — ${desc}`;
+    } else {
+        // Fallback placeholder while orange-dev-data is updated
+        content.innerHTML = `<strong style="color: var(--text-primary);">Awaiting Data</strong> — Pipeline will feature first-time contributors here.`;
+    }
 }
 
 function formatMonthYear(input) {
     const d = new Date(input);
     if (!Number.isFinite(d.getTime())) return 'Unknown';
-    return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function escHtml(str) {

@@ -27,9 +27,8 @@
     <div class="container">
         <!-- Engineering Efficiency: Churn vs Net -->
         <section class="card" style="margin-top: 30px;">
-            <h3>Engineering Efficiency: Historical Churn vs. Net Change</h3>
-            <p class="narrative"> Highlighting weeks where
-                net LOC went down but churn was high shows high-quality engineering.</p>
+            <h3 style="margin-bottom: 5px;">Engineering Efficiency: Historical Churn vs. Net Change</h3>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0 0 20px 0; line-height: 1.4;">Tracks the ratio of code added/deleted against the net change in repository size. Highlighting weeks where net LOC went down but churn was high reveals periods of intense refactoring and high-quality engineering.</p>
             <div id="chart-churn" style="height: 500px; width: 100%;"></div>
 
             <!-- Explanatory Text Footer -->
@@ -62,11 +61,8 @@
         <!-- Peer Review: The Unsung Work -->
         <section class="story-section" style="margin-top: 30px;">
             <div class="card">
-                <h3>The Review Gap: Peer Review Analysis</h3>
-                <p class="narrative">Commits are only half the story. In Bitcoin Core, the peer review process is
-                    where the real engineering rigor happens. This analysis tracks the distributed effort of verifying
-                    code quality (ACK/NACK), highlighting the collaborative volume required to move the protocol
-                    forward safely.</p>
+                <h3 style="margin-bottom: 5px;">The Review Gap: Peer Review Analysis</h3>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0 0 20px 0; line-height: 1.4;">Commits are only half the story. This analysis tracks the distributed effort of verifying code quality (ACK/NACK), highlighting the collaborative volume required to move the protocol forward safely.</p>
 
                 <div class="placeholder-chart" style="height: 400px;">
                     <i class="fas fa-microscope" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.5;"></i>
@@ -82,9 +78,8 @@
         <!-- Velocity: PR Lead Time (WIP) -->
         <section class="story-section" style="margin-top: 30px; margin-bottom: 50px;">
             <div class="card">
-                <h3>Velocity: PR Lead Time Analysis</h3>
-                <p class="narrative">Understanding the friction in the code review pipeline. We are mapping the
-                    journey from first commit to final merge to identify bottlenecks in the engineering flow.</p>
+                <h3 style="margin-bottom: 5px;">Velocity: PR Lead Time Analysis</h3>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0 0 20px 0; line-height: 1.4;">Maps the journey from first commit to final merge. Understanding the friction in the code review pipeline helps identify bottlenecks in the engineering flow.</p>
 
                 <div class="placeholder-chart">
                     <i class="fas fa-hourglass-half" style="font-size: 2.5rem; margin-bottom: 15px; opacity: 0.5;"></i>

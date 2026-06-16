@@ -4,48 +4,64 @@
 
 async function loadVitalSigns() {
     try {
-        const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/dashboard_vital_signs.json');
-        const data = await res.json();
+        const [resTracker, resEco, resPulse] = await Promise.all([
+            fetch(DATA_PATH_PREFIX + 'output/tracker/dashboard_vital_signs.json'),
+            fetch(DATA_PATH_PREFIX + 'output/shared/ecosystem_summary.json'),
+            fetch(DATA_PATH_PREFIX + 'output/shared/discussions_pulse.json').catch(() => null)
+        ]);
 
+        const data = await resTracker.json();
+        const ecoData = await resEco.json();
+        let pulseData = null;
+        if (resPulse && resPulse.ok) {
+            pulseData = await resPulse.json();
+        }
+
+        // 1. Contributors (All-time code / Active ecosystem)
         if (document.getElementById('kpi-contributors')) {
-            document.getElementById('kpi-contributors').innerText = data.unique_contributors.toLocaleString();
+            const totalActive = (ecoData && ecoData.groups && ecoData.groups.total_active) ? ecoData.groups.total_active.toLocaleString() : "-";
+            document.getElementById('kpi-contributors').innerText = totalActive;
+            const codeContribs = data.unique_contributors ? data.unique_contributors.toLocaleString() : "-";
+            document.getElementById('kpi-contributors-sub').innerText = `${codeContribs} Code Contributors`;
         }
 
-        if (document.getElementById('freshness-line')) {
-            const dateStr = data.generated_at ? new Date(data.generated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown';
-            document.getElementById('freshness-line').innerText = `Data refreshed: ${dateStr}`;
-        }
-
-        // Maintainers: Total / Active
+        // 2. Maintainers: Total / Active
         if (document.getElementById('kpi-maintainers')) {
             const total = data.total_maintainers || "-";
             const active = data.unique_maintainers || "-";
             document.getElementById('kpi-maintainers').innerText = `${total} / ${active}`;
         }
 
-        // Codebase: x.xxM
-        if (document.getElementById('kpi-codebase')) {
-            const size = data.current_codebase_size;
-            const sizeStr = size ? (size / 1000000).toFixed(2) + "M" : "-";
-            document.getElementById('kpi-codebase').innerText = sizeStr;
+        // 3. PRs Merged (All-time / Recent)
+        if (document.getElementById('kpi-prs-merged')) {
+            const totalPrs = ecoData.prs && ecoData.prs.total_merged ? ecoData.prs.total_merged.toLocaleString() : "-";
+            const prs30d = ecoData.prs && ecoData.prs.merged_30d ? ecoData.prs.merged_30d.toLocaleString() : "0";
+            document.getElementById('kpi-prs-merged').innerText = totalPrs;
+            document.getElementById('kpi-prs-merged-sub').innerText = `${prs30d} merged in last 30d`;
         }
 
-        // Total Commits
+        // 4. Project Scale (Total Commits Main / Codebase LOC Subtext)
         if (document.getElementById('kpi-total-commits')) {
             document.getElementById('kpi-total-commits').innerText = data.total_commits ? data.total_commits.toLocaleString() : "-";
+            
+            const size = data.current_codebase_size;
+            const sizeStr = size ? (size / 1000000).toFixed(2) + "M" : "-";
+            document.getElementById('kpi-codebase-sub').innerText = `Codebase: ${sizeStr} LOC`;
         }
 
-        // Social: Stars / Forks / Watchers
-        if (document.getElementById('kpi-social')) {
-            function fmt(num) {
-                if (!num) return "0";
-                if (num > 1000) return (num / 1000).toFixed(0) + "k";
-                return num.toString();
-            }
-            const s = fmt(data.total_stars);
-            const f = fmt(data.total_forks);
-            const w = fmt(data.total_watchers);
-            document.getElementById('kpi-social').innerText = `${s} / ${f} / ${w}`;
+        // 5. Active BIPs
+        if (document.getElementById('kpi-bips')) {
+            const totalBips = ecoData.bips && ecoData.bips.total ? ecoData.bips.total.toLocaleString() : "-";
+            const activeBips = ecoData.bips && ecoData.bips.active_recently ? ecoData.bips.active_recently.toLocaleString() : "0";
+            document.getElementById('kpi-bips').innerText = totalBips;
+            document.getElementById('kpi-bips-sub').innerText = `${activeBips} active / discussed recently`;
+        }
+
+
+
+        if (document.getElementById('freshness-line')) {
+            const dateStr = data.generated_at ? new Date(data.generated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown';
+            document.getElementById('freshness-line').innerText = `Data refreshed: ${dateStr}`;
         }
 
     } catch (e) {
@@ -172,7 +188,7 @@ async function loadSnapshots() {
 }
 
 let categoryData = null;
-let currentCategoryView = 'total';
+let currentCategoryView = 'authored';
 let currentCategoryYearView = 'full';
 
 async function loadCategory() {
@@ -180,49 +196,12 @@ async function loadCategory() {
         const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_category_evolution.json');
         categoryData = await res.json();
 
-        setupCategoryToggles();
         setupCategoryYearToggles();
         renderCategory(currentCategoryView);
 
     } catch (e) {
         console.error("Category Evolution Error:", e);
     }
-}
-
-function setupCategoryToggles() {
-    const btnTotal = document.getElementById('btn-category-total');
-    const btnAuthored = document.getElementById('btn-category-authored');
-
-    if (!btnTotal || !btnAuthored) return;
-
-    const updateUI = (view) => {
-        [btnTotal, btnAuthored].forEach(btn => {
-            btn.classList.remove('active');
-            btn.style.background = 'transparent';
-            btn.style.color = '#718096';
-            btn.style.boxShadow = 'none';
-        });
-
-        const activeBtn = view === 'total' ? btnTotal : btnAuthored;
-        activeBtn.classList.add('active');
-        activeBtn.style.background = '#fff';
-        activeBtn.style.color = 'inherit';
-        activeBtn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
-    };
-
-    btnTotal.addEventListener('click', () => {
-        if (currentCategoryView === 'total') return;
-        currentCategoryView = 'total';
-        updateUI('total');
-        renderCategory('total');
-    });
-
-    btnAuthored.addEventListener('click', () => {
-        if (currentCategoryView === 'authored') return;
-        currentCategoryView = 'authored';
-        updateUI('authored');
-        renderCategory('authored');
-    });
 }
 
 function setupCategoryYearToggles() {
@@ -234,16 +213,10 @@ function setupCategoryYearToggles() {
     const updateUI = (view) => {
         [btnFull, btnYtd].forEach(btn => {
             btn.classList.remove('active');
-            btn.style.background = 'transparent';
-            btn.style.color = '#718096';
-            btn.style.boxShadow = 'none';
         });
 
         const activeBtn = view === 'full' ? btnFull : btnYtd;
         activeBtn.classList.add('active');
-        activeBtn.style.background = '#fff';
-        activeBtn.style.color = 'inherit';
-        activeBtn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
 
         const badge = document.getElementById('badge-category-partial');
         if (badge) {
@@ -359,16 +332,10 @@ function setupGrowthYearToggles() {
     const updateUI = (view) => {
         [btnFull, btnYtd].forEach(btn => {
             btn.classList.remove('active');
-            btn.style.background = 'transparent';
-            btn.style.color = '#718096';
-            btn.style.boxShadow = 'none';
         });
 
         const activeBtn = view === 'full' ? btnFull : btnYtd;
         activeBtn.classList.add('active');
-        activeBtn.style.background = '#fff';
-        activeBtn.style.color = 'inherit';
-        activeBtn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
 
         const badge = document.getElementById('badge-growth-partial');
         if (badge) {
@@ -432,55 +399,18 @@ function renderGrowth() {
 }
 
 let pyramidData = null;
-let currentPyramidView = 'total';
+let currentPyramidView = 'authored';
 
 async function loadEngagementTiers() {
     try {
         const res = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_engagement_tiers.json');
         pyramidData = await res.json();
 
-        setupPyramidToggles();
-        renderPyramid('total');
+        renderPyramid(currentPyramidView);
 
     } catch (e) {
         console.error("Engagement Pyramid Error:", e);
     }
-}
-
-function setupPyramidToggles() {
-    const btnTotal = document.getElementById('btn-pyramid-total');
-    const btnAuthored = document.getElementById('btn-pyramid-authored');
-
-    if (!btnTotal || !btnAuthored) return;
-
-    const updateUI = (view) => {
-        [btnTotal, btnAuthored].forEach(btn => {
-            btn.classList.remove('active');
-            btn.style.background = 'transparent';
-            btn.style.color = '#718096';
-            btn.style.boxShadow = 'none';
-        });
-
-        const activeBtn = view === 'total' ? btnTotal : btnAuthored;
-        activeBtn.classList.add('active');
-        activeBtn.style.background = '#fff';
-        activeBtn.style.color = 'inherit';
-        activeBtn.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
-    };
-
-    btnTotal.addEventListener('click', () => {
-        if (currentPyramidView === 'total') return;
-        currentPyramidView = 'total';
-        updateUI('total');
-        renderPyramid('total');
-    });
-
-    btnAuthored.addEventListener('click', () => {
-        if (currentPyramidView === 'authored') return;
-        currentPyramidView = 'authored';
-        updateUI('authored');
-        renderPyramid('authored');
-    });
 }
 
 function renderPyramid(view) {

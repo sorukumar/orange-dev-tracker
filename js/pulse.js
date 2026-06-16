@@ -99,23 +99,6 @@ function renderStats(data) {
     setText('stat-messages', (data.total_messages || 0).toLocaleString());
     setText('stat-threads', (data.total_threads || 0).toLocaleString());
     setText('stat-voices', (data.unique_voices || 0).toLocaleString());
-
-    const venueEl = document.getElementById('stat-venues');
-    const venueNoteEl = document.getElementById('stat-venues-note');
-    if (venueEl && data.source_counts) {
-        const delving = data.source_counts['delving'] || 0;
-        const ml = data.source_counts['mailing_list'] || 0;
-        venueEl.innerHTML = `Delving: <strong>${delving.toLocaleString()}</strong><br>Mailing List: <strong>${ml.toLocaleString()}</strong>`;
-        if (venueNoteEl && data.mailing_list_stale) {
-            venueNoteEl.textContent = 'Mailing list data last synced ' + data.mailing_list_days_since + 'd ago';
-        }
-    } else if (venueEl) {
-        // Fallback: use source_pct if source_counts not present
-        const pct = data.source_pct || {};
-        const dPct = pct['delving'] != null ? pct['delving'] + '%' : '—';
-        const mlPct = pct['mailing_list'] != null ? pct['mailing_list'] + '%' : '—';
-        venueEl.innerHTML = `Delving: <strong>${dPct}</strong><br>Mailing List: <strong>${mlPct}</strong>`;
-    }
 }
 
 // ── Themes ──────────────────────────────────────────────────────────────────
@@ -231,11 +214,11 @@ function renderTopVoices(voices) {
     }
 
     el.innerHTML = voices.map((v, i) => `
-        <div class="voice-row">
+        <a href="https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${encodeURIComponent(v.uuid)}" target="_blank" class="voice-row" style="text-decoration: none;">
             <span class="voice-rank">${i + 1}</span>
-            <span class="voice-name">${escHtml(v.name)}</span>
+            <span class="voice-name" style="color: var(--text-primary); text-decoration: none;">${escHtml(v.name)}</span>
             <span class="voice-posts">${v.posts} post${v.posts === 1 ? '' : 's'}</span>
-        </div>
+        </a>
     `).join('');
 }
 
