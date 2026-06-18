@@ -34,62 +34,66 @@
         <div id="app-content" class="landing-layout">
             <div class="hero-section">
                 <h1>See How Bitcoin is Built.</h1>
-                <p>Providing transparency, accountability, and foresight into the world's most important open-source project.</p>
+                <p>The analytics suite tracking Bitcoin's code velocity, ecosystem health, and development momentum.</p>
 
 
 
                 <section class="snapshot-panel" aria-label="Network Snapshot">
                     <div class="snapshot-panel-head">
                         <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <h2 style="margin: 0;">Ecosystem Pulse</h2>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <h2 style="margin: 0;">Ecosystem Pulse</h2>
+                                <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); border: 1px solid var(--border); padding: 2px 8px; border-radius: 6px; letter-spacing: 0.5px;">LAST 30 DAYS</span>
+                            </div>
                             <span id="freshness-line" class="freshness-line" style="margin: 0; font-size: 11px; font-weight: 600; padding: 4px 10px; background: rgba(255,255,255,0.05); border-radius: 20px;"></span>
                         </div>
-                        <p>Live signals from across the Bitcoin development ecosystem.</p>
+                        <p>Real-time activity across code, peer review, and research.</p>
                     </div>
                     <div class="live-widgets">
                         <!-- Card 1: Network Participants -->
-                        <article class="live-widget">
-                            <h3>Network Participants (Last 30 days)</h3>
+                        <article class="live-widget" style="display: flex; flex-direction: column;">
+                            <h3>Active Builders</h3>
                             <div id="widget-active-count" class="live-widget-value">-</div>
-                            <p class="live-widget-note" style="margin-bottom: 12px;">Total active developers across code and review.</p>
-                            <ul class="simple-list" style="padding-left: 0; list-style: none; margin-bottom: 12px;">
-                                <li><i class="fas fa-users" style="width: 16px; opacity: 0.6;"></i> <strong id="widget-voices-count">-</strong> research participants</li>
-                                <li><i class="fas fa-seedling" style="width: 16px; opacity: 0.6;"></i> <strong id="widget-newcomers">-</strong> newly onboarded</li>
+                            <p class="live-widget-note" style="margin-bottom: 16px;">Total active developers across code and review.</p>
+                            <ul class="simple-list" style="padding-left: 0; list-style: none;">
+                                <li><i class="fas fa-users" style="width: 16px; opacity: 0.6;"></i> <span id="widget-voices-count"><strong>-</strong> research participants</span></li>
+                                <li><i class="fas fa-laptop-code" style="width: 16px; opacity: 0.6;"></i> <span id="widget-new-coders"><strong>-</strong> new code contributors</span></li>
+                                <li><i class="fas fa-comment-dots" style="width: 16px; opacity: 0.6;"></i> <span id="widget-new-discussants"><strong>-</strong> new forum voices</span></li>
                             </ul>
                             
-                            <div id="widget-spotlight-container" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 8px; font-size: 12px;">
-                                <div style="color: var(--primary); font-weight: 700; margin-bottom: 4px;"><i class="fas fa-star" style="margin-right: 4px;"></i> Contributor Spotlight</div>
-                                <div id="widget-spotlight-content" style="color: var(--text-secondary); line-height: 1.4;">Loading spotlight...</div>
+                            <div id="widget-spotlight-container" style="margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                                <div style="color: var(--primary); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 4px;"><i class="fas fa-star" style="margin-right: 4px;"></i> Contributor Spotlight</div>
+                                <div id="widget-spotlight-content" style="color: var(--text-secondary); line-height: 1.4; font-size: 13px;">Loading spotlight...</div>
                             </div>
                         </article>
                         
                         <!-- Card 2: Code Velocity -->
-                        <article class="live-widget">
-                            <h3>Code Velocity (Last 30 days)</h3>
+                        <article class="live-widget" style="display: flex; flex-direction: column;">
+                            <h3>Code Velocity</h3>
                             <div id="widget-prs-count" class="live-widget-value">-</div>
-                            <p id="widget-prs-note" class="live-widget-note" style="margin-bottom: 12px;">Loading merge velocity...</p>
+                            <p id="widget-prs-note" class="live-widget-note" style="margin-bottom: 16px;">Loading merge velocity...</p>
                             
-                            <ul class="simple-list" style="padding-left: 0; list-style: none;">
-                                <li><i class="fas fa-code-commit" style="width: 16px; opacity: 0.6;"></i> <strong id="widget-commits-count">-</strong> commits pushed</li>
+                            <ul class="simple-list" style="padding-left: 0; list-style: none; margin-bottom: auto;">
+                                <li><i class="fas fa-code-commit" style="width: 16px; opacity: 0.6;"></i> <span id="widget-commits-count"><strong>-</strong> commits pushed</span></li>
                             </ul>
                         </article>
                         
                         <!-- Card 3: Hot Topics & Research -->
-                        <article class="live-widget">
-                            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
-                                <h3 style="margin: 0;">Hot Topics & Research (Last 30 days)</h3>
-                            </div>
-                            <p id="widget-mailing-spark" class="live-widget-note" style="margin-bottom: 12px; font-weight: 600; color: var(--text-primary);">Loading signal...</p>
+                        <article class="live-widget" style="display: flex; flex-direction: column;">
+                            <h3>Trending Discussions</h3>
+                            <div id="widget-research-count" class="live-widget-value">-</div>
+                            <p id="widget-research-note" class="live-widget-note" style="margin-bottom: 16px;">Loading signal...</p>
                             
-                            <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin: 0 0 6px 0;">Trending Topics</h4>
-                            <ol id="widget-topics" class="rank-list" style="margin-bottom: 12px; padding-left: 14px;">
-                                <li>Loading...</li>
-                            </ol>
-                            
-                            <h4 style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin: 0 0 6px 0;">High-Velocity BIPs</h4>
-                            <ul id="widget-bips" class="simple-list" style="padding-left: 0; list-style: none;">
-                                <li>Loading...</li>
+                            <ul id="widget-topics" class="simple-list" style="padding-left: 0; list-style: none; margin-bottom: 16px;">
+                                <li>Loading topics...</li>
                             </ul>
+                            
+                            <div style="margin-top: auto; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                                <div style="color: var(--text-secondary); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 6px;">Active BIPs</div>
+                                <ul id="widget-bips" class="simple-list" style="padding-left: 0; list-style: none;">
+                                    <li>Loading BIPs...</li>
+                                </ul>
+                            </div>
                         </article>
                     </div>
                 </section>
@@ -123,8 +127,6 @@
 
                 <section class="secondary-cta" aria-label="Follow and feedback">
                     <a href="https://x.com/BitcoinDataLabs" target="_blank" rel="noopener noreferrer" class="secondary-link">Follow updates on X</a>
-                    <a href="roadmap.html" class="secondary-link">View Roadmap & Give Feedback</a>
-                    <a href="methodology.html" class="secondary-link">Data Methodology</a>
                 </section>
 
             </div>

@@ -106,7 +106,7 @@ function renderActiveContributorsWidget(snapshot) {
     const previous = Number(widget.previous_30d || 0);
     const delta = Number(widget.delta_30d || (current - previous));
 
-    valueEl.textContent = current.toLocaleString();
+    valueEl.innerHTML = `${current.toLocaleString()} <span class="delta-pill" style="font-size: 14px; margin-left: 8px; vertical-align: middle;" title="Change vs previous 30 days">${formatDelta(delta)} MoM</span>`;
 }
 
 function renderMergedPrsWidget(stats) {
@@ -122,13 +122,25 @@ function renderMergedPrsWidget(stats) {
     }
 
     const merged30d = Number(stats.prs.merged_30d || 0);
+    const prevMerged30d = Number(stats.prs.merged_prev_30d || 0);
+    const deltaMerged = merged30d - prevMerged30d;
     const total = Number(stats.prs.total_merged || 0);
 
-    valueEl.textContent = merged30d.toLocaleString();
+    const deltaHtml = stats.prs.merged_prev_30d !== undefined 
+        ? `<span class="delta-pill" style="font-size: 14px; margin-left: 8px; vertical-align: middle;" title="Change vs previous 30 days">${formatDelta(deltaMerged)} MoM</span>`
+        : '';
+
+    valueEl.innerHTML = `${merged30d.toLocaleString()} <span style="font-size: 14px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">PRs Merged</span>${deltaHtml}`;
     noteEl.textContent = `Sustaining velocity with ${total.toLocaleString()} cumulative PRs merged to date.`;
     
     if (commitsEl && stats.commits) {
-        commitsEl.textContent = Number(stats.commits.commits_30d || 0).toLocaleString();
+        const c30 = Number(stats.commits.commits_30d || 0);
+        const cPrev = Number(stats.commits.commits_prev_30d || 0);
+        const deltaC = c30 - cPrev;
+        const deltaCHtml = stats.commits.commits_prev_30d !== undefined 
+            ? ` <span class="delta-pill" title="Change vs previous 30 days">${formatDelta(deltaC)} MoM</span>`
+            : '';
+        commitsEl.innerHTML = `<strong>${c30.toLocaleString()}</strong> commits pushed${deltaCHtml}`;
     }
 }
 
@@ -147,7 +159,7 @@ function renderTopicMomentumWidget(snapshot) {
         const label = escHtml(item.label || item.topic || 'Unknown');
         const count = Math.round(item.mentions_30d || 0).toLocaleString();
         const delta = Number(item.delta_30d || 0);
-        return `<li>${label} <strong>${count}</strong> <span class="delta-pill">${formatDelta(delta)}</span></li>`;
+        return `<li>${label} <strong>${count}</strong> <span class="delta-pill" title="Change vs previous 30 days">${formatDelta(delta)}</span></li>`;
     }).join('');
 }
 
@@ -181,20 +193,23 @@ function renderRecentBipsWidget(snapshot) {
 }
 
 function renderResearchActivityWidget(snapshot) {
-    const sparkEl = document.getElementById('widget-mailing-spark');
-    if (!sparkEl) return;
+    const countEl = document.getElementById('widget-research-count');
+    const noteEl = document.getElementById('widget-research-note');
+    if (!countEl || !noteEl) return;
 
     const widget = snapshot && snapshot.widgets ? snapshot.widgets.research_activity_30d : null;
     if (!widget) {
-        sparkEl.textContent = 'Signal unavailable';
+        countEl.textContent = '-';
+        noteEl.textContent = 'Signal unavailable';
         return;
     }
 
     const ml30 = Number(widget.messages_30d || 0);
     const prev30 = Number(widget.previous_30d || 0);
     const delta = Number(widget.delta_30d || (ml30 - prev30));
-    const paceLabel = widget.momentum || 'steady';
-    sparkEl.textContent = `${ml30.toLocaleString()} messages (Δ ${formatDelta(delta)})`;
+    
+    countEl.textContent = ml30.toLocaleString();
+    noteEl.textContent = `Messages across mailing lists and forums (Δ ${formatDelta(delta)})`;
 }
 
 function renderDiscussionVoicesWidget(snapshot) {
@@ -210,16 +225,19 @@ function renderDiscussionVoicesWidget(snapshot) {
     const current = Number(widget.value || 0);
     const previous = Number(widget.previous_30d || 0);
     const delta = Number(widget.delta_30d || (current - previous));
-    valueEl.textContent = current.toLocaleString();
+    valueEl.innerHTML = `<strong>${current.toLocaleString()}</strong> research participants <span class="delta-pill" title="Change vs previous 30 days">${formatDelta(delta)} MoM</span>`;
 }
 
 function renderNewcomersWidget(stats) {
-    const valueEl = document.getElementById('widget-newcomers');
-    if (!valueEl) return;
+    const codersEl = document.getElementById('widget-new-coders');
+    const discussantsEl = document.getElementById('widget-new-discussants');
+    
+    if (!codersEl || !discussantsEl) return;
 
     const onboarding = stats && stats.onboarding ? stats.onboarding : null;
     if (!onboarding) {
-        valueEl.textContent = '-';
+        codersEl.innerHTML = `<strong>-</strong> new code contributors`;
+        discussantsEl.innerHTML = `<strong>-</strong> new forum voices`;
         return;
     }
 
@@ -230,10 +248,9 @@ function renderNewcomersWidget(stats) {
     const discussants = onboarding.new_discussants_30d !== undefined 
         ? Number(onboarding.new_discussants_30d) 
         : Math.round(Number(onboarding.new_discussants_90d || 0) / 3);
-        
-    const total = coders + discussants;
 
-    valueEl.textContent = total.toLocaleString();
+    codersEl.innerHTML = `<strong>${coders.toLocaleString()}</strong> new code contributors`;
+    discussantsEl.innerHTML = `<strong>${discussants.toLocaleString()}</strong> new forum voices`;
 }
 
 function renderSpotlightWidget(stats) {
@@ -245,17 +262,30 @@ function renderSpotlightWidget(stats) {
         const name = escHtml(stats.spotlight.name || 'Unknown');
         const desc = escHtml(stats.spotlight.description || '');
         const uuid = stats.spotlight.uuid;
+        const gh = stats.spotlight.github_login || '';
         
-        let nameHtml = `<strong style="color: var(--text-primary);">${name}</strong>`;
+        const avatarUrl = gh 
+            ? `https://github.com/${encodeURIComponent(gh)}.png?size=80` 
+            : 'https://bitcoindatalabs.org/images/default_avatar.png';
+
+        let nameHtml = `<div style="color: var(--text-primary); font-weight: 700;">${name}</div>`;
         if (uuid && uuid !== 'nan' && uuid !== 'None') {
             const profileLink = `https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${encodeURIComponent(uuid)}`;
-            nameHtml = `<a class="reviewer-link" href="${profileLink}" target="_blank" rel="noopener noreferrer"><strong>${name}</strong></a>`;
+            nameHtml = `<a class="reviewer-link" href="${profileLink}" target="_blank" rel="noopener noreferrer" style="color: var(--text-primary); font-weight: 700; text-decoration: none;">${name}</a>`;
         }
         
-        content.innerHTML = `${nameHtml} — ${desc}`;
+        content.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
+                <img src="${avatarUrl}" alt="${name}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border);" onerror="this.src='https://github.com/identicons/${name}.png'">
+                <div>
+                    ${nameHtml}
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">${desc}</div>
+                </div>
+            </div>
+        `;
     } else {
         // Fallback placeholder while orange-dev-data is updated
-        content.innerHTML = `<strong style="color: var(--text-primary);">Awaiting Data</strong> — Pipeline will feature first-time contributors here.`;
+        content.innerHTML = `<strong style="color: var(--text-primary);">Awaiting Data</strong> — Pipeline will feature first-time core contributors here.`;
     }
 }
 
