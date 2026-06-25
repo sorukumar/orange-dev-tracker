@@ -240,14 +240,14 @@ body.landing-layout .landing-layout {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
-    max-width: 1060px;
+    max-width: 1100px;
     margin: 32px auto 40px auto;
     padding: 0 20px;
 }
 
 .snapshot-panel {
     width: 100%;
-    max-width: 1060px;
+    max-width: 1100px;
     margin: 24px auto 8px auto;
     background: rgba(255, 255, 255, 0.025);
     border: 1px solid var(--border);
@@ -356,7 +356,7 @@ body.landing-layout .landing-layout {
 .why-this-matters,
 .methodology-note {
     width: 100%;
-    max-width: 1060px;
+    max-width: 1100px;
     margin: 10px auto 0 auto;
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -386,7 +386,7 @@ body.landing-layout .landing-layout {
 
 .secondary-cta {
     width: 100%;
-    max-width: 1060px;
+    max-width: 1100px;
     display: flex;
     gap: 12px;
     justify-content: center;

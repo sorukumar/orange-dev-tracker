@@ -3,7 +3,7 @@
 /* Layout Wrapper */
 .release-layout-wrapper {
     display: block;
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -211,23 +211,22 @@
 }
 
 .pr-item {
-    background: transparent;
-    border-bottom: 1px solid var(--border-color);
-    padding: 24px 20px;
-    transition: background 0.25s ease, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-left-color 0.25s ease;
-    border-left: 3px solid transparent;
-    border-radius: 4px;
-    margin-bottom: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 18px 22px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 16px;
+    margin-bottom: 12px;
 }
 
 .pr-item:last-child {
-    border-bottom: none;
+    margin-bottom: 0;
 }
 
 .pr-item:hover {
-    background: rgba(255, 255, 255, 0.02);
-    border-left-color: var(--primary);
-    transform: translateX(6px);
+    background: var(--bg-secondary);
+    border-color: rgba(232, 145, 107, 0.3);
+    transform: translateY(-2px);
 }
 
 .pr-header-row {
@@ -258,7 +257,7 @@
     color: var(--primary);
     font-weight: 800;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 15px;
     letter-spacing: 0.05em;
     transition: color 0.2s;
 }
@@ -268,18 +267,18 @@
 }
 
 .pr-title-text {
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 1.1rem;
-    line-height: 1.6;
-    letter-spacing: 0.01em;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 15px;
+    line-height: 1.5;
+    flex: 1;
 }
 
 .pr-meta-group {
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    font-size: 0.8rem;
+    font-size: 12px;
     color: var(--text-secondary);
     font-weight: 400;
 }
@@ -346,10 +345,10 @@
 }
 
 .pr-public-summary {
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-size: 13px;
     line-height: 1.6;
-    margin: 12px 0 0 0;
+    margin: 8px 0 12px 0;
 }
 
 /* Technical Details Toggle */
@@ -362,7 +361,7 @@
     border: none;
     color: var(--primary);
     opacity: 0.8;
-    font-size: 0.8rem;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     display: flex;
@@ -392,7 +391,7 @@
     margin-top: 10px;
     padding: 12px 16px;
     background: rgba(255, 255, 255, 0.02);
-    border-radius: 4px;
+    border-radius: 12px;
     border: 1px solid var(--border-color);
     border-left: 3px solid var(--primary);
     font-size: 0.85rem;

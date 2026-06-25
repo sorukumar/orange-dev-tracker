@@ -33,19 +33,19 @@
         <div id="header"></div>
 
         <div id="app-content">
-            <div class="hero-section" style="text-align: center; margin-bottom: 30px;">
-                <h1 style="margin-bottom: 10px;">Protocol Pulse</h1>
-                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 20px auto;">Track what devs are debating across Delving and the mailing list.</p>
-
-
-                <!-- Time Window toggle -->
-                <div style="display: flex; justify-content: center; width: 100%;">
-                    <div class="window-toggle">
-                        <button class="window-btn active" data-window="90d">Last 90 Days</button>
-                        <button class="window-btn" data-window="30d">Last 30 Days</button>
+            <header class="page-header" style="max-width: 1100px; margin: 0 auto 24px auto;">
+                <div class="header-top-row" style="display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;">
+                    <div class="header-content">
+                        <p style="color: var(--text-secondary); margin: 0;">Track what devs are debating across Delving and the mailing list.</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="window-toggle" style="margin: 0;">
+                            <button class="window-btn active" data-window="90d">Last 90 Days</button>
+                            <button class="window-btn" data-window="30d">Last 30 Days</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </header>
 
                 <!-- Top-line stats row -->
                 <div class="pulse-stats-row" id="pulse-stats-row">

@@ -36,7 +36,7 @@ async function init() {
     charts.growth = initChart('chart-growth');
     charts.engagement = initChart('chart-engagement-tiers');
     charts.social = initChart('chart-social');
-    charts.maintainers = initChart('chart-maintainers');
+
     charts.landscape = initChart('chart-contributor-landscape');
     charts.churn = initChart('chart-churn');
     charts.retention = initChart('chart-retention');
@@ -60,7 +60,7 @@ async function init() {
         if (charts.growth) await loadGrowth();
         if (charts.engagement) await loadEngagementTiers();
         if (charts.social) await loadSocial();
-        if (charts.maintainers) await loadMaintainers();
+
         if (charts.heatmap) await loadStory();
 
         // Codebase specific

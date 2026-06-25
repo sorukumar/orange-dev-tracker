@@ -37,7 +37,7 @@ async function loadCorporateEra() {
 
 async function loadMaintainerIndependence() {
     try {
-        const response = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_maintainer_independence.json');
+        const response = await fetch(DATA_PATH_PREFIX + 'output/shared/maintainers/stats_maintainers.json');
         if (!response.ok) return;
         const data = await response.json();
         const chartEl = document.getElementById('chart-maintainer-independence');
