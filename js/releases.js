@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let activeFilter = 'All';
 
     try {
-        const response = await fetch('output/tracker/releases.json');
+        const response = await fetch(DATA_PATH_PREFIX + 'output/tracker/releases.json');
         if (!response.ok) throw new Error('Failed to fetch releases.json');
         releasesData = await response.json();
         
@@ -122,8 +122,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         badgeEl.className = `release-status-badge ${release.status}`;
         badgeEl.textContent = release.status;
         
-        if (release.target_date && release.target_date !== "TBD") {
-            dateEl.textContent = release.status === 'upcoming' ? `(Target: ${release.target_date})` : `(Released: ${release.target_date})`;
+        if (release.last_active_date && release.last_active_date !== "TBD") {
+            dateEl.textContent = release.status === 'upcoming' ? `(Target: TBD | Last Active: ${release.last_active_date})` : `(Released: ${release.last_active_date})`;
         } else {
             dateEl.textContent = `(Expected: TBD)`;
         }
