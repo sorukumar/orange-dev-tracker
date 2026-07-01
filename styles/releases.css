@@ -267,9 +267,9 @@
 }
 
 .pr-title-text {
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 15px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 16px;
     line-height: 1.5;
     flex: 1;
 }
@@ -401,4 +401,26 @@
 
 .pr-technical-content.open {
     display: block;
+}
+
+/* Load More Button */
+.load-more-btn {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-primary);
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.load-more-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(232, 145, 107, 0.15);
 }

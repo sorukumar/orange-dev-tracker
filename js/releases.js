@@ -8,12 +8,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     const dateEl = document.getElementById('release-date');
     const summaryEl = document.getElementById('release-summary');
     const badgeEl = document.getElementById('release-status-badge');
+    const highlightsContainerEl = document.getElementById('release-highlights-container');
+    const highlightsListEl = document.getElementById('release-highlights-list');
     const filterContainerEl = document.getElementById('filter-container');
     const listContainerEl = document.getElementById('pr-list-container');
+    const searchInputEl = document.getElementById('pr-search-input');
 
     let releasesData = [];
     let currentVersion = null;
     let activeFilter = 'All';
+    let searchQuery = '';
+    let renderLimit = 15;
+
+    if (searchInputEl) {
+        searchInputEl.addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim().toLowerCase();
+            renderLimit = 15;
+            
+            if (searchQuery.length > 0) {
+                // Global search mode
+                document.querySelector('.release-header').style.display = 'none';
+                filterContainerEl.style.display = 'none';
+                
+                let allPRs = [];
+                releasesData.forEach(release => {
+                    if (release.prs) {
+                        release.prs.forEach(pr => {
+                            // Clone PR to inject release version as a tag
+                            const prCopy = { ...pr };
+                            if (!prCopy.categories) prCopy.categories = [];
+                            prCopy.categories = [`v${release.version}`, ...prCopy.categories];
+                            allPRs.push(prCopy);
+                        });
+                    }
+                });
+                
+                activeFilter = 'All'; // Ignore category filter during global search
+                renderPRs(allPRs);
+            } else {
+                // Restore release view mode
+                document.querySelector('.release-header').style.display = '';
+                filterContainerEl.style.display = '';
+                if (currentVersion) {
+                    const release = releasesData.find(r => r.version === currentVersion);
+                    if (release) renderPRs(release.prs || []);
+                }
+            }
+        });
+    }
 
     try {
         const response = await fetch(DATA_PATH_PREFIX + 'output/tracker/releases.json');
@@ -93,6 +135,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     function selectVersion(version) {
         currentVersion = version;
         activeFilter = 'All'; 
+        searchQuery = '';
+        renderLimit = 15;
+        if (searchInputEl) searchInputEl.value = '';
         
         const release = releasesData.find(r => r.version === version);
         if (release) {
@@ -128,22 +173,40 @@ document.addEventListener('DOMContentLoaded', async () => {
             dateEl.textContent = `(Expected: TBD)`;
         }
         
-        summaryEl.textContent = release.summary || `Release notes and changes for Bitcoin Core ${release.version}.`;
+        if (release.release_summary) {
+            summaryEl.textContent = release.release_summary;
+        } else {
+            summaryEl.textContent = release.summary || `A complete log of what shipped, who built it, and how long it took for Bitcoin Core ${release.version}.`;
+        }
+
+        if (release.highlights && release.highlights.length > 0) {
+            if (highlightsContainerEl) highlightsContainerEl.style.display = 'block';
+            if (highlightsListEl) {
+                highlightsListEl.innerHTML = release.highlights.map(h => {
+                    // Convert markdown bold to styled strong tag
+                    const formattedHtml = h.replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--accent);">$1</strong>');
+                    return `<li style="margin-bottom: 8px;">${formattedHtml}</li>`;
+                }).join('');
+            }
+        } else {
+            if (highlightsContainerEl) highlightsContainerEl.style.display = 'none';
+        }
 
         // Extract unique categories from the flattened PR list
         const categoriesSet = new Set();
         if (release.prs) {
             release.prs.forEach(pr => {
                 if (pr.categories) {
+                    pr.categories = pr.categories.map(c => c === 'Uncategorized' ? 'Miscellaneous' : c);
                     pr.categories.forEach(c => categoriesSet.add(c));
                 }
             });
         }
         
-        // Sort categories to put Uncategorized/Backport at end
+        // Sort categories to put Miscellaneous/Backport at end
         let sortedCats = Array.from(categoriesSet).sort((a, b) => {
-            if (a === 'Uncategorized' || a === 'Backport') return 1;
-            if (b === 'Uncategorized' || b === 'Backport') return -1;
+            if (a === 'Miscellaneous' || a === 'Backport') return 1;
+            if (b === 'Miscellaneous' || b === 'Backport') return -1;
             return a.localeCompare(b);
         });
 
@@ -159,19 +222,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         allBtn.textContent = `All (${release.prs.length})`;
         allBtn.onclick = () => {
             activeFilter = 'All';
+            renderLimit = 15;
             renderReleaseContent(release);
         };
         filterContainerEl.appendChild(allBtn);
 
         categories.forEach(cat => {
-            if (cat === 'Uncategorized' && categories.length > 1) return; // Optional logic, we can keep it
-            
             const count = release.prs.filter(pr => pr.categories.includes(cat)).length;
             const btn = document.createElement('button');
             btn.className = `filter-pill ${activeFilter === cat ? 'active' : ''}`;
             btn.textContent = `${cat} (${count})`;
             btn.onclick = () => {
                 activeFilter = cat;
+                renderLimit = 15;
                 renderReleaseContent(release);
             };
             filterContainerEl.appendChild(btn);
@@ -181,14 +244,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderPRs(prs) {
         listContainerEl.innerHTML = '';
         
-        const filteredPRs = activeFilter === 'All' 
-            ? prs 
-            : prs.filter(pr => pr.categories && pr.categories.includes(activeFilter));
+        const filteredPRs = prs.filter(pr => {
+            const matchesFilter = activeFilter === 'All' || (pr.categories && pr.categories.includes(activeFilter));
+            if (!matchesFilter) return false;
+            
+            if (searchQuery) {
+                const searchTarget = `${pr.pr} ${pr.title || ''} ${pr.author || ''} ${pr.author_name || ''} ${pr.public_summary || ''}`.toLowerCase();
+                if (!searchTarget.includes(searchQuery)) return false;
+            }
+            return true;
+        });
 
         const denseList = document.createElement('div');
         denseList.className = 'pr-dense-list';
 
-        filteredPRs.forEach(pr => {
+        filteredPRs.slice(0, renderLimit).forEach(pr => {
             const prNum = pr.pr.replace('#', '');
             const pubSummary = pr.public_summary || pr.description || "No public summary provided.";
             const techSummary = pr.technical_summary || "";
@@ -197,9 +267,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             let catTags = '';
             if (pr.categories) {
                 pr.categories.forEach(c => {
-                    if (c !== 'Uncategorized') {
-                        catTags += `<span class="pr-cat-tag">${c}</span>`;
-                    }
+                    catTags += `<span class="pr-cat-tag">${c}</span>`;
                 });
             }
 
@@ -281,5 +349,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         listContainerEl.appendChild(denseList);
+        
+        if (filteredPRs.length > renderLimit) {
+            const loadMoreContainer = document.createElement('div');
+            loadMoreContainer.className = 'load-more-container';
+            loadMoreContainer.style.textAlign = 'center';
+            loadMoreContainer.style.marginTop = '24px';
+            
+            const loadMoreBtn = document.createElement('button');
+            loadMoreBtn.className = 'load-more-btn';
+            loadMoreBtn.textContent = `Load More (${filteredPRs.length - renderLimit} remaining)`;
+            
+            loadMoreBtn.addEventListener('click', () => {
+                renderLimit += 15;
+                renderPRs(prs);
+            });
+            
+            loadMoreContainer.appendChild(loadMoreBtn);
+            listContainerEl.appendChild(loadMoreContainer);
+        }
     }
 });

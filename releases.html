@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitcoin Core Releases | Orange Dev Tracker</title>
-    <meta name="description" content="Explore Bitcoin Core release cycles, including past, present, and future planned releases.">
+    <title>Bitcoin Core Releases: The complete log of what shipped | Orange Dev Tracker</title>
+    <meta name="description" content="The complete log of what shipped in Bitcoin Core, who built it, and how long it took.">
     <link rel="canonical" href="https://sorukumar.github.io/orange-dev-tracker/releases.html">
 
     <!-- Bitcoin Data Labs Font & Icons -->
@@ -58,10 +58,21 @@
                                 <span id="release-date" style="font-size: 0.95rem; color: var(--text-secondary); font-weight: 500;"></span>
                             </div>
                             <p id="release-summary" style="color: var(--text-secondary); margin: 12px 0 0 0; font-size: 0.95rem; line-height: 1.5;"></p>
+                            <div id="release-highlights-container" style="display: none; margin-top: 20px; padding: 20px; background: rgba(247, 147, 26, 0.08); border-left: 4px solid var(--accent); border-radius: 8px;">
+                                <h3 style="margin: 0 0 12px 0; font-size: 1.1rem; color: var(--accent); font-weight: 700;">Release Highlights</h3>
+                                <ul id="release-highlights-list" style="margin: 0; padding-left: 20px; color: var(--text-primary); font-size: 0.95rem; line-height: 1.6;">
+                                </ul>
+                            </div>
                         </div>
                         
-                        <div id="filter-container" class="filter-container">
-                            <!-- Filter pills populated by JS -->
+                        <div class="search-and-filter-container">
+                            <div class="search-container" style="margin-bottom: 20px; display: flex; justify-content: center;">
+                                <input type="text" id="pr-search-input" placeholder="Search PRs by title, author, or number..." style="width: 100%; max-width: 500px; padding: 12px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.15); background: var(--card-bg); color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s;">
+                            </div>
+                            <div id="filter-container" class="filter-container">
+                                <!-- Filter pills populated by JS -->
+                            </div>
+                        </div>
                         </div>
                         
                         <div class="pr-list-container" id="pr-list-container">
