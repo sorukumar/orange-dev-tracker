@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health & Culture | Orange Dev Tracker | Bitcoin Data Labs</title>
+    <title>Health | Orange Dev Tracker | Bitcoin Data Labs</title>
     <meta name="description"
         content="Assess the sustainability of Bitcoin Core development. Track maintainer tenure, corporate vs. independent funding, and global developer activity heatmaps.">
     <link rel="canonical" href="https://sorukumar.github.io/orange-dev-tracker/health.html">
@@ -26,30 +26,114 @@
 
     <div class="container">
 
-        <!-- Story Section: Corporate Era -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- HEADER & VITAL SIGNS SCORECARD                        -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <div class="page-header" style="margin-bottom: 30px; margin-top: 20px;">
+            <h1 style="margin-bottom: 10px;">Bitcoin Core: Vital Signs</h1>
+            <p class="narrative" style="margin: 0; max-width: 800px;">The macro indicators that determine whether this project can survive the next decade.</p>
+        </div>
+
+        <section class="story-section" style="margin-bottom: 40px;">
+            <div id="vital-signs-scorecard" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-top: 3px solid var(--primary); border-radius: 12px; backdrop-filter: blur(10px); padding: 0; overflow: hidden;">
+                <!-- KPIs injected via JS -->
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- BUS FACTOR CHART                                        -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="story-section" style="margin-bottom: 40px;">
+            <div class="card">
+                <h2>Resilience Trajectory: The Bus Factor</h2>
+                <p class="narrative">How many developers would need to leave for the project to lose half its engineering capacity? A higher number = more resilient.</p>
+                <div id="chart-bus-factor" style="height: 400px; width: 100%; margin-top: 20px;"></div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- ACT 1: INSTITUTIONALIZATION & INDEPENDENCE (Funding)   -->
+        <!-- ═══════════════════════════════════════════════════════ -->
         <section class="story-section">
             <div class="card">
                 <h2>Institutionalization & Independence</h2>
-                <p class="narrative">Bitcoin development has shifted from a weekend hobby for cypherpunks to a
-                    professionalized workforce. Who is funding the code?</p>
+                <p class="narrative">Bitcoin's codebase is maintained by a small, professionalized workforce.
+                    Understanding who funds them — and whether that funding is diversifying or concentrating — is the
+                    first measure of project health.</p>
 
                 <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-top: 20px;">
-                    <!-- Chart 1: Contributor Sponsorship (Commits over time) -->
+                    <!-- Timeline: The Dawn of the Sponsored Era -->
                     <div style="flex: 2; min-width: 300px;">
                         <h4 style="margin-bottom: 10px; color: inherit; font-size: 14px;">
-                            <i class="fas fa-users" style="margin-right: 8px; opacity: 0.7;"></i>
-                            The Shift to Sponsored Development <span class="partial-year-badge">2026 Partial</span>
+                            <i class="fas fa-history" style="margin-right: 8px; opacity: 0.7;"></i>
+                            The Dawn of the Sponsored Era
                         </h4>
-                        <p style="font-size: 12px; color: #718096; margin-bottom: 15px;">
-                            % of commits from sponsored vs independent developers over time.
+                        <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 25px;">
+                            How Bitcoin Core development professionalized over the last decade.
                         </p>
-                        <div id="chart-corporate" style="height: 350px; width: 100%;"></div>
+                        
+                        <div style="position: relative; padding-left: 20px; border-left: 2px solid var(--border-color); display: flex; flex-direction: column; gap: 20px; margin-bottom: 15px;">
+                            
+                            <!-- 2014 -->
+                            <div style="position: relative;">
+                                <div style="position: absolute; left: -27px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--primary); border: 2px solid var(--card-bg);"></div>
+                                <div style="font-size: 11px; font-weight: 700; color: var(--primary); letter-spacing: 1px;">2014</div>
+                                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 4px 0;">Blockstream: The Pioneer Model</div>
+                                <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 8px;">Helped establish the model of corporate-sponsored open-source work by hiring prominent Core developers full-time.</div>
+                                <div style="display: inline-block; background: rgba(247, 147, 26, 0.1); border: 1px solid rgba(247, 147, 26, 0.2); padding: 4px 8px; border-radius: 4px; font-size: 11px; color: var(--primary); font-weight: 600;">
+                                    Legacy Impact: ~5 of the Top 10 highest impact contributors & ~73 of 210 Core BIPs authored by alumni
+                                </div>
+                            </div>
+
+                            <!-- 2015 -->
+                            <div style="position: relative;">
+                                <div style="position: absolute; left: -27px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--text-secondary); border: 2px solid var(--card-bg);"></div>
+                                <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); letter-spacing: 1px;">2015</div>
+                                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 4px 0;">MIT DCI: Neutral Academic Funding</div>
+                                <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">Stepped in after the Bitcoin Foundation's funding dried up to support key developers, proving the viability of neutral academic grants.</div>
+                            </div>
+
+                            <!-- 2016 -->
+                            <div style="position: relative;">
+                                <div style="position: absolute; left: -27px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--text-secondary); border: 2px solid var(--card-bg);"></div>
+                                <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); letter-spacing: 1px;">2016</div>
+                                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 4px 0;">Chaincode Labs: The Research Hub</div>
+                                <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">Cultivated an environment dedicated entirely to Bitcoin research and developer residencies, without commercial product pressure.</div>
+                            </div>
+
+                            <!-- 2019 -->
+                            <div style="position: relative;">
+                                <div style="position: absolute; left: -27px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--text-secondary); border: 2px solid var(--card-bg);"></div>
+                                <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); letter-spacing: 1px;">2019</div>
+                                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 4px 0;">Spiral (Square Crypto): Corporate Grants</div>
+                                <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">Demonstrated how publicly traded tech companies could directly grant funds to independent open-source developers.</div>
+                            </div>
+
+                            <!-- 2020 -->
+                            <div style="position: relative;">
+                                <div style="position: absolute; left: -27px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--text-secondary); border: 2px solid var(--card-bg);"></div>
+                                <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); letter-spacing: 1px;">2020</div>
+                                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 4px 0;">Brink: Non-Profit Independence</div>
+                                <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">Shifted the landscape toward tax-deductible grant funding, allowing developers to remain independent of corporate agendas.</div>
+                            </div>
+
+                            <!-- 2021 -->
+                            <div style="position: relative;">
+                                <div style="position: absolute; left: -27px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--text-secondary); border: 2px solid var(--card-bg);"></div>
+                                <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); letter-spacing: 1px;">2021+</div>
+                                <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 4px 0;">OpenSats & Btrust: Decentralized & Global</div>
+                                <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 8px;">Vastly expanded the pool of grant money, focusing on both ecosystem-wide open-source support and global expansion (Btrust in Africa).</div>
+                                <div style="display: inline-block; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 4px 8px; border-radius: 4px; font-size: 11px; color: var(--text-secondary); font-weight: 600;">
+                                    Current Impact: Brink and OpenSats actively fund 15% of the Top 100 all-time contributors
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Chart 2: Maintainer Independence (Pie/Bar) -->
-                    <div style="flex: 1; min-width: 300px;">
+                    <!-- Chart 2: Maintainer Matrix (Replaced Pie Chart) -->
+                    <div style="flex: 1.5; min-width: 340px;">
                         <div
-                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                             <h4 style="margin-bottom: 0; color: inherit; font-size: 14px;">
                                 <i class="fas fa-shield-alt" style="margin-right: 8px; opacity: 0.7;"></i>
                                 Funding the Gatekeepers
@@ -59,100 +143,91 @@
                                 <button id="btn-maintainer-all">All-Time</button>
                             </div>
                         </div>
-                        <p style="font-size: 12px; color: #718096; margin-bottom: 15px;">
-                            Distribution of maintainers by sponsoring entity.
+                        <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">
+                            Who currently funds the developers with merge access?
                         </p>
-                        <div id="chart-maintainer-independence" style="height: 350px; width: 100%;"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- The Global Heartbeat -->
-        <section id="heartbeat" class="story-section">
-            <div class="card">
-                <h2>The Global Heartbeat</h2>
-                <p class="narrative">Bitcoin never sleeps. What began as a weekend project for a handful of cypherpunks
-                    has evolved into a global 24/7 industrial-grade operation.</p>
-
-                <div style="display:flex; gap:30px; height: 450px; flex-wrap: wrap; margin-top: 20px;">
-                    <!-- Heatmap: The 24/7 Proof -->
-                    <div style="flex: 2; min-width: 300px; display: flex; flex-direction: column;">
-                        <h4 style="margin-bottom: 15px; color: inherit; font-size: 14px;">
-                            <i class="fas fa-clock" style="margin-right: 8px; opacity: 0.7;"></i>
-                            Hourly Activity by Year (UTC)
-                        </h4>
-                        <div id="chart-heatmap" style="flex: 1; min-width: 280px; width: 100%;"></div>
-                    </div>
-
-                    <!-- Vital Signs Panel: Why it matters -->
-                    <div style="flex: 1; min-width: 280px;">
-                        <div
-                            style="background: #F7FAFC; padding: 25px; border-radius: 16px; border: 1px solid #E2E8F0; height: 100%; display: flex; flex-direction: column; justify-content: center;">
-                            <h4
-                                style="margin-top: 0; color: var(--color-primary); font-size: 1.1rem; margin-bottom: 15px;">
-                                The Sun Never Sets</h4>
-
-                            <div style="margin-bottom: 25px;">
-                                <div
-                                    style="display: flex; justify-content: space-between; border-bottom: 1px dashed #CBD5E0; padding-bottom: 8px; margin-bottom: 12px;">
-                                    <span style="font-size: 13px; color: inherit;">Hourly Coverage</span>
-                                    <span style="font-size: 13px; font-weight: 700; color: var(--color-success);">24 /
-                                        24 hrs</span>
-                                </div>
-                                <p style="font-size: 13px; line-height: 1.5; color: #718096; margin: 0;">
-                                    The "follow-the-sun" model: When US devs log off, Europe and Asia Pacific maintain
-                                    the momentum. Review activity never hits zero.
-                                </p>
-                            </div>
-
-                            <div style="margin-bottom: 25px;">
-                                <div
-                                    style="display: flex; justify-content: space-between; border-bottom: 1px dashed #CBD5E0; padding-bottom: 8px; margin-bottom: 12px;">
-                                    <span style="font-size: 13px; color: inherit;">Vested Interests</span>
-                                    <span style="font-size: 13px; font-weight: 700; color: #E8916B;">9-to-5 Shift</span>
-                                </div>
-                                <p style="font-size: 13px; line-height: 1.5; color: #718096; margin: 0;">
-                                    Weekend coding has plummeted from 40% (2009) to ~8% today. Bitcoin is no longer a
-                                    hobby; it is a professional vocation.
-                                </p>
-                            </div>
-
-                            <div>
-                                <h5
-                                    style="margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #A0AEC0;">
-                                    Key Hubs</h5>
-                                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                                    <span
-                                        style="background: #EDF2F7; padding: 4px 10px; border-radius: 12px; font-size: 11px; color: inherit; font-weight: 600;">San
-                                        Francisco (UTC-8)</span>
-                                    <span
-                                        style="background: #EDF2F7; padding: 4px 10px; border-radius: 12px; font-size: 11px; color: inherit; font-weight: 600;">London
-                                        (UTC+0)</span>
-                                    <span
-                                        style="background: #EDF2F7; padding: 4px 10px; border-radius: 12px; font-size: 11px; color: inherit; font-weight: 600;">Berlin
-                                        (UTC+1)</span>
-                                    <span
-                                        style="background: #EDF2F7; padding: 4px 10px; border-radius: 12px; font-size: 11px; color: inherit; font-weight: 600;">Sydney
-                                        (UTC+10)</span>
-                                </div>
-                            </div>
+                        <div id="matrix-maintainer-independence" style="min-height: 300px; width: 100%;"></div>
+                        <div style="margin-top: 15px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 6px; border: 1px dashed rgba(255,255,255,0.1); font-size: 12px; color: var(--text-secondary);">
+                            <i class="fas fa-info-circle" style="margin-right: 6px; color: var(--primary);"></i>
+                            <strong>Data Notice:</strong> This representation is strictly based on the sponsorship metadata we have curated so far. Institutional footprints are likely even larger. Help us refine this historical data on our <a href="roadmap.html" style="color: var(--primary); text-decoration: underline;">Feedback & Roadmap</a> page.
                         </div>
                     </div>
                 </div>
-
-                <!-- Weekend Ratio: The Professionalization Proof -->
-                <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #EDF2F7;">
-                    <h4 style="margin-bottom: 15px; color: inherit; font-size: 14px;">
-                        <i class="fas fa-briefcase" style="margin-right: 8px; opacity: 0.7;"></i>
-                        The Death of the Hobbyist Era: Weekend Coding Ratio
-                    </h4>
-                    <div id="chart-weekend" style="height: 180px; width: 100%;"></div>
-                </div>
             </div>
         </section>
 
-        <!-- Regional Evolution Section -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- ACT 2: THE HUMAN ENGINE (Retention & Workforce)       -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section class="story-section">
+            <div class="card">
+                <h2>The Human Engine</h2>
+                <p class="narrative">A project isn't its code — it's its people. Retention tracks whether the
+                    developers who commit stay committed. This is the most critical leading indicator of long-term
+                    project sustainability.</p>
+
+                <!-- Retention Summary KPIs -->
+                <div id="retention-kpis"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin: 20px 0 25px 0;">
+                    <div
+                        style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 14px; text-align: center;">
+                        <div style="font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 600;">
+                            Active Regulars</div>
+                        <div id="kpi-active-regulars"
+                            style="font-size: 2em; font-weight: bold; color: var(--primary); margin: 6px 0;">—</div>
+                        <div style="font-size: 0.75em; color: var(--text-secondary); opacity: 0.8;">3+ commits this
+                            year</div>
+                    </div>
+                    <div
+                        style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 14px; text-align: center;">
+                        <div style="font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 600;">
+                            1-Year Survival</div>
+                        <div id="kpi-1yr-survival"
+                            style="font-size: 2em; font-weight: bold; color: var(--primary); margin: 6px 0;">—</div>
+                        <div id="kpi-1yr-survival-sub"
+                            style="font-size: 0.75em; color: var(--text-secondary); opacity: 0.8;">of regulars return
+                            next year</div>
+                    </div>
+                    <div
+                        style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px 14px; text-align: center;">
+                        <div style="font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 600;">
+                            Workforce Half-Life</div>
+                        <div id="kpi-half-life"
+                            style="font-size: 2em; font-weight: bold; color: var(--primary); margin: 6px 0;">—</div>
+                        <div style="font-size: 0.75em; color: var(--text-secondary); opacity: 0.8;">years to 50%
+                            attrition</div>
+                    </div>
+                </div>
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                    <h3 style="margin: 0;">Cohort Retention Analysis</h3>
+                    <div class="toggle-group">
+                        <button id="btn-retention-workforce" class="active">Workforce Stability</button>
+                        <button id="btn-retention-loyalty">New Joiner Loyalty</button>
+                    </div>
+                </div>
+
+                <div id="retention-desc-workforce">
+                    <p class="narrative"><strong>Workforce Stability:</strong> Tracks the stability of the active
+                        project team. It focuses on <b>"Regulars"</b> (contributors with 3+ commits in a given year),
+                        regardless of when they first joined, and shows how many remain active in subsequent years. This
+                        measures <b>system continuity</b>.</p>
+                </div>
+                <div id="retention-desc-loyalty" style="display: none;">
+                    <p class="narrative"><strong>New Joiner Loyalty:</strong> Tracks the survival of arrival cohorts. It
+                        specifically filters for new developers who joined in that year AND demonstrated immediate
+                        commitment (3+ commits in their first year). This measures <b>onboarding health</b> by excluding
+                        casual one-time contributors.</p>
+                </div>
+
+                <div id="chart-retention" style="height: 500px; width: 100%;"></div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- ACT 3: GLOBAL CONTRIBUTOR EVOLUTION (Regional)        -->
+        <!-- ═══════════════════════════════════════════════════════ -->
         <section id="regional-evolution" class="story-section">
             <div class="card">
                 <h2>Global Contributor Evolution</h2>
@@ -171,7 +246,7 @@
                     <div
                         style="flex: 1; min-width: 300px; display: flex; flex-direction: column; justify-content: center;">
                         <div
-                            style="background: var(--bg-card); padding: 25px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                            style="background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
                             <h4 style="margin-top: 0; color: var(--color-primary); font-size: 1.1rem;">The Multi-Polar
                                 Workforce</h4>
                             <p style="font-size: 14px; line-height: 1.6; color: var(--color-text-secondary);">
@@ -208,31 +283,92 @@
             </div>
         </section>
 
-        <!-- Advanced Human Metrics: Retention -->
-        <section class="story-section">
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- ACT 4: THE GLOBAL HEARTBEAT (24/7 Activity)           -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="heartbeat" class="story-section">
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h3 style="margin: 0;">Retention</h3>
-                    <div class="toggle-group">
-                        <button id="btn-retention-workforce" class="active">Workforce Stability</button>
-                        <button id="btn-retention-loyalty">New Joiner Loyalty</button>
+                <h2>The Global Heartbeat</h2>
+                <p class="narrative">Bitcoin never sleeps. What began as a weekend project for a handful of cypherpunks
+                    has evolved into a global 24/7 industrial-grade operation.</p>
+
+                <div style="display:flex; gap:30px; height: 450px; flex-wrap: wrap; margin-top: 20px;">
+                    <!-- Heatmap: The 24/7 Proof -->
+                    <div style="flex: 2; min-width: 300px; display: flex; flex-direction: column;">
+                        <h4 style="margin-bottom: 15px; color: inherit; font-size: 14px;">
+                            <i class="fas fa-clock" style="margin-right: 8px; opacity: 0.7;"></i>
+                            Hourly Activity by Year (UTC)
+                        </h4>
+                        <div id="chart-heatmap" style="flex: 1; min-width: 280px; width: 100%;"></div>
+                    </div>
+
+                    <!-- Vital Signs Panel: Data-Driven -->
+                    <div style="flex: 1; min-width: 280px;">
+                        <div
+                            style="background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid var(--border-color); height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                            <h4
+                                style="margin-top: 0; color: var(--primary); font-size: 1.1rem; margin-bottom: 15px;">
+                                The Sun Never Sets</h4>
+
+                            <div style="margin-bottom: 25px;">
+                                <div
+                                    style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 12px;">
+                                    <span style="font-size: 13px; color: var(--text-secondary);">Hourly Coverage</span>
+                                    <span id="vital-hourly-coverage"
+                                        style="font-size: 13px; font-weight: 700; color: var(--color-success);">— /
+                                        24 hrs</span>
+                                </div>
+                                <p style="font-size: 13px; line-height: 1.5; color: var(--text-secondary); margin: 0;">
+                                    The "follow-the-sun" model: When US devs log off, Europe and Asia Pacific maintain
+                                    the momentum. Review activity never hits zero.
+                                </p>
+                            </div>
+
+                            <div style="margin-bottom: 25px;">
+                                <div
+                                    style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 12px;">
+                                    <span style="font-size: 13px; color: var(--text-secondary);">Professionalization</span>
+                                    <span id="vital-weekend-stat"
+                                        style="font-size: 13px; font-weight: 700; color: var(--primary);">—</span>
+                                </div>
+                                <p id="vital-weekend-narrative"
+                                    style="font-size: 13px; line-height: 1.5; color: var(--text-secondary); margin: 0;">
+                                    Weekend coding has declined significantly. Bitcoin is no longer a hobby; it is a
+                                    professional vocation.
+                                </p>
+                            </div>
+
+                            <div>
+                                <h5
+                                    style="margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary);">
+                                    Key Hubs</h5>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                    <span
+                                        style="background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 12px; font-size: 11px; color: var(--text-secondary); font-weight: 600;">San
+                                        Francisco (UTC-8)</span>
+                                    <span
+                                        style="background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 12px; font-size: 11px; color: var(--text-secondary); font-weight: 600;">London
+                                        (UTC+0)</span>
+                                    <span
+                                        style="background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 12px; font-size: 11px; color: var(--text-secondary); font-weight: 600;">Berlin
+                                        (UTC+1)</span>
+                                    <span
+                                        style="background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 12px; font-size: 11px; color: var(--text-secondary); font-weight: 600;">Sydney
+                                        (UTC+10)</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div id="retention-desc-workforce">
-                    <p class="narrative"><strong>Workforce Stability:</strong> Tracks the stability of the active
-                        project team. It focuses on <b>"Regulars"</b> (contributors with 3+ commits in a given year),
-                        regardless of when they first joined, and shows how many remain active in subsequent years. This
-                        measures <b>system continuity</b>.</p>
+                <!-- Weekend Ratio: The Professionalization Proof -->
+                <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border-color);">
+                    <h4 style="margin-bottom: 15px; color: inherit; font-size: 14px;">
+                        <i class="fas fa-briefcase" style="margin-right: 8px; opacity: 0.7;"></i>
+                        The Death of the Hobbyist Era: Weekend Coding Ratio
+                    </h4>
+                    <div id="chart-weekend" style="height: 180px; width: 100%;"></div>
                 </div>
-                <div id="retention-desc-loyalty" style="display: none;">
-                    <p class="narrative"><strong>New Joiner Loyalty:</strong> Tracks the survival of arrival cohorts. It
-                        specifically filters for new developers who joined in that year AND demonstrated immediate
-                        commitment (3+ commits in their first year). This measures <b>onboarding health</b> by excluding
-                        casual one-time contributors.</p>
-                </div>
-
-                <div id="chart-retention" style="height: 500px; width: 100%;"></div>
             </div>
         </section>
     </div>
@@ -245,7 +381,7 @@
     <script src="js/charts-dashboard.js"></script>
     <script src="js/charts-health.js"></script>
     <script src="js/charts-advanced.js"></script>
-    <script src="js/app.js?v=3"></script>
+    <script src="js/app.js?v=4"></script>
     <script src="js/app-config.js"></script>
 </body>
 

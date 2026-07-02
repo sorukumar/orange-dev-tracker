@@ -105,6 +105,65 @@ h3 {
     margin-top: -5px;
 }
 
+/* KPI and Chart Box Styles */
+.kpi-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.metric-card {
+    flex: 1;
+    min-width: 250px;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(42, 51, 66, 0.04);
+}
+
+.metric-value {
+    font-size: 2.5em;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 10px 0;
+}
+
+.metric-label {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.chart-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.chart-box {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(42, 51, 66, 0.04);
+}
+
+.chart-header {
+    color: var(--secondary);
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+}
+
 /* ECharts responsive overrides if needed */
 .chart-container {
     width: 100%;

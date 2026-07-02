@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Engineering | Orange Dev Tracker | Bitcoin Data Labs</title>
     <meta name="description"
-        content="Deep dive into the engineering rigor of Bitcoin Core. Analysis of churn, refactoring discipline, reviewer activity, and contributor retention.">
-    <link rel="canonical" href="https://sorukumar.github.io/orange-dev-tracker/engineering.html">
+        content="Real-time analytics and KPIs for Bitcoin Core development. Track unique contributors, maintainers, codebase size, and commit trends.">
+    <link rel="canonical" href="https://sorukumar.github.io/orange-dev-tracker/index.html">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://bitcoindatalabs.org/styles/styles.css">
@@ -15,18 +15,194 @@
     <link rel="icon" type="image/png" href="https://bitcoindatalabs.org/favicon.png">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Engineering Velocity | Orange Dev Tracker | Bitcoin Data Labs">
-    <meta property="og:description" content="Analyzing the speed, merge times, and review cycles of Bitcoin Core.">
+    <meta property="og:title" content="Engineering | Orange Dev Tracker | Bitcoin Data Labs">
+    <meta property="og:description" content="Real-time analytics and KPIs for Bitcoin Core development.">
     <meta property="og:image" content="https://sorukumar.github.io/orange-dev-tracker/assets/og-image.png">
     <link rel="stylesheet" href="styles/style.css">
 </head>
 
 <body class="has-fixed-header">
-    <div id="header"></div>
+    <div id="main-container">
+        <div id="header"></div>
 
-    <div class="container">
-        <!-- Engineering Efficiency: Churn vs Net -->
-        <section class="card" style="margin-top: 30px;">
+        <div id="app-content">
+            <div class="hero-section" style="text-align: center; margin-bottom: 20px;">
+                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto; font-size: 1.1rem;">Track the code velocity, codebase architecture, and engineering quality of Bitcoin Core.</p>
+            </div>
+
+            <div class="container" style="padding-top: 0;">
+                <div id="freshness-line" class="freshness-line">Data refreshed: -</div>
+
+                <!-- Vital Signs: KPIs -->
+                <section id="vital-signs" style="margin-bottom: 30px;">
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Contributors</div>
+                            <div class="kpi-value" id="kpi-contributors">-</div>
+                            <div class="kpi-sub" id="kpi-contributors-sub">Code Contributors</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Maintainers</div>
+                            <div class="kpi-value" id="kpi-maintainers">-</div>
+                            <div class="kpi-sub">Total / Active</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">PRs Merged</div>
+                            <div class="kpi-value" id="kpi-prs-merged">-</div>
+                            <div class="kpi-sub" id="kpi-prs-merged-sub">in last 30 days</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Total Commits</div>
+                            <div class="kpi-value" id="kpi-total-commits">-</div>
+                            <div class="kpi-sub" id="kpi-codebase-sub">Lines of Code</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">BIPs</div>
+                            <div class="kpi-value" id="kpi-bips">-</div>
+                            <div class="kpi-sub" id="kpi-bips-sub">Active / Discussed recently</div>
+                        </div>
+                    </div>
+                </section>
+
+        <!-- Row 1: Structural Distribution (Status Quo) -->
+        <section style="display: flex; gap: 20px; margin-bottom: 30px; min-height: 400px; flex-wrap: wrap;">
+            <!-- Left 2/5: Work Snapshot -->
+            <div class="card" style="flex: 2; min-width: 300px; display: flex; flex-direction: column;">
+                <h3 style="margin: 0 0 5px 0;">Unique Commits by Area (Current Snapshot)</h3>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0 0 15px 0; line-height: 1.4;">Shows the distribution of engineering effort across the codebase right now. Useful for identifying which subsystems are currently receiving the most active development.</p>
+                <div id="chart-snapshot-work" style="flex: 1; height: 350px; width: 100%;"></div>
+            </div>
+            <!-- Right 3/5: Human Pyramid -->
+            <div class="card" style="flex: 3; min-width: 300px; display: flex; flex-direction: column;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                    <h3 style="margin: 0;">The Engagement Pyramid (Authored Commits)</h3>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0 0 15px 0; line-height: 1.4;">Categorizes contributors by their lifetime commit volume. Highlights the project's reliance on core maintainers versus the broader long-tail of casual contributors.</p>
+                <div id="chart-engagement-tiers" style="flex: 1; height: 350px; width: 100%;"></div>
+            </div>
+        </section>
+
+        <!-- Act 2: Codebase Anatomy -->
+        <section class="card" style="margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <div>
+                    <h3 style="margin: 0 0 5px 0;">Codebase Anatomy</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0; line-height: 1.4; max-width: 700px;">Explore the architecture and size of the codebase across different programming languages and functional areas.</p>
+                </div>
+            </div>
+
+            <div class="kpi-row" style="margin-bottom: 30px;">
+                <div class="metric-card">
+                    <div class="metric-label">Total Volume</div>
+                    <div class="metric-value" id="kpi-total-lines">-</div>
+                    <div style="font-size:0.8em; color:var(--text-secondary);">Lines of Code (LOC)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">File Count</div>
+                    <div class="metric-value" id="kpi-total-files">-</div>
+                    <div style="font-size:0.8em; color:var(--text-secondary);">Source Files</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Tech Stack</div>
+                    <div class="metric-value" id="kpi-total-langs">-</div>
+                    <div style="font-size:0.8em; color:var(--text-secondary);">Active Languages</div>
+                </div>
+            </div>
+
+            <!-- Row 1: Category Analysis -->
+            <div class="chart-row">
+                <div class="chart-box">
+                    <div class="chart-header">Functional Footprint (File Count)</div>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4;">Shows how the codebase is structured by functional area, based on the sheer number of source files. Highlights architectural breadth.</p>
+                    <div id="chart-snapshot-files-cat" style="height:300px;"></div>
+                </div>
+                <div class="chart-box">
+                    <div class="chart-header">Code Volume by Category (LOC)</div>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4;">Measures the size of each functional area by lines of code. Reveals where the heaviest logic and complexity reside.</p>
+                    <div id="chart-snapshot-volume" style="height:300px;"></div>
+                </div>
+            </div>
+
+            <!-- Row 2: Language Analysis -->
+            <div class="chart-row">
+                <div class="chart-box">
+                    <div class="chart-header">Polyglot Composition (File Count)</div>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4;">Breaks down the file count by programming language. Useful for understanding the variety of tooling and scripting used.</p>
+                    <div id="chart-snapshot-files-lang" style="height:300px;"></div>
+                </div>
+                <div class="chart-box">
+                    <div class="chart-header">Tech Stack Dominance (LOC)</div>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4;">Displays the dominant programming languages by lines of code. Emphasizes the project's heavy reliance on core languages like C++ and Python.</p>
+                    <div id="chart-snapshot-stack" style="height:300px;"></div>
+                </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div
+                style="border: 1px solid var(--border-color); background: var(--bg-secondary); padding: 20px; border-radius: 12px; margin-bottom: 30px; color: var(--text-secondary); text-align: center; font-size: 14px;">
+                <strong style="color: var(--secondary);">⚠️ Data Normalization Notice</strong><br>
+                Historical line-of-code trends are mathematically scaled to match the current static codebase size (0.9M
+                LOC).<br>
+                Discrepancies between historical net churn (adds - deletes) and actual on-disk size have been normalized to
+                reflect realistic growth patterns.
+            </div>
+        </section>
+
+        <!-- Row 2: The Hero Narrative (Historial Context) -->
+        <section class="card" style="margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <div>
+                    <h3 style="margin: 0 0 5px 0;">Evolution of Functional Areas (Authored Commits) <span id="badge-category-partial"
+                            class="partial-year-badge" style="display: none;">2026 Partial</span></h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0; line-height: 1.4; max-width: 700px;">Tracks how development focus shifts over time. Shows the historical velocity of code authored in different subsystems, revealing evolving technical priorities.</p>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div class="window-toggle" style="margin: 0;">
+                        <button id="btn-category-year-full" class="window-btn active">Full Years</button>
+                        <button id="btn-category-year-ytd" class="window-btn">YTD 2026</button>
+                    </div>
+                </div>
+            </div>
+            <div id="chart-category" style="height: 450px; width: 100%;"></div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 30px 0;">
+
+            <div style="margin-bottom: 15px;">
+                <h3 style="margin: 0 0 5px 0;">Longitudinal Tech Evolution (Lines of Code 2009-2025)</h3>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0; line-height: 1.4;">Tracks the growth of different programming languages over time. Shows historical shifts in technology choices and testing infrastructure.</p>
+            </div>
+            <div id="chart-streamgraph" style="height:400px; width: 100%;"></div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 30px 0;">
+
+            <div style="margin-bottom: 15px;">
+                <h3 style="margin: 0 0 5px 0;">Longitudinal Category Evolution (Lines of Code 2009-2025)</h3>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0; line-height: 1.4;">Visualizes the historical expansion of functional areas. Illustrates when specific subsystems (e.g., wallet, consensus) experienced rapid development.</p>
+            </div>
+            <div id="chart-category-evolution" style="height:400px; width: 100%;"></div>
+        </section>
+
+        <!-- Row 3: Momentum (Velocity) -->
+        <section style="display: flex; gap: 20px; margin-bottom: 30px; min-height: 400px; flex-wrap: wrap;">
+            <!-- Full Width: Recruitment Velocity -->
+            <div class="card" style="flex: 1; width: 100%; display: flex; flex-direction: column;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                    <div>
+                        <h3 style="margin: 0 0 5px 0;">Recruitment Velocity <span id="badge-growth-partial"
+                                class="partial-year-badge" style="display: none;">2026 Partial</span></h3>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0; line-height: 1.4; max-width: 700px;">Measures the onboarding rate of new developers making their first commit. Indicates the ecosystem's ability to attract and integrate fresh talent over time.</p>
+                    </div>
+                    <div class="window-toggle" style="margin: 0;">
+                        <button id="btn-growth-year-full" class="window-btn active">Full Years</button>
+                        <button id="btn-growth-year-ytd" class="window-btn">YTD 2026</button>
+                    </div>
+                </div>
+                <div id="chart-growth" style="flex: 1; height: 350px;"></div>
+            </div>
+        </section>
+
+        <!-- Act 5: Engineering Rigor -->
+        <section class="card" style="margin-bottom: 30px;">
             <h3 style="margin-bottom: 5px;">Engineering Efficiency: Historical Churn vs. Net Change</h3>
             <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0 0 20px 0; line-height: 1.4;">Tracks the ratio of code added/deleted against the net change in repository size. Highlighting weeks where net LOC went down but churn was high reveals periods of intense refactoring and high-quality engineering.</p>
             <div id="chart-churn" style="height: 500px; width: 100%;"></div>
@@ -57,39 +233,9 @@
                 </div>
             </div>
         </section>
+    </div>
 
-        <!-- Peer Review: The Unsung Work -->
-        <section class="story-section" style="margin-top: 30px;">
-            <div class="card">
-                <h3 style="margin-bottom: 5px;">The Review Gap: Peer Review Analysis</h3>
-                <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0 0 20px 0; line-height: 1.4;">Commits are only half the story. This analysis tracks the distributed effort of verifying code quality (ACK/NACK), highlighting the collaborative volume required to move the protocol forward safely.</p>
-
-                <div class="placeholder-chart" style="height: 400px;">
-                    <i class="fas fa-microscope" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.5;"></i>
-                    <h4 style="margin: 0; color: #64748b;">VALIDATION IN PROGRESS</h4>
-                    <p style="font-size: 0.9rem; margin-top: 10px; max-width: 400px; text-align: center;">
-                        Review scoring models are currently being calibrated to better distinguish between trivial
-                        ACKs and deep technical audits.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Velocity: PR Lead Time (WIP) -->
-        <section class="story-section" style="margin-top: 30px; margin-bottom: 50px;">
-            <div class="card">
-                <h3 style="margin-bottom: 5px;">Velocity: PR Lead Time Analysis</h3>
-                <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0 0 20px 0; line-height: 1.4;">Maps the journey from first commit to final merge. Understanding the friction in the code review pipeline helps identify bottlenecks in the engineering flow.</p>
-
-                <div class="placeholder-chart">
-                    <i class="fas fa-hourglass-half" style="font-size: 2.5rem; margin-bottom: 15px; opacity: 0.5;"></i>
-                    <h4 style="margin: 0; color: #64748b;">WIP: RESEARCH PHASE</h4>
-                    <p style="font-size: 0.9rem; margin-top: 10px;">
-                        Mapping the temporal lifecycle of Bitcoin Core contributions.
-                    </p>
-                </div>
-            </div>
-        </section>
+        </div>
     </div>
 
     <div id="footer"></div>
@@ -97,10 +243,10 @@
     <script src="https://bitcoindatalabs.org/components/app-components.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/theme.js"></script>
-    <script src="js/charts-dashboard.js"></script>
+    <script src="js/charts-dashboard.js?v=5"></script>
     <script src="js/charts-codebase.js"></script>
     <script src="js/charts-advanced.js"></script>
-    <script src="js/app.js?v=4"></script>
+    <script src="js/app.js?v=5"></script>
     <script src="js/app-config.js"></script>
 </body>
 

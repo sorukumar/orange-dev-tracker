@@ -42,6 +42,7 @@ async function init() {
     charts.retention = initChart('chart-retention');
     charts.reviewers = initChart('chart-reviewers');
     charts.regionalEvolution = initChart('chart-regional-evolution');
+    charts.busFactor = initChart('chart-bus-factor');
 
     window.addEventListener('resize', () => {
         Object.values(charts).forEach(c => c && c.resize());
@@ -69,10 +70,17 @@ async function init() {
         if (charts.catEvolution) await loadCategoryHistory();
 
         // Health specific
-        if (document.getElementById('chart-corporate')) await loadCorporateEra();
         if (document.getElementById('chart-geography')) await loadGeography();
-        if (document.getElementById('chart-maintainer-independence')) await loadMaintainerIndependence();
+        if (document.getElementById('matrix-maintainer-independence')) await loadMaintainerIndependence();
         if (document.getElementById('chart-regional-evolution')) await loadRegionalEvolution();
+        if (document.getElementById('vital-signs-scorecard')) await loadVitalSignsScorecard();
+        if (charts.busFactor) await loadBusFactorChart();
+
+        // Health: Data-driven vital signs panel (after heatmap/weekend charts are loaded)
+        if (document.getElementById('vital-hourly-coverage')) await populateVitalSignsPanel();
+
+        // Health: Retention KPI summary cards
+        if (document.getElementById('kpi-active-regulars')) await populateRetentionKPIs();
 
         // Advanced Engineering Metrics
         if (charts.churn) await loadChurnMetrics();

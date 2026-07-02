@@ -6,12 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
             appHomeUrl: 'index.html',
             navLinks: [
                 { name: 'Home', url: 'index.html' },
-                { name: 'Dashboard', url: 'dashboard.html' },
-                { name: 'Protocol Pulse', url: 'pulse.html' },
-                { name: 'Codebase', url: 'codebase.html' },
-                { name: 'Releases', url: 'releases.html' },
                 { name: 'Engineering', url: 'engineering.html' },
-                { name: 'Health & Culture', url: 'health.html' }
+                { name: 'Protocol Pulse', url: 'pulse.html' },
+                { name: 'Releases', url: 'releases.html' },
+                { name: 'Health', url: 'health.html' }
             ],
             footerLinks: [
                 { name: 'Methodology & Definitions', url: 'https://sorukumar.github.io/orange-dev-tracker/methodology.html' }
