@@ -43,15 +43,9 @@ async function loadVitalSigns() {
         // 3. PRs Merged (All-time / Recent)
         if (document.getElementById('kpi-prs-merged')) {
             const totalPrs = ecoData.prs && ecoData.prs.total_merged ? ecoData.prs.total_merged.toLocaleString() : "-";
+            const prs30d = ecoData.prs && ecoData.prs.merged_30d ? ecoData.prs.merged_30d.toLocaleString() : "0";
             document.getElementById('kpi-prs-merged').innerText = totalPrs;
-            
-            if (document.getElementById('kpi-prs-core') && document.getElementById('kpi-prs-eco')) {
-                const corePrs = ecoData.prs && ecoData.prs.total_merged_core ? ecoData.prs.total_merged_core.toLocaleString() : "-";
-                const ecoPrs = ecoData.prs && ecoData.prs.total_merged_eco ? ecoData.prs.total_merged_eco.toLocaleString() : "-";
-                document.getElementById('kpi-prs-core').innerText = corePrs;
-                document.getElementById('kpi-prs-eco').innerText = ecoPrs;
-            } else if (document.getElementById('kpi-prs-merged-sub')) {
-                const prs30d = ecoData.prs && ecoData.prs.merged_30d ? ecoData.prs.merged_30d.toLocaleString() : "0";
+            if (document.getElementById('kpi-prs-merged-sub')) {
                 document.getElementById('kpi-prs-merged-sub').innerText = `${prs30d} merged in last 30d`;
             }
         }
