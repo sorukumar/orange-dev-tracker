@@ -15,6 +15,7 @@ To keep the architecture clean, we strictly divide the ecosystem into the "What"
 
 - [ ] **Verify JSON Exports:** Ensure that `stats_reviewers.json` cleanly exports both volume and type of reviews.
 - [ ] **Export Reciprocity Data:** Expose "Review Reciprocity" and "Avg Approval Latency".
+- [ ] **Pre-calculate Release Epoch Metadata:** Move the calculation of release KPIs (Total PRs, Unique Contributors, Categories Touched, Avg Days in Review) and the "Top 5 Contributors" lists from the frontend `releases.js` to the backend Python generation scripts. Emit these as top-level fields inside `releases.json` to keep the UI completely static and declarative.
 
 ---
 

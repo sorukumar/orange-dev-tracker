@@ -280,6 +280,43 @@ h3 {
     border: 1px solid var(--border-color) !important;
 }
 
+/* ── Page Hero: Shared tab-page intro ── */
+.page-hero {
+    max-width: 1100px;
+    margin: 0 auto 24px auto;
+    padding: 20px 20px 0 20px;
+}
+
+.page-hero .hero-narrative {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.5;
+    max-width: 700px;
+    margin: 0;
+}
+
+/* Tier 1 only: Narrative title for thesis pages */
+.page-hero h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 10px 0;
+}
+
+/* Hero scorecard: shared orange-accent treatment */
+.hero-scorecard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-top: 3px solid var(--primary);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    padding: 0;
+    overflow: hidden;
+    margin-top: 24px;
+}
+
 /* ── Global Toggles ── */
 .window-toggle {
     display: flex;

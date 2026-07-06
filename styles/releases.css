@@ -174,7 +174,7 @@
 }
 
 .filter-pill {
-    background: var(--card-bg);
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.08) var(--fill-pct, 0%), var(--card-bg) var(--fill-pct, 0%));
     border: 1px solid rgba(255, 255, 255, 0.08);
     color: var(--text-secondary);
     padding: 8px 18px;
@@ -185,8 +185,8 @@
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.filter-pill:hover {
-    background: rgba(255, 255, 255, 0.05);
+.filter-pill:hover:not(.active) {
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.15) var(--fill-pct, 0%), rgba(255, 255, 255, 0.05) var(--fill-pct, 0%));
     color: var(--text-primary);
     border-color: rgba(255, 255, 255, 0.15);
     transform: translateY(-2px);
@@ -317,9 +317,43 @@
 }
 
 .pr-meta-tag.slow {
-    color: #F44336;
-    background: rgba(244, 67, 54, 0.08);
-    border-color: rgba(244, 67, 54, 0.2);
+    color: #8293AB;
+    background: rgba(130, 147, 171, 0.08);
+    border-color: rgba(130, 147, 171, 0.2);
+}
+
+/* Top Contributors */
+.contributor-badge {
+    display: inline-flex;
+    align-items: center;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 4px 12px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.contributor-badge:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.contributor-badge-name {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-right: 8px;
+}
+
+.contributor-badge-count {
+    background: rgba(232, 145, 107, 0.1);
+    color: var(--primary);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
 }
 
 .pr-cat-tags-container {

@@ -30,6 +30,9 @@
         <div id="header"></div>
 
         <div id="app-content">
+            <div class="page-hero">
+                <p class="hero-narrative">The complete record of what shipped in Bitcoin Core — release by release, PR by PR.</p>
+            </div>
             <div class="release-layout-wrapper">
                 <!-- Main Content -->
                 <main class="release-main">
@@ -63,6 +66,8 @@
                                 <ul id="release-highlights-list" style="margin: 0; padding-left: 20px; color: var(--text-primary); font-size: 0.95rem; line-height: 1.6;">
                                 </ul>
                             </div>
+
+                            <div id="release-kpis" class="hero-scorecard" style="display: none;"></div>
                         </div>
                         
                         <div class="search-and-filter-container">
@@ -73,6 +78,10 @@
                                 <!-- Filter pills populated by JS -->
                             </div>
                         </div>
+                        
+                        <div id="top-contributors-container" style="display: none; margin-bottom: 24px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--border-color);">
+                            <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); margin-bottom: 16px; font-weight: 700; text-align: center;">Top Contributors to this Release</div>
+                            <div id="top-contributors-list" style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;"></div>
                         </div>
                         
                         <div class="pr-list-container" id="pr-list-container">

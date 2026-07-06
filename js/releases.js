@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let releasesData = [];
     let currentVersion = null;
     let activeFilter = 'All';
+    let activeAuthorFilter = null;
     let searchQuery = '';
     let renderLimit = 15;
 
@@ -29,6 +30,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Global search mode
                 document.querySelector('.release-header').style.display = 'none';
                 filterContainerEl.style.display = 'none';
+                const kpisEl = document.getElementById('release-kpis');
+                const topContribsEl = document.getElementById('top-contributors-container');
+                if (kpisEl) kpisEl.style.display = 'none';
+                if (topContribsEl) topContribsEl.style.display = 'none';
                 
                 let allPRs = [];
                 releasesData.forEach(release => {
@@ -135,6 +140,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function selectVersion(version) {
         currentVersion = version;
         activeFilter = 'All'; 
+        activeAuthorFilter = null;
         searchQuery = '';
         renderLimit = 15;
         if (searchInputEl) searchInputEl.value = '';
@@ -192,26 +198,132 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (highlightsContainerEl) highlightsContainerEl.style.display = 'none';
         }
 
-        // Extract unique categories from the flattened PR list
-        const categoriesSet = new Set();
+        // Extract unique impact categories from the PR list for filters
+        const impactCategoriesSet = new Set();
         if (release.prs) {
             release.prs.forEach(pr => {
-                if (pr.categories) {
-                    pr.categories = pr.categories.map(c => c === 'Uncategorized' ? 'Miscellaneous' : c);
-                    pr.categories.forEach(c => categoriesSet.add(c));
+                if (pr.impact_category) {
+                    impactCategoriesSet.add(pr.impact_category);
+                } else {
+                    impactCategoriesSet.add('Maintenance & Tech Debt');
                 }
             });
         }
         
-        // Sort categories to put Miscellaneous/Backport at end
-        let sortedCats = Array.from(categoriesSet).sort((a, b) => {
-            if (a === 'Miscellaneous' || a === 'Backport') return 1;
-            if (b === 'Miscellaneous' || b === 'Backport') return -1;
+        // Sort categories to put Maintenance at end
+        let sortedCats = Array.from(impactCategoriesSet).sort((a, b) => {
+            if (a === 'Maintenance & Tech Debt') return 1;
+            if (b === 'Maintenance & Tech Debt') return -1;
             return a.localeCompare(b);
         });
 
         renderFilters(sortedCats, release);
+        renderReleaseKPIs(release, sortedCats);
+        renderTopContributors(release);
         renderPRs(release.prs || []);
+    }
+
+    function renderReleaseKPIs(release, sortedCats) {
+        const kpiContainer = document.getElementById('release-kpis');
+        if (!kpiContainer || !release.prs || release.prs.length === 0) {
+            if (kpiContainer) kpiContainer.style.display = 'none';
+            return;
+        }
+
+        const highImpactPRs = release.prs.length;
+        const totalPRs = release.total_prs_in_release || highImpactPRs;
+        const uniqueContributors = new Set(release.prs.filter(pr => pr.author && pr.author !== 'nan' && pr.author !== 'None').map(pr => pr.author)).size;
+        const categoriesTouched = sortedCats.length;
+        
+        let validMergeTimes = release.prs.map(pr => pr.merge_time_days).filter(d => d !== undefined && d !== null);
+        const avgMergeTime = validMergeTimes.length > 0 ? Math.round(validMergeTimes.reduce((a, b) => a + b, 0) / validMergeTimes.length) : '-';
+
+        kpiContainer.style.display = 'grid';
+        kpiContainer.innerHTML = `
+            <div style="padding: 20px; border-right: 1px solid rgba(255,255,255,0.05); text-align: center; flex: 1;">
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 600; margin-bottom: 10px;">
+                    <i class="fas fa-code-branch" style="margin-right: 6px; opacity: 0.7;"></i>High-Impact PRs
+                </div>
+                <div style="font-size: 2.5em; font-weight: bold; color: var(--text-primary); margin: 5px 0 2px 0; line-height: 1;">${highImpactPRs}</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.8; margin-top: 5px;">(Total Merged: ~${totalPRs})</div>
+            </div>
+            <div style="padding: 20px; border-right: 1px solid rgba(255,255,255,0.05); text-align: center; flex: 1;">
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 600; margin-bottom: 10px;">
+                    <i class="fas fa-users" style="margin-right: 6px; opacity: 0.7;"></i>Contributors
+                </div>
+                <div style="font-size: 2.5em; font-weight: bold; color: var(--text-primary); margin: 5px 0; line-height: 1;">${uniqueContributors}</div>
+            </div>
+            <div style="padding: 20px; text-align: center; flex: 1;">
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 600; margin-bottom: 10px;">
+                    <i class="fas fa-clock" style="margin-right: 6px; opacity: 0.7;"></i>Avg Days in Review
+                </div>
+                <div style="font-size: 2.5em; font-weight: bold; color: var(--text-primary); margin: 5px 0; line-height: 1;">${avgMergeTime}</div>
+            </div>
+        `;
+    }
+
+    function renderTopContributors(release) {
+        const container = document.getElementById('top-contributors-container');
+        const list = document.getElementById('top-contributors-list');
+        if (!container || !list || !release.prs || release.prs.length === 0) {
+            if (container) container.style.display = 'none';
+            return;
+        }
+
+        const authorCounts = {};
+        const authorUUIDs = {};
+        
+        release.prs.forEach(pr => {
+            const author = pr.author;
+            if (author && author !== 'nan' && author !== 'None') {
+                authorCounts[author] = (authorCounts[author] || 0) + 1;
+                if (pr.author_uuid) authorUUIDs[author] = pr.author_uuid;
+            }
+        });
+
+        const sortedAuthors = Object.keys(authorCounts).sort((a, b) => authorCounts[b] - authorCounts[a]);
+        const topAuthors = sortedAuthors.slice(0, 5);
+
+        if (topAuthors.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+
+        list.innerHTML = topAuthors.map(author => {
+            const count = authorCounts[author];
+            const uuid = authorUUIDs[author];
+            const url = uuid ? `https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${uuid}` : `https://github.com/${author}`;
+            const isActive = activeAuthorFilter === author;
+            
+            return `
+                <div style="display: flex; align-items: center; gap: 4px;">
+                    <button class="contributor-badge ${isActive ? 'active' : ''}" data-author="${author}" style="cursor: pointer; border: ${isActive ? '1px solid var(--accent)' : '1px solid rgba(255,255,255,0.1)'}; background: ${isActive ? 'rgba(247, 147, 26, 0.1)' : ''}">
+                        <span class="contributor-badge-name">@${author}</span>
+                        <span class="contributor-badge-count">${count} PR${count > 1 ? 's' : ''}</span>
+                    </button>
+                    <a href="${url}" target="_blank" style="color: var(--text-secondary); font-size: 0.8rem; padding: 4px; border-radius: 4px; transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-secondary)'" title="View Profile">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            `;
+        }).join('');
+        
+        // Add event listeners to the new buttons
+        const buttons = list.querySelectorAll('button.contributor-badge');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const author = e.currentTarget.dataset.author;
+                if (activeAuthorFilter === author) {
+                    activeAuthorFilter = null; // toggle off
+                } else {
+                    activeAuthorFilter = author; // toggle on
+                }
+                renderLimit = 15;
+                renderReleaseContent(release);
+            });
+        });
+        
+        container.style.display = 'block';
     }
 
     function renderFilters(categories, release) {
@@ -222,16 +334,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         allBtn.textContent = `All (${release.prs.length})`;
         allBtn.onclick = () => {
             activeFilter = 'All';
+            activeAuthorFilter = null; // Clearing main filter also clears author filter
             renderLimit = 15;
             renderReleaseContent(release);
         };
         filterContainerEl.appendChild(allBtn);
 
         categories.forEach(cat => {
-            const count = release.prs.filter(pr => pr.categories.includes(cat)).length;
+            const count = release.prs.filter(pr => (pr.impact_category || 'Maintenance & Tech Debt') === cat).length;
+            const pct = release.prs.length > 0 ? Math.round((count / release.prs.length) * 100) : 0;
             const btn = document.createElement('button');
             btn.className = `filter-pill ${activeFilter === cat ? 'active' : ''}`;
             btn.textContent = `${cat} (${count})`;
+            btn.style.setProperty('--fill-pct', `${pct}%`);
             btn.onclick = () => {
                 activeFilter = cat;
                 renderLimit = 15;
@@ -245,8 +360,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         listContainerEl.innerHTML = '';
         
         const filteredPRs = prs.filter(pr => {
-            const matchesFilter = activeFilter === 'All' || (pr.categories && pr.categories.includes(activeFilter));
+            const matchesFilter = activeFilter === 'All' || (pr.impact_category || 'Maintenance & Tech Debt') === activeFilter;
             if (!matchesFilter) return false;
+            
+            if (activeAuthorFilter && pr.author !== activeAuthorFilter) {
+                return false;
+            }
             
             if (searchQuery) {
                 const searchTarget = `${pr.pr} ${pr.title || ''} ${pr.author || ''} ${pr.author_name || ''} ${pr.public_summary || ''}`.toLowerCase();
@@ -289,7 +408,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (pr.merge_time_days !== undefined && pr.merge_time_days !== null) {
                 const speedClass = pr.merge_time_days < 5 ? 'fast' : (pr.merge_time_days > 45 ? 'slow' : 'normal');
-                metaTags += `<span class="pr-meta-tag ${speedClass}"><i class="fas fa-clock" style="font-size: 0.75rem; margin-right: 3px;"></i>${pr.merge_time_days} days to merge</span>`;
+                metaTags += `<span class="pr-meta-tag ${speedClass}"><i class="fas fa-clock" style="font-size: 0.75rem; margin-right: 3px;"></i>${pr.merge_time_days} days in review</span>`;
             }
 
             // Header Row (PR Number, Title, Tags)

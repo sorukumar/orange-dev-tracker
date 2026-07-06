@@ -33,22 +33,16 @@
         <div id="header"></div>
 
         <div id="app-content">
-            <header class="page-header" style="max-width: 1100px; margin: 0 auto 24px auto;">
-                <div class="header-top-row" style="display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;">
-                    <div class="header-content">
-                        <p style="color: var(--text-secondary); margin: 0;">Track what devs are debating across Delving and the mailing list.</p>
-                    </div>
-                    <div class="header-actions">
-                        <div class="window-toggle" style="margin: 0;">
-                            <button class="window-btn active" data-window="90d">Last 90 Days</button>
-                            <button class="window-btn" data-window="30d">Last 30 Days</button>
-                        </div>
+            <div class="page-hero">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                    <p class="hero-narrative">What Bitcoin developers are debating right now — and where the protocol is heading.</p>
+                    <div class="window-toggle" style="margin: 0;">
+                        <button class="window-btn active" data-window="90d">Last 90 Days</button>
+                        <button class="window-btn" data-window="30d">Last 30 Days</button>
                     </div>
                 </div>
-            </header>
-
                 <!-- Top-line stats row -->
-                <div class="pulse-stats-row" id="pulse-stats-row">
+                <div class="pulse-stats-row" id="pulse-stats-row" style="margin-top: 20px;">
                     <div class="pulse-stat">
                         <div class="pulse-stat-value" id="stat-threads">—</div>
                         <div class="pulse-stat-label">Active Threads</div>
@@ -62,6 +56,7 @@
                         <div class="pulse-stat-label">Unique Participants</div>
                     </div>
                 </div>
+            </div>
 
                 <!-- Section: Dominant Themes -->
                 <div class="pulse-section">
