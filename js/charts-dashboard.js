@@ -21,8 +21,16 @@ async function loadVitalSigns() {
         if (document.getElementById('kpi-contributors')) {
             const totalActive = (ecoData && ecoData.groups && ecoData.groups.total_active) ? ecoData.groups.total_active.toLocaleString() : "-";
             document.getElementById('kpi-contributors').innerText = totalActive;
-            const codeContribs = data.unique_contributors ? data.unique_contributors.toLocaleString() : "-";
-            document.getElementById('kpi-contributors-sub').innerText = `${codeContribs} Code Contributors`;
+            
+            if (document.getElementById('kpi-contributors-core') && document.getElementById('kpi-contributors-eco')) {
+                const coreContribs = data.core_contributors ? data.core_contributors.toLocaleString() : "-";
+                const ecoContribs = data.eco_contributors ? data.eco_contributors.toLocaleString() : "-";
+                document.getElementById('kpi-contributors-core').innerText = coreContribs;
+                document.getElementById('kpi-contributors-eco').innerText = ecoContribs;
+            } else if (document.getElementById('kpi-contributors-sub')) {
+                const codeContribs = data.unique_contributors ? data.unique_contributors.toLocaleString() : "-";
+                document.getElementById('kpi-contributors-sub').innerText = `${codeContribs} Code Contributors`;
+            }
         }
 
         // 2. Maintainers: Total / Active
@@ -44,9 +52,16 @@ async function loadVitalSigns() {
         if (document.getElementById('kpi-total-commits')) {
             document.getElementById('kpi-total-commits').innerText = data.total_commits ? data.total_commits.toLocaleString() : "-";
             
-            const size = data.current_codebase_size;
-            const sizeStr = size ? (size / 1000000).toFixed(2) + "M" : "-";
-            document.getElementById('kpi-codebase-sub').innerText = `Codebase: ${sizeStr} LOC`;
+            if (document.getElementById('kpi-commits-core') && document.getElementById('kpi-commits-eco')) {
+                const coreCommits = data.core_commits ? data.core_commits.toLocaleString() : "-";
+                const ecoCommits = data.eco_commits ? data.eco_commits.toLocaleString() : "-";
+                document.getElementById('kpi-commits-core').innerText = coreCommits;
+                document.getElementById('kpi-commits-eco').innerText = ecoCommits;
+            } else if (document.getElementById('kpi-codebase-sub')) {
+                const size = data.current_codebase_size;
+                const sizeStr = size ? (size / 1000000).toFixed(2) + "M" : "-";
+                document.getElementById('kpi-codebase-sub').innerText = `Codebase: ${sizeStr} LOC`;
+            }
         }
 
         // 5. Active BIPs

@@ -32,10 +32,16 @@
 
                 <!-- Vital Signs: KPIs -->
                 <div class="hero-scorecard" id="vital-signs" style="margin-bottom: 30px;">
-                    <div class="kpi-card" style="border: none; border-right: 1px solid rgba(255,255,255,0.05); border-radius: 0; box-shadow: none; background: transparent;">
-                        <div class="kpi-label">Contributors</div>
-                        <div class="kpi-value" id="kpi-contributors">-</div>
-                        <div class="kpi-sub" id="kpi-contributors-sub">Code Contributors</div>
+                    <div class="kpi-card" style="border: none; border-right: 1px solid rgba(255,255,255,0.05); border-radius: 0; box-shadow: none; background: transparent; position: relative;">
+                        <div class="kpi-label">
+                            Contributors
+                            <i class="fas fa-info-circle" title="Core: bitcoin/bitcoin&#10;Ecosystem: BIPs, bLIPs, Lightning, etc." style="font-size: 0.8em; opacity: 0.6; margin-left: 4px; cursor: help;"></i>
+                        </div>
+                        <div class="kpi-value" id="kpi-contributors" style="margin-bottom: 2px;">-</div>
+                        <div class="kpi-sub" id="kpi-contributors-sub" style="display: flex; gap: 10px; justify-content: center; font-size: 0.85em; margin-top: 4px;">
+                            <span style="color: var(--primary);" title="Commits to the main bitcoin/bitcoin repository">Core: <span id="kpi-contributors-core">-</span></span>
+                            <span style="color: var(--text-secondary);" title="Commits to surrounding ecosystem repositories (e.g., BIPs, Core GUI, libsecp256k1)">Eco: <span id="kpi-contributors-eco">-</span></span>
+                        </div>
                     </div>
                     <div class="kpi-card" style="border: none; border-right: 1px solid rgba(255,255,255,0.05); border-radius: 0; box-shadow: none; background: transparent;">
                         <div class="kpi-label">Maintainers</div>
@@ -47,10 +53,16 @@
                         <div class="kpi-value" id="kpi-prs-merged">-</div>
                         <div class="kpi-sub" id="kpi-prs-merged-sub">in last 30 days</div>
                     </div>
-                    <div class="kpi-card" style="border: none; border-right: 1px solid rgba(255,255,255,0.05); border-radius: 0; box-shadow: none; background: transparent;">
-                        <div class="kpi-label">Total Commits</div>
-                        <div class="kpi-value" id="kpi-total-commits">-</div>
-                        <div class="kpi-sub" id="kpi-codebase-sub">Lines of Code</div>
+                    <div class="kpi-card" style="border: none; border-right: 1px solid rgba(255,255,255,0.05); border-radius: 0; box-shadow: none; background: transparent; position: relative;">
+                        <div class="kpi-label">
+                            Total Commits
+                            <i class="fas fa-info-circle" title="Core: bitcoin/bitcoin&#10;Ecosystem: BIPs, bLIPs, Lightning, etc." style="font-size: 0.8em; opacity: 0.6; margin-left: 4px; cursor: help;"></i>
+                        </div>
+                        <div class="kpi-value" id="kpi-total-commits" style="margin-bottom: 2px;">-</div>
+                        <div class="kpi-sub" id="kpi-commits-sub" style="display: flex; gap: 10px; justify-content: center; font-size: 0.85em; margin-top: 4px;">
+                            <span style="color: var(--primary);" title="Commits to the main bitcoin/bitcoin repository">Core: <span id="kpi-commits-core">-</span></span>
+                            <span style="color: var(--text-secondary);" title="Commits to surrounding ecosystem repositories (e.g., BIPs, Core GUI, libsecp256k1)">Eco: <span id="kpi-commits-eco">-</span></span>
+                        </div>
                     </div>
                     <div class="kpi-card" style="border: none; border-radius: 0; box-shadow: none; background: transparent;">
                         <div class="kpi-label">BIPs</div>
