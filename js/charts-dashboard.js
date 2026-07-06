@@ -85,7 +85,7 @@ async function loadVitalSigns() {
                     dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                 }
             }
-            document.getElementById('freshness-line').innerText = `Data refreshed: ${dateStr}`;
+            document.getElementById('freshness-line').innerText = `Data as of: ${dateStr}`;
         }
 
     } catch (e) {

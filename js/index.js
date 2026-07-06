@@ -95,7 +95,7 @@ function renderFreshnessLine(stats, snapshot) {
     const count = snapshot ? snapshot.contributors_tracked : null;
 
     const stamp = generated ? formatMonthYear(generated) : 'Unknown date';
-    el.textContent = `Updated ${stamp}`;
+    el.textContent = `Data as of: ${stamp}`;
 }
 
 function renderLiveWidgets(stats, snapshot, windowKey = '30d') {
