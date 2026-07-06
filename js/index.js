@@ -36,7 +36,24 @@ async function initLanding() {
     }
 
     renderFreshnessLine(stats, snapshot);
-    renderLiveWidgets(stats, snapshot);
+    
+    setupWindowToggle(stats, snapshot);
+    renderLiveWidgets(stats, snapshot, '30d');
+
+}
+
+
+function setupWindowToggle(stats, snapshot) {
+    const toggle = document.getElementById('pulse-window-toggle');
+    if (!toggle) return;
+    
+    toggle.querySelectorAll('.window-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            toggle.querySelectorAll('.window-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderLiveWidgets(stats, snapshot, btn.dataset.window);
+        });
+    });
 }
 
 function renderDomainSummary(stats) {
@@ -81,35 +98,35 @@ function renderFreshnessLine(stats, snapshot) {
     el.textContent = `Updated ${stamp}`;
 }
 
-function renderLiveWidgets(stats, snapshot) {
-    renderActiveContributorsWidget(snapshot);
-    renderResearchActivityWidget(snapshot);
-    renderDiscussionVoicesWidget(snapshot);
-    renderTopicMomentumWidget(snapshot);
-    renderRecentBipsWidget(snapshot);
-    renderNewcomersWidget(stats);
-    renderMergedPrsWidget(stats);
-    renderSpotlightWidget(stats);
+function renderLiveWidgets(stats, snapshot, windowKey = '30d') {
+    renderActiveContributorsWidget(snapshot, windowKey);
+    renderResearchActivityWidget(snapshot, windowKey);
+    renderDiscussionVoicesWidget(snapshot, windowKey);
+    renderTopicMomentumWidget(snapshot, windowKey);
+    renderRecentBipsWidget(snapshot, windowKey);
+    renderNewcomersWidget(stats, windowKey);
+    renderMergedPrsWidget(stats, windowKey);
+    renderSpotlightWidget(stats, windowKey);
 }
 
-function renderActiveContributorsWidget(snapshot) {
+function renderActiveContributorsWidget(snapshot, windowKey = '30d') {
     const valueEl = document.getElementById('widget-active-count');
     if (!valueEl) return;
 
-    const widget = snapshot && snapshot.widgets ? snapshot.widgets.active_contributors_30d : null;
+    const widget = snapshot && snapshot.widgets ? snapshot.widgets[`active_contributors_${windowKey}`] : null;
     if (!widget) {
         valueEl.textContent = '-';
         return;
     }
 
     const current = Number(widget.value || 0);
-    const previous = Number(widget.previous_30d || 0);
-    const delta = Number(widget.delta_30d || (current - previous));
+    const previous = Number(widget[`previous_${windowKey}`] || 0);
+    const delta = Number(widget[`delta_${windowKey}`] || (current - previous));
 
-    valueEl.innerHTML = `${current.toLocaleString()} <span class="delta-pill" style="font-size: 14px; margin-left: 8px; vertical-align: middle;" title="Change vs previous 30 days">${formatDelta(delta)} MoM</span>`;
+    valueEl.innerHTML = `${current.toLocaleString()} <span class="delta-pill" style="font-size: 14px; margin-left: 8px; vertical-align: middle;" title="Change vs previous window">${formatDelta(delta)}</span>`;
 }
 
-function renderMergedPrsWidget(stats) {
+function renderMergedPrsWidget(stats, windowKey = '30d') {
     const valueEl = document.getElementById('widget-prs-count');
     const noteEl = document.getElementById('widget-prs-note');
     const commitsEl = document.getElementById('widget-commits-count');
@@ -121,34 +138,34 @@ function renderMergedPrsWidget(stats) {
         return;
     }
 
-    const merged30d = Number(stats.prs.merged_30d || 0);
-    const prevMerged30d = Number(stats.prs.merged_prev_30d || 0);
+    const merged30d = Number(stats.prs[`merged_${windowKey}`] || 0);
+    const prevMerged30d = Number(stats.prs[`merged_prev_${windowKey}`] || 0);
     const deltaMerged = merged30d - prevMerged30d;
     const total = Number(stats.prs.total_merged || 0);
 
-    const deltaHtml = stats.prs.merged_prev_30d !== undefined 
-        ? `<span class="delta-pill" style="font-size: 14px; margin-left: 8px; vertical-align: middle;" title="Change vs previous 30 days">${formatDelta(deltaMerged)} MoM</span>`
+    const deltaHtml = stats.prs[`merged_prev_${windowKey}`] !== undefined 
+        ? `<span class="delta-pill" style="font-size: 14px; margin-left: 8px; vertical-align: middle;" title="Change vs previous window">${formatDelta(deltaMerged)}</span>`
         : '';
 
     valueEl.innerHTML = `${merged30d.toLocaleString()} <span style="font-size: 14px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">PRs Merged</span>${deltaHtml}`;
     noteEl.textContent = `Sustaining velocity with ${total.toLocaleString()} cumulative PRs merged to date.`;
     
     if (commitsEl && stats.commits) {
-        const c30 = Number(stats.commits.commits_30d || 0);
-        const cPrev = Number(stats.commits.commits_prev_30d || 0);
+        const c30 = Number(stats.commits[`commits_${windowKey}`] || 0);
+        const cPrev = Number(stats.commits[`commits_prev_${windowKey}`] || 0);
         const deltaC = c30 - cPrev;
-        const deltaCHtml = stats.commits.commits_prev_30d !== undefined 
-            ? ` <span class="delta-pill" title="Change vs previous 30 days">${formatDelta(deltaC)} MoM</span>`
+        const deltaCHtml = stats.commits[`commits_prev_${windowKey}`] !== undefined 
+            ? ` <span class="delta-pill" title="Change vs previous window">${formatDelta(deltaC)}</span>`
             : '';
         commitsEl.innerHTML = `<strong>${c30.toLocaleString()}</strong> commits pushed${deltaCHtml}`;
     }
 }
 
-function renderTopicMomentumWidget(snapshot) {
+function renderTopicMomentumWidget(snapshot, windowKey = '30d') {
     const el = document.getElementById('widget-topics');
     if (!el) return;
 
-    const widget = snapshot && snapshot.widgets ? snapshot.widgets.topic_momentum_30d : null;
+    const widget = snapshot && snapshot.widgets ? snapshot.widgets[`topic_momentum_${windowKey}`] : null;
     const items = widget ? (widget.items || []).slice(0, 3) : [];
     if (!items.length) {
         el.innerHTML = '<li>Topic momentum unavailable.</li>';
@@ -157,18 +174,18 @@ function renderTopicMomentumWidget(snapshot) {
 
     el.innerHTML = items.map(item => {
         const label = escHtml(item.label || item.topic || 'Unknown');
-        const count = Math.round(item.mentions_30d || 0).toLocaleString();
-        const delta = Number(item.delta_30d || 0);
-        return `<li>${label} <strong>${count}</strong> <span class="delta-pill" title="Change vs previous 30 days">${formatDelta(delta)}</span></li>`;
+        const count = Math.round(item[`mentions_${windowKey}`] || 0).toLocaleString();
+        const delta = Number(item[`delta_${windowKey}`] || 0);
+        return `<li>${label} <strong>${count}</strong> <span class="delta-pill" title="Change vs previous window">${formatDelta(delta)}</span></li>`;
     }).join('');
 }
 
-function renderRecentBipsWidget(snapshot) {
+function renderRecentBipsWidget(snapshot, windowKey = '30d') {
     const el = document.getElementById('widget-bips');
     if (!el) return;
 
-    const items = snapshot && snapshot.widgets && snapshot.widgets.recent_bips
-        ? (snapshot.widgets.recent_bips.items || []).slice(0, 3)
+    const items = snapshot && snapshot.widgets && snapshot.widgets[`recent_bips_${windowKey}`]
+        ? (snapshot.widgets[`recent_bips_${windowKey}`].items || []).slice(0, 3)
         : [];
     if (!items.length) {
         el.innerHTML = '<li>No recent BIP discussions in this window.</li>';
@@ -186,49 +203,49 @@ function renderRecentBipsWidget(snapshot) {
             ? `<a class="bip-link" href="${authorLink}" target="_blank" rel="noopener noreferrer">${author}</a>`
             : author;
 
-        const delta = Number(item.delta_30d || 0);
-        const mentions = Number(item.mentions_30d || 0).toLocaleString();
+        const delta = Number(item[`delta_${windowKey}`] || 0);
+        const mentions = Number(item[`mentions_${windowKey}`] || 0).toLocaleString();
         return `<li><strong>BIP ${escHtml(bipId)}</strong> ${title}<span> - ${authorHtml} · ${mentions} mentions · ${formatDelta(delta)}</span></li>`;
     }).join('');
 }
 
-function renderResearchActivityWidget(snapshot) {
+function renderResearchActivityWidget(snapshot, windowKey = '30d') {
     const countEl = document.getElementById('widget-research-count');
     const noteEl = document.getElementById('widget-research-note');
     if (!countEl || !noteEl) return;
 
-    const widget = snapshot && snapshot.widgets ? snapshot.widgets.research_activity_30d : null;
+    const widget = snapshot && snapshot.widgets ? snapshot.widgets[`research_activity_${windowKey}`] : null;
     if (!widget) {
         countEl.textContent = '-';
         noteEl.textContent = 'Signal unavailable';
         return;
     }
 
-    const ml30 = Number(widget.messages_30d || 0);
-    const prev30 = Number(widget.previous_30d || 0);
-    const delta = Number(widget.delta_30d || (ml30 - prev30));
+    const ml30 = Number(widget[`messages_${windowKey}`] || 0);
+    const prev30 = Number(widget[`previous_${windowKey}`] || 0);
+    const delta = Number(widget[`delta_${windowKey}`] || (ml30 - prev30));
     
     countEl.textContent = ml30.toLocaleString();
     noteEl.textContent = `Messages across mailing lists and forums (Δ ${formatDelta(delta)})`;
 }
 
-function renderDiscussionVoicesWidget(snapshot) {
+function renderDiscussionVoicesWidget(snapshot, windowKey = '30d') {
     const valueEl = document.getElementById('widget-voices-count');
     if (!valueEl) return;
 
-    const widget = snapshot && snapshot.widgets ? snapshot.widgets.discussion_voices_30d : null;
+    const widget = snapshot && snapshot.widgets ? snapshot.widgets[`discussion_voices_${windowKey}`] : null;
     if (!widget) {
         valueEl.textContent = '-';
         return;
     }
 
     const current = Number(widget.value || 0);
-    const previous = Number(widget.previous_30d || 0);
-    const delta = Number(widget.delta_30d || (current - previous));
-    valueEl.innerHTML = `<strong>${current.toLocaleString()}</strong> research participants <span class="delta-pill" title="Change vs previous 30 days">${formatDelta(delta)} MoM</span>`;
+    const previous = Number(widget[`previous_${windowKey}`] || 0);
+    const delta = Number(widget[`delta_${windowKey}`] || (current - previous));
+    valueEl.innerHTML = `<strong>${current.toLocaleString()}</strong> research participants <span class="delta-pill" title="Change vs previous window">${formatDelta(delta)}</span>`;
 }
 
-function renderNewcomersWidget(stats) {
+function renderNewcomersWidget(stats, windowKey = '30d') {
     const codersEl = document.getElementById('widget-new-coders');
     const discussantsEl = document.getElementById('widget-new-discussants');
     
@@ -241,19 +258,19 @@ function renderNewcomersWidget(stats) {
         return;
     }
 
-    const coders = onboarding.new_coders_30d !== undefined 
-        ? Number(onboarding.new_coders_30d) 
+    const coders = onboarding[`new_coders_${windowKey}`] !== undefined 
+        ? Number(onboarding[`new_coders_${windowKey}`]) 
         : Math.round(Number(onboarding.new_coders_90d || 0) / 3);
         
-    const discussants = onboarding.new_discussants_30d !== undefined 
-        ? Number(onboarding.new_discussants_30d) 
+    const discussants = onboarding[`new_discussants_${windowKey}`] !== undefined 
+        ? Number(onboarding[`new_discussants_${windowKey}`]) 
         : Math.round(Number(onboarding.new_discussants_90d || 0) / 3);
 
     codersEl.innerHTML = `<strong>${coders.toLocaleString()}</strong> new code contributors`;
     discussantsEl.innerHTML = `<strong>${discussants.toLocaleString()}</strong> new forum voices`;
 }
 
-function renderSpotlightWidget(stats) {
+function renderSpotlightWidget(stats, windowKey = '30d') {
     const container = document.getElementById('widget-spotlight-container');
     const content = document.getElementById('widget-spotlight-content');
     if (!container || !content) return;
@@ -290,9 +307,13 @@ function renderSpotlightWidget(stats) {
 }
 
 function formatMonthYear(input) {
-    const d = new Date(input);
-    if (!Number.isFinite(d.getTime())) return 'Unknown';
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    if (!input) return 'Unknown';
+    const parts = input.split('T')[0].split('-');
+    if (parts.length === 3) {
+        const d = new Date(parts[0], parts[1] - 1, parts[2]);
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    return 'Unknown';
 }
 
 function escHtml(str) {

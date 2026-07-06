@@ -77,7 +77,14 @@ async function loadVitalSigns() {
 
 
         if (document.getElementById('freshness-line')) {
-            const dateStr = data.generated_at ? new Date(data.generated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Unknown';
+            let dateStr = 'Unknown';
+            if (data.generated_at) {
+                const parts = data.generated_at.split('T')[0].split('-');
+                if (parts.length === 3) {
+                    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+                    dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                }
+            }
             document.getElementById('freshness-line').innerText = `Data refreshed: ${dateStr}`;
         }
 
