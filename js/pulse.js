@@ -92,6 +92,32 @@ function renderWindow(windowKey) {
     renderHotThreads(data.hot_threads || [], activeThreadSource);
     renderBipSpotlight(data.top_bips || []);
     renderTopVoices(data.top_voices || []);
+    
+    // Always render 30d editorial regardless of which window is active
+    const w30 = pulseData?.windows?.['30d'];
+    renderEditorial(w30?.pulse_editorial);
+}
+
+// ── Pulse Editorial ─────────────────────────────────────────────────────────
+function renderEditorial(editorial) {
+    const container = document.getElementById('pulse-editorial-container');
+    if (!container) return;
+
+    if (!editorial || !editorial.summary) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = 'block';
+    
+    const summaryEl = document.getElementById('pulse-editorial-summary');
+    if (summaryEl) summaryEl.textContent = editorial.summary;
+
+    const insightsEl = document.getElementById('pulse-editorial-insights');
+    if (insightsEl) {
+        const insights = editorial.insights || [];
+        insightsEl.innerHTML = insights.map(i => `<li>${escHtml(i)}</li>`).join('');
+    }
 }
 
 // ── Stats row ──────────────────────────────────────────────────────────────
@@ -173,6 +199,7 @@ function renderHotThreads(threads, sourceFilter) {
                         <span class="source-badge ${sourceClass}">${sourceLabel}</span>
                     </div>
                 </div>
+                ${t.insight ? `<div class="thread-insight">${escHtml(t.insight)}</div>` : ''}
                 ${t.snippet ? `<div class="thread-snippet">${escHtml(t.snippet)}</div>` : ''}
                 <div class="thread-footer">
                     <span class="thread-footer-stat"><i class="fas fa-reply"></i> ${t.reply_count} repl${t.reply_count === 1 ? 'y' : 'ies'}</span>

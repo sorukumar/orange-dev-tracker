@@ -68,6 +68,62 @@
     text-align: left;
 }
 
+/* Pulse Editorial Box */
+.pulse-editorial-box {
+    background: rgba(232, 145, 107, 0.08); /* Matches var(--primary) but translucent */
+    border-left: 4px solid var(--primary);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 0;
+}
+
+.pulse-editorial-box h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#pulse-editorial-summary {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+#pulse-editorial-insights {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#pulse-editorial-insights li {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    padding-left: 16px;
+    position: relative;
+}
+
+#pulse-editorial-insights li::before {
+    content: "•";
+    color: var(--primary);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 16px;
+}
+
+.thread-insight {
+    font-style: italic;
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
 /* Themes grid */
 .themes-grid {
     display: grid;
