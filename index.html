@@ -43,7 +43,10 @@
                         <div style="display: flex; align-items: center; justify-content: space-between;">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <h2 style="margin: 0;">Ecosystem Pulse</h2>
-                                <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); border: 1px solid var(--border); padding: 2px 8px; border-radius: 6px; letter-spacing: 0.5px;">LAST 30 DAYS</span>
+                                <div class="window-toggle" style="margin: 0;" id="pulse-window-toggle">
+                                    <button class="window-btn" data-window="7d">Last 7 Days</button>
+                                    <button class="window-btn active" data-window="30d">Last 30 Days</button>
+                                </div>
                             </div>
                             <span id="freshness-line" class="freshness-line" style="margin: 0; font-size: 11px; font-weight: 600; padding: 4px 10px; background: rgba(255,255,255,0.05); border-radius: 20px;"></span>
                         </div>

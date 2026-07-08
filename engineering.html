@@ -27,20 +27,24 @@
 
         <div id="app-content">
             <div class="page-hero">
-                <p class="hero-narrative">How fast is Bitcoin Core shipping code — and where is the effort going?</p>
-                <div id="freshness-line" class="freshness-line" style="text-align: right; margin-top: 12px;">Data refreshed: -</div>
+                <p class="hero-narrative" style="margin-bottom: 12px;">How fast is Bitcoin Core shipping code — and where is the effort going?</p>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px;">
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0; opacity: 0.8;">
+                        <i class="fas fa-database" style="font-size: 0.85em; margin-right: 4px;"></i> <strong>Scope:</strong> Core (<span style="font-family: monospace;">bitcoin/bitcoin</span>, <span style="font-family: monospace;">gui</span>, <span style="font-family: monospace;">secp256k1</span>) and Ecosystem (<span style="font-family: monospace;">guix.sigs</span>, <span style="font-family: monospace;">HWI</span>, <span style="font-family: monospace;">qa-assets</span>).
+                    </p>
+                    <div id="freshness-line" class="freshness-line" style="margin: 0;">Data refreshed: -</div>
+                </div>
 
                 <!-- Vital Signs: KPIs -->
                 <div class="hero-scorecard" id="vital-signs" style="margin-bottom: 30px;">
                     <div class="kpi-card" style="border: none; border-right: 1px solid rgba(255,255,255,0.05); border-radius: 0; box-shadow: none; background: transparent; position: relative;">
                         <div class="kpi-label">
                             Contributors
-                            <i class="fas fa-info-circle" title="Core: bitcoin/bitcoin&#10;Ecosystem: BIPs, bLIPs, Lightning, etc." style="font-size: 0.8em; opacity: 0.6; margin-left: 4px; cursor: help;"></i>
                         </div>
                         <div class="kpi-value" id="kpi-contributors" style="margin-bottom: 2px;">-</div>
                         <div class="kpi-sub" id="kpi-contributors-sub" style="display: flex; gap: 10px; justify-content: center; font-size: 0.85em; margin-top: 4px;">
-                            <span style="color: var(--primary);" title="Core repositories include bitcoin/bitcoin, bitcoin-core/gui, and bitcoin-core/secp256k1">Core: <span id="kpi-contributors-core">-</span></span>
-                            <span style="color: var(--text-secondary);" title="Ecosystem repositories (e.g., guix.sigs, HWI, qa-assets, ...)">Eco: <span id="kpi-contributors-eco">-</span></span>
+                            <span style="color: var(--primary); border-bottom: 1px dotted; cursor: help;" title="Core repositories include bitcoin/bitcoin, bitcoin-core/gui, and bitcoin-core/secp256k1">Core: <span id="kpi-contributors-core">-</span></span>
+                            <span style="color: var(--text-secondary); border-bottom: 1px dotted; cursor: help;" title="Ecosystem repositories (e.g., guix.sigs, HWI, qa-assets, ...)">Eco: <span id="kpi-contributors-eco">-</span></span>
                         </div>
                     </div>
                     <div class="kpi-card" style="border: none; border-right: 1px solid rgba(255,255,255,0.05); border-radius: 0; box-shadow: none; background: transparent;">
@@ -56,12 +60,11 @@
                     <div class="kpi-card" style="border: none; border-right: 1px solid rgba(255,255,255,0.05); border-radius: 0; box-shadow: none; background: transparent; position: relative;">
                         <div class="kpi-label">
                             Total Commits
-                            <i class="fas fa-info-circle" title="Core: bitcoin/bitcoin&#10;Ecosystem: BIPs, bLIPs, Lightning, etc." style="font-size: 0.8em; opacity: 0.6; margin-left: 4px; cursor: help;"></i>
                         </div>
                         <div class="kpi-value" id="kpi-total-commits" style="margin-bottom: 2px;">-</div>
                         <div class="kpi-sub" id="kpi-commits-sub" style="display: flex; gap: 10px; justify-content: center; font-size: 0.85em; margin-top: 4px;">
-                            <span style="color: var(--primary);" title="Core repositories include bitcoin/bitcoin, bitcoin-core/gui, and bitcoin-core/secp256k1">Core: <span id="kpi-commits-core">-</span></span>
-                            <span style="color: var(--text-secondary);" title="Ecosystem repositories (e.g., guix.sigs, HWI, qa-assets, ...)">Eco: <span id="kpi-commits-eco">-</span></span>
+                            <span style="color: var(--primary); border-bottom: 1px dotted; cursor: help;" title="Core repositories include bitcoin/bitcoin, bitcoin-core/gui, and bitcoin-core/secp256k1">Core: <span id="kpi-commits-core">-</span></span>
+                            <span style="color: var(--text-secondary); border-bottom: 1px dotted; cursor: help;" title="Ecosystem repositories (e.g., guix.sigs, HWI, qa-assets, ...)">Eco: <span id="kpi-commits-eco">-</span></span>
                         </div>
                     </div>
                     <div class="kpi-card" style="border: none; border-radius: 0; box-shadow: none; background: transparent;">
@@ -73,6 +76,7 @@
             </div>
 
             <div class="container" style="padding-top: 0;">
+
 
         <!-- Row 1: Structural Distribution (Status Quo) -->
         <section style="display: flex; gap: 20px; margin-bottom: 30px; min-height: 400px; flex-wrap: wrap;">
