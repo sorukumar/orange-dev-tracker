@@ -171,35 +171,6 @@
     color: var(--primary);
 }
 
-.trend-badge {
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.trend-rising {
-    background: rgba(16, 185, 129, 0.15);
-    color: #10b981;
-}
-
-.trend-fading {
-    background: rgba(100, 116, 139, 0.15);
-    color: #64748b;
-}
-
-.trend-steady {
-    background: rgba(232, 145, 107, 0.1);
-    color: var(--primary);
-}
-
-.trend-new {
-    background: rgba(59, 130, 246, 0.15);
-    color: #3b82f6;
-}
-
 .theme-bar-bg {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 4px;

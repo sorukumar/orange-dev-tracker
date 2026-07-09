@@ -25,6 +25,9 @@ object {
     /* Compatibility with old names */
     --bg-color: var(--bg-primary);
     --text-accent: var(--primary);
+    --card-bg: #ffffff;
+    --card-shadow: 0 4px 12px rgba(42, 51, 66, 0.05);
+    --card-shadow-hover: 0 8px 24px rgba(42, 51, 66, 0.08);
 }
 
 /* Base body styles */
@@ -46,17 +49,17 @@ body.has-fixed-header {
 }
 
 .card {
-    background: #ffffff;
+    background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 25px;
     margin-bottom: 30px;
-    box-shadow: 0 4px 12px rgba(42, 51, 66, 0.05);
+    box-shadow: var(--card-shadow);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .card:hover {
-    box-shadow: 0 8px 24px rgba(42, 51, 66, 0.08);
+    box-shadow: var(--card-shadow-hover);
 }
 
 h2,
@@ -75,12 +78,12 @@ h3 {
 }
 
 .kpi-card {
-    background: #ffffff;
+    background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 24px 15px;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(42, 51, 66, 0.04);
+    box-shadow: var(--card-shadow);
 }
 
 .kpi-value {
@@ -117,12 +120,13 @@ h3 {
 .metric-card {
     flex: 1;
     min-width: 250px;
-    background: #ffffff;
+    background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 24px;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(42, 51, 66, 0.04);
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .metric-value {
@@ -148,11 +152,11 @@ h3 {
 }
 
 .chart-box {
-    background: #ffffff;
+    background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 24px;
-    box-shadow: 0 2px 8px rgba(42, 51, 66, 0.04);
+    box-shadow: var(--card-shadow);
 }
 
 .chart-header {
@@ -220,6 +224,8 @@ h3 {
     --text-primary: #FDF6E3;
     --text-secondary: #94A3B8;
     --border-color: rgba(253, 246, 227, 0.08);
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.6);
 }
 
 [data-theme="dark"] body {
@@ -227,19 +233,7 @@ h3 {
     color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .card, 
-[data-theme="dark"] .kpi-card,
-[data-theme="dark"] .chart-box,
-[data-theme="dark"] .issue-item,
-[data-theme="dark"] .empty-state,
-[data-theme="dark"] .metric-card,
-[data-theme="dark"] .details-box,
-[data-theme="dark"] th {
-    background-color: var(--card-bg) !important;
-    border-color: var(--border-color) !important;
-    color: var(--text-secondary) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
-}
+
 
 [data-theme="dark"] .header-text h1,
 [data-theme="dark"] section h2 {
@@ -349,6 +343,36 @@ h3 {
 }
 
 .window-btn.active {
-    background: var(--primary);
-    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+
+/* Shared Trend/Delta Pills */
+.delta-pill, .trend-badge {
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid var(--border-color);
+    display: inline-block;
+}
+
+.delta-up, .trend-rising {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+.delta-down, .trend-fading {
+    background: rgba(248, 113, 113, 0.15);
+    color: #F87171;
+    border-color: rgba(248, 113, 113, 0.2);
+}
+
+.delta-flat, .trend-steady {
+    background: rgba(232, 145, 107, 0.1);
+    color: var(--text-secondary);
 }

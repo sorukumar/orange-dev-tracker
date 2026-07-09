@@ -72,9 +72,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         renderSidebar(); // actually renders the dropdown now
         
-        // Select first one by default
         if (releasesData.length > 0) {
-            selectVersion(releasesData[0].version);
+            let initialVersion = releasesData[0].version;
+            const hashVersion = window.location.hash.replace('#', '');
+            if (hashVersion && releasesData.some(r => r.version === hashVersion)) {
+                initialVersion = hashVersion;
+            }
+            selectVersion(initialVersion);
         }
 
     } catch (error) {

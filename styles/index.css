@@ -94,12 +94,6 @@ body.landing-layout .landing-layout {
     margin-bottom: 12px;
 }
 
-.metric-subtext {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-bottom: 12px;
-}
-
 .summary-list {
     list-style: disc inside;
     margin: 0;
@@ -193,48 +187,6 @@ body.landing-layout .landing-layout {
     border-radius: 0;
 }
 
-.metrics-grid .metric-card {
-    flex: 1 1 0 !important;
-    min-width: 0 !important;
-}
-
-.metric-card {
-    background: var(--card-bg);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--border);
-    padding: 24px;
-    border-radius: 20px;
-    text-align: left;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.metric-card:hover {
-    background: rgba(253, 246, 227, 0.05);
-    border-color: rgba(232, 145, 107, 0.2);
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-}
-
-.metric-card h3 {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--text-secondary);
-    margin-bottom: 16px;
-}
-
-.metric-value {
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: 8px;
-}
-
-.metric-subtext {
-    font-size: 13px;
-    color: var(--text-secondary);
-}
-
 /* Suite Pillars Container */
 .pillars-container {
     display: grid;
@@ -285,6 +237,12 @@ body.landing-layout .landing-layout {
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.live-widget:hover {
+    border-color: rgba(232, 145, 107, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .live-widget h3 {
@@ -325,13 +283,64 @@ body.landing-layout .landing-layout {
     line-height: 1.4;
 }
 
-.delta-pill {
-    margin-left: 6px;
+/* Semantic delta colors */
+/* BIP Row — Standalone element below the 3-card grid */
+.bip-row {
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    border-left: 3px solid var(--primary);
+}
+
+.bip-row-header {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.bip-row-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px;
+}
+
+.bip-row-item {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    transition: border-color 0.2s;
+}
+
+.bip-row-item:hover {
+    border-color: rgba(232, 145, 107, 0.25);
+}
+
+.bip-row-item-header {
+    font-size: 13px;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+}
+
+.bip-row-item-header .bip-title {
+    color: var(--text-secondary);
+    font-weight: 400;
+    margin-left: 4px;
+}
+
+.bip-row-item-meta {
     font-size: 11px;
     color: var(--text-secondary);
-    padding: 2px 6px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
 }
 
 .sparkline-text {
@@ -351,6 +360,11 @@ body.landing-layout .landing-layout {
 .reviewer-link:hover {
     color: var(--primary);
     text-decoration: underline;
+}
+
+.topic-link:hover {
+    color: var(--primary) !important;
+    text-decoration: underline !important;
 }
 
 .why-this-matters,
@@ -589,6 +603,10 @@ body.landing-layout .landing-layout {
     }
 
     .live-widgets {
+        grid-template-columns: 1fr;
+    }
+
+    .bip-row-list {
         grid-template-columns: 1fr;
     }
 

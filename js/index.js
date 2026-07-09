@@ -8,7 +8,7 @@ const SHARED_BASE = isLocal
     : 'https://raw.githubusercontent.com/sorukumar/orange-dev-data/main/output/shared/';
 
 const STATS_URL = SHARED_BASE + 'ecosystem_summary.json';
-const SNAPSHOT_URL = SHARED_BASE + 'network_home_snapshot.json';
+const SNAPSHOT_URL = SHARED_BASE + 'ecosystem_home_snapshot.json';
 
 async function initLanding() {
     let stats = null;
@@ -105,7 +105,7 @@ function renderLiveWidgets(stats, snapshot, windowKey = '30d') {
     renderTopicMomentumWidget(snapshot, windowKey);
     renderRecentBipsWidget(snapshot, windowKey);
     renderNewcomersWidget(stats, windowKey);
-    renderMergedPrsWidget(stats, windowKey);
+    renderMergedPrsWidget(stats, snapshot, windowKey);
     renderSpotlightWidget(stats, windowKey);
 }
 
@@ -126,7 +126,7 @@ function renderActiveContributorsWidget(snapshot, windowKey = '30d') {
     valueEl.innerHTML = `${current.toLocaleString()} <span class="delta-pill" style="font-size: 14px; margin-left: 8px; vertical-align: middle;" title="Change vs previous window">${formatDelta(delta)}</span>`;
 }
 
-function renderMergedPrsWidget(stats, windowKey = '30d') {
+function renderMergedPrsWidget(stats, snapshot, windowKey = '30d') {
     const valueEl = document.getElementById('widget-prs-count');
     const noteEl = document.getElementById('widget-prs-note');
     const commitsEl = document.getElementById('widget-commits-count');
@@ -148,7 +148,29 @@ function renderMergedPrsWidget(stats, windowKey = '30d') {
         : '';
 
     valueEl.innerHTML = `${merged30d.toLocaleString()} <span style="font-size: 14px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">PRs Merged</span>${deltaHtml}`;
-    noteEl.textContent = `Sustaining velocity with ${total.toLocaleString()} cumulative PRs merged to date.`;
+
+    noteEl.style.display = 'none';
+
+    const releaseWidget = snapshot && snapshot.widgets ? snapshot.widgets[`highlighted_release_${windowKey}`] : null;
+    const releaseItemEl = document.getElementById('widget-release-item');
+    const releaseInfoEl = document.getElementById('widget-release-info');
+    
+    if (releaseWidget && releaseItemEl && releaseInfoEl) {
+        const v = releaseWidget.version;
+        const prs = releaseWidget.prs;
+        let releaseText = '';
+        if (releaseWidget.status === 'shipped') {
+            const dateStr = releaseWidget.date ? ` on ${releaseWidget.date}` : ' recently';
+            releaseText = `<strong style="color: var(--primary); font-size: 1.1em; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-rocket" style="margin-right: 4px;"></i> Just Shipped:</strong> Bitcoin Core ${v} was released${dateStr} (${prs} PRs).`;
+        } else {
+            releaseText = `<strong>Next Up:</strong> Bitcoin Core ${v} is upcoming (${prs} PRs).`;
+        }
+        
+        releaseInfoEl.innerHTML = `${releaseText} <a href="releases.html#${v}" class="bip-link" style="color: var(--primary); text-decoration: none;">View log &rarr;</a>`;
+        releaseItemEl.style.display = 'list-item';
+    } else if (releaseItemEl) {
+        releaseItemEl.style.display = 'none';
+    }
     
     if (commitsEl && stats.commits) {
         const c30 = Number(stats.commits[`commits_${windowKey}`] || 0);
@@ -173,7 +195,8 @@ function renderTopicMomentumWidget(snapshot, windowKey = '30d') {
     }
 
     el.innerHTML = items.map(item => {
-        const label = escHtml(item.label || item.topic || 'Unknown');
+        const rawLabel = item.label || item.topic || 'Unknown';
+        const label = `<a href="pulse.html" style="color: var(--text-primary); text-decoration: none;" class="topic-link">${escHtml(rawLabel)}</a>`;
         const count = Math.round(item[`mentions_${windowKey}`] || 0).toLocaleString();
         const delta = Number(item[`delta_${windowKey}`] || 0);
         return `<li>${label} <strong>${count}</strong> <span class="delta-pill" title="Change vs previous window">${formatDelta(delta)}</span></li>`;
@@ -184,8 +207,10 @@ function renderRecentBipsWidget(snapshot, windowKey = '30d') {
     const el = document.getElementById('widget-bips');
     if (!el) return;
 
-    const items = snapshot && snapshot.widgets && snapshot.widgets[`recent_bips_${windowKey}`]
-        ? (snapshot.widgets[`recent_bips_${windowKey}`].items || []).slice(0, 3)
+    const widget = snapshot?.widgets?.[`recent_bips_${windowKey}`]
+        || (windowKey === '30d' ? snapshot?.widgets?.['recent_bips'] : null);
+    const items = widget
+        ? (widget.items || []).slice(0, 3)
         : [];
     if (!items.length) {
         el.innerHTML = '<li>No recent BIP discussions in this window.</li>';
@@ -203,9 +228,13 @@ function renderRecentBipsWidget(snapshot, windowKey = '30d') {
             ? `<a class="bip-link" href="${authorLink}" target="_blank" rel="noopener noreferrer">${author}</a>`
             : author;
 
-        const delta = Number(item[`delta_${windowKey}`] || 0);
-        const mentions = Number(item[`mentions_${windowKey}`] || 0).toLocaleString();
-        return `<li><strong>BIP ${escHtml(bipId)}</strong> ${title}<span> - ${authorHtml} · ${mentions} mentions · ${formatDelta(delta)}</span></li>`;
+        const wk = windowKey;
+        const mentions = Number(item[`mentions_${wk}`] || 0).toLocaleString();
+        const delta = Number(item[`delta_${wk}`] || 0);
+        return `<li class="bip-row-item">
+            <div class="bip-row-item-header"><strong>BIP ${escHtml(bipId)}</strong> <span class="bip-title">${title}</span></div>
+            <div class="bip-row-item-meta">${authorHtml} · ${mentions} mentions ${formatDelta(delta)}</div>
+        </li>`;
     }).join('');
 }
 
@@ -225,8 +254,8 @@ function renderResearchActivityWidget(snapshot, windowKey = '30d') {
     const prev30 = Number(widget[`previous_${windowKey}`] || 0);
     const delta = Number(widget[`delta_${windowKey}`] || (ml30 - prev30));
     
-    countEl.textContent = ml30.toLocaleString();
-    noteEl.textContent = `Messages across mailing lists and forums (Δ ${formatDelta(delta)})`;
+    countEl.innerHTML = `${ml30.toLocaleString()} <span style="font-size: 14px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Messages</span>`;
+    noteEl.innerHTML = `Messages on bitcoin-dev mailing list & Delving Bitcoin (${formatDelta(delta)})`;
 }
 
 function renderDiscussionVoicesWidget(snapshot, windowKey = '30d') {
@@ -327,9 +356,9 @@ function escHtml(str) {
 
 function formatDelta(n) {
     const val = Number(n || 0);
-    if (val > 0) return `+${val.toLocaleString()}`;
-    if (val < 0) return `${val.toLocaleString()}`;
-    return '0';
+    if (val > 0) return `<span class="delta-up">▲ +${val.toLocaleString()}</span>`;
+    if (val < 0) return `<span class="delta-down">▼ ${val.toLocaleString()}</span>`;
+    return `<span class="delta-flat">— 0</span>`;
 }
 
 document.addEventListener('DOMContentLoaded', initLanding);
