@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         searchInputEl.addEventListener('input', (e) => {
             searchQuery = e.target.value.trim().toLowerCase();
             renderLimit = 15;
-            
+
             if (searchQuery.length > 0) {
                 // Global search mode
                 document.querySelector('.release-header').style.display = 'none';
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const topContribsEl = document.getElementById('top-contributors-container');
                 if (kpisEl) kpisEl.style.display = 'none';
                 if (topContribsEl) topContribsEl.style.display = 'none';
-                
+
                 let allPRs = [];
                 releasesData.forEach(release => {
                     if (release.prs) {
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         });
                     }
                 });
-                
+
                 activeFilter = 'All'; // Ignore category filter during global search
                 renderPRs(allPRs);
             } else {
@@ -66,12 +66,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const response = await fetch(DATA_PATH_PREFIX + 'output/tracker/releases.json');
         if (!response.ok) throw new Error('Failed to fetch releases.json');
         releasesData = await response.json();
-        
+
         loadingEl.style.display = 'none';
         contentEl.style.display = 'block';
 
         renderSidebar(); // actually renders the dropdown now
-        
+
         if (releasesData.length > 0) {
             let initialVersion = releasesData[0].version;
             const hashVersion = window.location.hash.replace('#', '');
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderSidebar() {
         if (!dropdownMenu) return;
-        
+
         dropdownMenu.innerHTML = '';
         const groups = groupReleasesByMajor();
 
@@ -130,12 +130,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 btn.className = 'dropdown-item';
                 btn.dataset.version = release.version;
                 btn.textContent = release.version + (release.status === 'upcoming' ? ' (Upcoming)' : '');
-                
+
                 btn.addEventListener('click', () => {
                     customDropdown.classList.remove('open');
                     selectVersion(release.version);
                 });
-                
+
                 dropdownMenu.appendChild(btn);
             });
         });
@@ -143,18 +143,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function selectVersion(version) {
         currentVersion = version;
-        activeFilter = 'All'; 
+        activeFilter = 'All';
         activeAuthorFilter = null;
         searchQuery = '';
         renderLimit = 15;
         if (searchInputEl) searchInputEl.value = '';
-        
+
         const release = releasesData.find(r => r.version === version);
         if (release) {
             if (dropdownLabel) {
                 dropdownLabel.textContent = release.version + (release.status === 'upcoming' ? ' (Upcoming)' : '');
             }
-            
+
             // Update active state in dropdown
             if (dropdownMenu) {
                 const items = dropdownMenu.querySelectorAll('.dropdown-item');
@@ -176,18 +176,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderReleaseContent(release) {
         badgeEl.className = `release-status-badge ${release.status}`;
         badgeEl.textContent = release.status;
-        
+
         if (release.last_active_date && release.last_active_date !== "TBD") {
             dateEl.textContent = release.status === 'upcoming' ? `(Target: TBD | Last Active: ${release.last_active_date})` : `(Released: ${release.last_active_date})`;
         } else {
             dateEl.textContent = `(Expected: TBD)`;
         }
-        
-        if (release.release_summary) {
-            summaryEl.textContent = release.release_summary;
-        } else {
-            summaryEl.textContent = release.summary || `A complete log of what shipped, who built it, and how long it took for Bitcoin Core ${release.version}.`;
-        }
+
+        let summaryText = release.release_summary || release.summary || `A curated log of high-impact features shipped in Bitcoin Core ${release.version}.`;
+        summaryEl.innerHTML = `${summaryText} <a href="https://github.com/bitcoin/bitcoin/releases/tag/v${release.version}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9em; margin-left: 8px; white-space: nowrap;">Read official release notes <i class="fas fa-external-link-alt" style="font-size: 0.8em; margin-left: 2px;"></i></a>`;
 
         if (release.highlights && release.highlights.length > 0) {
             if (highlightsContainerEl) highlightsContainerEl.style.display = 'block';
@@ -213,7 +210,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
         }
-        
+
         // Sort categories to put Maintenance at end
         let sortedCats = Array.from(impactCategoriesSet).sort((a, b) => {
             if (a === 'Maintenance & Tech Debt') return 1;
@@ -238,7 +235,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const totalPRs = release.total_prs_in_release || highImpactPRs;
         const uniqueContributors = new Set(release.prs.filter(pr => pr.author && pr.author !== 'nan' && pr.author !== 'None').map(pr => pr.author)).size;
         const categoriesTouched = sortedCats.length;
-        
+
         let validMergeTimes = release.prs.map(pr => pr.merge_time_days).filter(d => d !== undefined && d !== null);
         const avgMergeTime = validMergeTimes.length > 0 ? Math.round(validMergeTimes.reduce((a, b) => a + b, 0) / validMergeTimes.length) : '-';
 
@@ -255,7 +252,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 600; margin-bottom: 10px;">
                     <i class="fas fa-users" style="margin-right: 6px; opacity: 0.7;"></i>Contributors
                 </div>
-                <div style="font-size: 2.5em; font-weight: bold; color: var(--text-primary); margin: 5px 0; line-height: 1;">${uniqueContributors}</div>
+                <div style="font-size: 2.5em; font-weight: bold; color: var(--text-primary); margin: 5px 0 2px 0; line-height: 1;">${uniqueContributors}</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary); opacity: 0.8; margin-top: 5px;">(in featured PRs)</div>
             </div>
             <div style="padding: 20px; text-align: center; flex: 1;">
                 <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 600; margin-bottom: 10px;">
@@ -276,7 +274,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const authorCounts = {};
         const authorUUIDs = {};
-        
+
         release.prs.forEach(pr => {
             const author = pr.author;
             if (author && author !== 'nan' && author !== 'None') {
@@ -298,7 +296,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const uuid = authorUUIDs[author];
             const url = uuid ? `https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${uuid}` : `https://github.com/${author}`;
             const isActive = activeAuthorFilter === author;
-            
+
             return `
                 <div style="display: flex; align-items: center; gap: 4px;">
                     <button class="contributor-badge ${isActive ? 'active' : ''}" data-author="${author}" style="cursor: pointer; border: ${isActive ? '1px solid var(--accent)' : '1px solid rgba(255,255,255,0.1)'}; background: ${isActive ? 'rgba(247, 147, 26, 0.1)' : ''}">
@@ -311,7 +309,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
         }).join('');
-        
+
         // Add event listeners to the new buttons
         const buttons = list.querySelectorAll('button.contributor-badge');
         buttons.forEach(btn => {
@@ -326,13 +324,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 renderReleaseContent(release);
             });
         });
-        
+
         container.style.display = 'block';
     }
 
     function renderFilters(categories, release) {
         filterContainerEl.innerHTML = '';
-        
+
         const allBtn = document.createElement('button');
         allBtn.className = `filter-pill ${activeFilter === 'All' ? 'active' : ''}`;
         allBtn.textContent = `All (${release.prs.length})`;
@@ -362,15 +360,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderPRs(prs) {
         listContainerEl.innerHTML = '';
-        
+
         const filteredPRs = prs.filter(pr => {
             const matchesFilter = activeFilter === 'All' || (pr.impact_category || 'Maintenance & Tech Debt') === activeFilter;
             if (!matchesFilter) return false;
-            
+
             if (activeAuthorFilter && pr.author !== activeAuthorFilter) {
                 return false;
             }
-            
+
             if (searchQuery) {
                 const searchTarget = `${pr.pr} ${pr.title || ''} ${pr.author || ''} ${pr.author_name || ''} ${pr.public_summary || ''}`.toLowerCase();
                 if (!searchTarget.includes(searchQuery)) return false;
@@ -386,7 +384,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const pubSummary = pr.public_summary || pr.description || "No public summary provided.";
             const techSummary = pr.technical_summary || "";
             const prTitle = pr.title || pubSummary; // Fallback to pubSummary if no title
-            
+
             let catTags = '';
             if (pr.categories) {
                 pr.categories.forEach(c => {
@@ -397,11 +395,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Create PR Item Container
             const prItem = document.createElement('div');
             prItem.className = 'pr-item';
-            
+
             // Meta Tags (Author & Merge Time)
             let metaTags = '';
             let authorBlock = '';
-            
+
             if (pr.author && pr.author !== 'nan' && pr.author !== 'None') {
                 if (pr.author_uuid) {
                     authorBlock = `(by <a href="https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${pr.author_uuid}" target="_blank" class="pr-meta-author-link">@${pr.author}</a>)`;
@@ -447,22 +445,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (techSummary && techSummary.trim() !== "" && techSummary !== "Technical details pending.") {
                 const detailsContainer = document.createElement('div');
                 detailsContainer.className = 'pr-details-container';
-                
+
                 const toggleBtn = document.createElement('button');
                 toggleBtn.className = 'pr-details-toggle';
                 toggleBtn.setAttribute('aria-expanded', 'false');
                 toggleBtn.innerHTML = `<i class="fas fa-chevron-down"></i> Technical Details`;
-                
+
                 const techContent = document.createElement('div');
                 techContent.className = 'pr-technical-content';
                 techContent.textContent = techSummary;
-                
+
                 toggleBtn.addEventListener('click', () => {
                     const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
                     toggleBtn.setAttribute('aria-expanded', !isExpanded);
                     techContent.classList.toggle('open');
                 });
-                
+
                 detailsContainer.appendChild(toggleBtn);
                 detailsContainer.appendChild(techContent);
                 prItem.appendChild(detailsContainer);
@@ -472,22 +470,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         listContainerEl.appendChild(denseList);
-        
+
         if (filteredPRs.length > renderLimit) {
             const loadMoreContainer = document.createElement('div');
             loadMoreContainer.className = 'load-more-container';
             loadMoreContainer.style.textAlign = 'center';
             loadMoreContainer.style.marginTop = '24px';
-            
+
             const loadMoreBtn = document.createElement('button');
             loadMoreBtn.className = 'load-more-btn';
             loadMoreBtn.textContent = `Load More (${filteredPRs.length - renderLimit} remaining)`;
-            
+
             loadMoreBtn.addEventListener('click', () => {
                 renderLimit += 15;
                 renderPRs(prs);
             });
-            
+
             loadMoreContainer.appendChild(loadMoreBtn);
             listContainerEl.appendChild(loadMoreContainer);
         }

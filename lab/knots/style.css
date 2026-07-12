@@ -1,0 +1,154 @@
+/* Additional overrides specifically for the lab/knots page */
+
+.hero-scorecard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.kpi-card {
+    padding: 20px;
+    text-align: center;
+}
+
+.kpi-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.kpi-value {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.kpi-sub {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.metric-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+}
+
+.metric-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+}
+
+.metric-value {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+}
+
+/* Provenance Table */
+#table-provenance th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#table-provenance td {
+    font-size: 0.88rem;
+}
+
+#table-provenance tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Ghost row hover override - make ghosts more visible on hover */
+#table-provenance tr:hover {
+    opacity: 1 !important;
+}
+
+/* Upstream Gallery */
+.upstream-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.upstream-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 20px 12px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.upstream-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(99, 110, 114, 0.4);
+}
+
+.upstream-card .upstream-emoji {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    opacity: 0.7;
+}
+
+.upstream-card .upstream-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.upstream-card .upstream-stats {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.upstream-card .upstream-stats strong {
+    color: #636e72;
+}
+
+/* Scrollbar Styling for Dark Theme Tables */
+.table-wrapper::-webkit-scrollbar,
+div[style*="overflow-y: auto"]::-webkit-scrollbar,
+div[style*="overflow-x: auto"]::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+.table-wrapper::-webkit-scrollbar-track,
+div[style*="overflow-y: auto"]::-webkit-scrollbar-track,
+div[style*="overflow-x: auto"]::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2); 
+    border-radius: 4px;
+}
+.table-wrapper::-webkit-scrollbar-thumb,
+div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb,
+div[style*="overflow-x: auto"]::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15); 
+    border-radius: 4px;
+}
+.table-wrapper::-webkit-scrollbar-thumb:hover,
+div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb:hover,
+div[style*="overflow-x: auto"]::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25); 
+}
