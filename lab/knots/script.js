@@ -1,6 +1,11 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const response = await fetch('../../output/lab/knots_comparison.json');
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const dataUrl = isLocal 
+            ? '../../output/lab/knots_comparison.json' 
+            : 'https://raw.githubusercontent.com/sorukumar/orange-dev-data/main/output/lab/knots_comparison.json';
+            
+        const response = await fetch(dataUrl);
         if (!response.ok) throw new Error('Failed to load JSON');
         const data = await response.json();
         
