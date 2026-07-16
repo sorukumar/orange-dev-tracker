@@ -184,7 +184,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         let summaryText = release.release_summary || release.summary || `A curated log of high-impact features shipped in Bitcoin Core ${release.version}.`;
-        summaryEl.innerHTML = `${summaryText} <a href="https://github.com/bitcoin/bitcoin/releases/tag/v${release.version}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9em; margin-left: 8px; white-space: nowrap;">Read official release notes <i class="fas fa-external-link-alt" style="font-size: 0.8em; margin-left: 2px;"></i></a>`;
+        let releaseNotesLink = release.status === 'upcoming' 
+            ? 'https://github.com/bitcoin/bitcoin/tree/master/doc/release-notes' 
+            : `https://github.com/bitcoin/bitcoin/releases/tag/v${release.version}`;
+        summaryEl.innerHTML = `${summaryText} <a href="${releaseNotesLink}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9em; margin-left: 8px; white-space: nowrap;">Read official release notes <i class="fas fa-external-link-alt" style="font-size: 0.8em; margin-left: 2px;"></i></a>`;
 
         if (release.highlights && release.highlights.length > 0) {
             if (highlightsContainerEl) highlightsContainerEl.style.display = 'block';
