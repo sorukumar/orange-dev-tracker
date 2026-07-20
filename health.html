@@ -232,53 +232,23 @@
         <section id="regional-evolution" class="story-section">
             <div class="card">
                 <h2>Global Contributor Evolution</h2>
-                <p class="narrative">Bitcoin's recruitment is shifting geographical gears. Over the last decade, we've
-                    moved from a
-                    predominantly North American and European base to a truly global professionalized workforce.</p>
+                <p class="narrative">Measures the expansion of Bitcoin's broader ecosystem, tracking the first recorded activity of all participants across code, research, peer review, and testing.</p>
 
                 <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-top: 20px;">
-                    <div style="flex: 2; min-width: 300px;">
-                        <h4 style="margin-bottom: 10px; color: inherit; font-size: 14px;">
-                            <i class="fas fa-chart-area" style="margin-right: 8px; opacity: 0.7;"></i>
-                            Recruitment Velocity by Region <span class="partial-year-badge">2026 Partial</span>
-                        </h4>
-                        <div id="chart-regional-evolution" style="height: 400px; width: 100%;"></div>
-                    </div>
-                    <div
-                        style="flex: 1; min-width: 300px; display: flex; flex-direction: column; justify-content: center;">
-                        <div
-                            style="background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                            <h4 style="margin-top: 0; color: var(--color-primary); font-size: 1.1rem;">The Multi-Polar
-                                Workforce</h4>
-                            <p style="font-size: 14px; line-height: 1.6; color: var(--color-text-secondary);">
-                                While "Western Hubs" remain the primary recruitment engine, the **geopolitical
-                                footprint** of Bitcoin's code is expanding.
-                            </p>
-                            <p
-                                style="font-size: 14px; line-height: 1.6; color: var(--color-text-secondary); margin-top: 10px;">
-                                We are seeing a notable surge in **Asia Pacific** participation, while regions like
-                                **Africa** have established a consistent yearly footprint for the first time.
-                            </p>
-                            <p
-                                style="font-size: 11px; color: var(--color-text-light); margin-top: 15px; font-style: italic; opacity: 0.8;">
-                                Note: "Undisclosed" data (~65% of contributors) reflects the project's cypherpunk roots
-                                and the cultural value of pseudonymity.
-                            </p>
-                            <div
-                                style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed var(--border-color);">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                    <span style="font-size: 13px; color: var(--color-text-secondary);">Growth Hub</span>
-                                    <span style="font-size: 13px; font-weight: 600;">Asia Pacific</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span style="font-size: 13px; color: var(--color-text-secondary);">Recruitment
-                                        Velocity</span>
-                                    <span
-                                        style="font-size: 13px; font-weight: 600; color: var(--color-success);">Expanding
-                                        +2x YoY</span>
-                                </div>
+                    <div style="flex: 1; width: 100%; display: flex; flex-direction: column;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="margin-bottom: 10px; color: inherit; font-size: 14px;">
+                                    <i class="fas fa-chart-area" style="margin-right: 8px; opacity: 0.7;"></i>
+                                    Global Ecosystem Expansion <span id="badge-regional-partial" class="partial-year-badge" style="display: none;">2026 Partial</span>
+                                </h4>
+                            </div>
+                            <div class="window-toggle" style="margin: 0;">
+                                <button id="btn-regional-year-full" class="window-btn active">Full Years</button>
+                                <button id="btn-regional-year-ytd" class="window-btn">YTD 2026</button>
                             </div>
                         </div>
+                        <div id="chart-regional-evolution" style="height: 400px; width: 100%;"></div>
                     </div>
                 </div>
             </div>

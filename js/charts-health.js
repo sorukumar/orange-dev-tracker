@@ -165,25 +165,86 @@ async function loadEmergingRegions() {
     } catch (e) { }
 }
 
+let regionalData = null;
+let currentRegionalYearView = 'full';
+
 async function loadRegionalEvolution() {
     try {
         const response = await fetch(DATA_PATH_PREFIX + 'output/tracker/stats_regional_evolution.json');
         if (!response.ok) return;
-        const data = await response.json();
-        const chart = echarts.init(document.getElementById('chart-regional-evolution'));
+        regionalData = await response.json();
+        setupRegionalYearToggles();
+        renderRegionalEvolution();
+    } catch (e) {
+        console.error("Regional Evolution Error:", e);
+    }
+}
 
-        // Vibrant for emerging, subtle for established
-        const regionColors = {
-            'Africa': GHIBLI_PALETTE[4],           // Salmon/Orange
-            'Latin America': GHIBLI_PALETTE[2],    // Green
-            'Asia Pacific': GHIBLI_PALETTE[6],     // Blue
-            'North America': '#718096',            // Slate
-            'Europe': '#A0AEC0',                   // Grey-Blue
-            'Undisclosed': '#CBD5E0'               // Clearly visible grey
-        };
+function setupRegionalYearToggles() {
+    const btnFull = document.getElementById('btn-regional-year-full');
+    const btnYtd = document.getElementById('btn-regional-year-ytd');
 
-        chart.setOption({
-            backgroundColor: 'transparent',
+    if (!btnFull || !btnYtd) return;
+
+    const updateUI = (view) => {
+        [btnFull, btnYtd].forEach(btn => btn.classList.remove('active'));
+        const activeBtn = view === 'full' ? btnFull : btnYtd;
+        activeBtn.classList.add('active');
+
+        const badge = document.getElementById('badge-regional-partial');
+        if (badge) {
+            badge.style.display = view === 'ytd' ? 'inline-block' : 'none';
+        }
+    };
+
+    btnFull.addEventListener('click', () => {
+        if (currentRegionalYearView === 'full') return;
+        currentRegionalYearView = 'full';
+        updateUI('full');
+        renderRegionalEvolution();
+    });
+
+    btnYtd.addEventListener('click', () => {
+        if (currentRegionalYearView === 'ytd') return;
+        currentRegionalYearView = 'ytd';
+        updateUI('ytd');
+        renderRegionalEvolution();
+    });
+}
+
+function renderRegionalEvolution() {
+    if (!charts.regionalEvolution || !regionalData) {
+        if (!charts.regionalEvolution) {
+            charts.regionalEvolution = echarts.init(document.getElementById('chart-regional-evolution'));
+        } else {
+            return;
+        }
+    }
+    
+    let filteredX = regionalData.xAxis;
+    let filteredSeries = regionalData.series;
+
+    if (currentRegionalYearView === 'full') {
+        const validIndices = filteredX.map((x, i) => x.startsWith('2026') ? -1 : i).filter(i => i !== -1);
+        filteredX = validIndices.map(i => filteredX[i]);
+        filteredSeries = filteredSeries.map(s => ({
+            ...s,
+            data: validIndices.map(i => s.data[i])
+        }));
+    }
+
+    // Vibrant for emerging, subtle for established
+    const regionColors = {
+        'Africa': GHIBLI_PALETTE[4],           // Salmon/Orange
+        'Latin America': GHIBLI_PALETTE[2],    // Green
+        'Asia Pacific': GHIBLI_PALETTE[6],     // Blue
+        'North America': '#718096',            // Slate
+        'Europe': '#A0AEC0',                   // Grey-Blue
+        'Undisclosed': '#CBD5E0'               // Clearly visible grey
+    };
+
+    charts.regionalEvolution.setOption({
+        backgroundColor: 'transparent',
             tooltip: {
                 ...tooltipStyle,
                 trigger: 'axis',
@@ -192,7 +253,7 @@ async function loadRegionalEvolution() {
                     let total = 0;
                     params.forEach(p => total += p.value);
                     let html = `<div style="margin-bottom:8px; border-bottom:1px solid #eee; padding-bottom:4px;"><b>Cohort Year: ${params[0].axisValue}</b></div>`;
-                    html += `<div style="font-size:11px; color:#718096; margin-bottom:8px;">Total New Devs: <b>${total}</b></div>`;
+                    html += `<div style="font-size:11px; color:#718096; margin-bottom:8px;">Total New Participants: <b>${total}</b></div>`;
 
                     // Sort by value to show largest contributors at top of tooltip
                     const sorted = [...params].sort((a, b) => b.value - a.value);
@@ -223,19 +284,19 @@ async function loadRegionalEvolution() {
                 containLabel: true
             },
             xAxis: {
-                ...axisStyle,
-                type: 'category',
-                boundaryGap: false,
-                data: data.xAxis
-            },
+            ...axisStyle,
+            type: 'category',
+            boundaryGap: false,
+            data: filteredX.map(x => x === '2026' ? '2026 (Partial)' : x)
+        },
             yAxis: {
-                ...axisStyle,
-                type: 'value',
-                name: 'New Devs',
-                splitLine: { show: true, lineStyle: { type: 'dashed', opacity: 0.1 } }
-            },
-            series: data.series.map(s => ({
-                ...s,
+            ...axisStyle,
+            type: 'value',
+            name: 'New Participants',
+            splitLine: { show: true, lineStyle: { type: 'dashed', opacity: 0.1 } }
+        },
+        series: filteredSeries.map(s => ({
+            ...s,
                 type: 'line',
                 stack: 'total',
                 smooth: true,
@@ -248,8 +309,6 @@ async function loadRegionalEvolution() {
                 emphasis: { focus: 'series' }
             }))
         });
-        charts.regionalEvolution = chart;
-    } catch (e) { }
 }
 
 /**
