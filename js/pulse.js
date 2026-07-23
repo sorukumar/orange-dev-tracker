@@ -241,7 +241,7 @@ function renderTopVoices(voices) {
     }
 
     el.innerHTML = voices.map((v, i) => `
-        <a href="https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${encodeURIComponent(v.uuid)}" target="_blank" class="voice-row" style="text-decoration: none;">
+        <a href="https://network.bitcoindatalabs.org/profile.html?uuid=${encodeURIComponent(v.uuid)}" target="_blank" class="voice-row" style="text-decoration: none;">
             <span class="voice-rank">${i + 1}</span>
             <span class="voice-name" style="color: var(--text-primary); text-decoration: none;">${escHtml(v.name)}</span>
             <span class="voice-posts">${v.posts} post${v.posts === 1 ? '' : 's'}</span>

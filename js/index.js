@@ -222,7 +222,7 @@ function renderRecentBipsWidget(snapshot, windowKey = '30d') {
         const title = escHtml(item.title || `BIP ${bipId}`);
         const author = escHtml(item.primary_author || 'Unknown');
         const authorLink = item.primary_author_uuid
-            ? `https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${encodeURIComponent(item.primary_author_uuid)}`
+            ? `https://network.bitcoindatalabs.org/profile.html?uuid=${encodeURIComponent(item.primary_author_uuid)}`
             : null;
         const authorHtml = authorLink
             ? `<a class="bip-link" href="${authorLink}" target="_blank" rel="noopener noreferrer">${author}</a>`
@@ -316,7 +316,7 @@ function renderSpotlightWidget(stats, windowKey = '30d') {
 
         let nameHtml = `<div style="color: var(--text-primary); font-weight: 700;">${name}</div>`;
         if (uuid && uuid !== 'nan' && uuid !== 'None') {
-            const profileLink = `https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${encodeURIComponent(uuid)}`;
+            const profileLink = `https://network.bitcoindatalabs.org/profile.html?uuid=${encodeURIComponent(uuid)}`;
             nameHtml = `<a class="reviewer-link" href="${profileLink}" target="_blank" rel="noopener noreferrer" style="color: var(--text-primary); font-weight: 700; text-decoration: none;">${name}</a>`;
         }
         

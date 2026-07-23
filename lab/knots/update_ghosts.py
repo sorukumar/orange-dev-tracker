@@ -22,7 +22,7 @@ old_populate = """function populateGhostGallery(overlapData) {
 
     gallery.innerHTML = ghosts.map(dev => {
         const profileLink = dev.has_profile
-            ? `<a href="https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${dev.uuid}" target="_blank" style="color: var(--text-primary); text-decoration: none;">${dev.name}</a>`
+            ? `<a href="https://network.bitcoindatalabs.org/profile.html?uuid=${dev.uuid}" target="_blank" style="color: var(--text-primary); text-decoration: none;">${dev.name}</a>`
             : dev.name;
         return `
             <div class="ghost-card">
@@ -52,7 +52,7 @@ new_populate = """function populateGhostGallery(overlapData) {
     }
 
     gallery.innerHTML = ghosts.map(dev => {
-        const profileUrl = dev.has_profile ? `https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${dev.uuid}` : '#';
+        const profileUrl = dev.has_profile ? `https://network.bitcoindatalabs.org/profile.html?uuid=${dev.uuid}` : '#';
         const avatarUrl = dev.github ? `https://github.com/${dev.github}.png` : `https://github.com/identicon/${dev.uuid}.png`;
         
         let commitsHtml = '';

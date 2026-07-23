@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         list.innerHTML = topAuthors.map(author => {
             const count = authorCounts[author];
             const uuid = authorUUIDs[author];
-            const url = uuid ? `https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${uuid}` : `https://github.com/${author}`;
+            const url = uuid ? `https://network.bitcoindatalabs.org/profile.html?uuid=${uuid}` : `https://github.com/${author}`;
             const isActive = activeAuthorFilter === author;
 
             return `
@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (pr.author && pr.author !== 'nan' && pr.author !== 'None') {
                 if (pr.author_uuid) {
-                    authorBlock = `(by <a href="https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${pr.author_uuid}" target="_blank" class="pr-meta-author-link">@${pr.author}</a>)`;
+                    authorBlock = `(by <a href="https://network.bitcoindatalabs.org/profile.html?uuid=${pr.author_uuid}" target="_blank" class="pr-meta-author-link">@${pr.author}</a>)`;
                 } else {
                     authorBlock = `(by <a href="https://github.com/${pr.author}" target="_blank" class="pr-meta-author-link">@${pr.author}</a>)`;
                 }

@@ -130,7 +130,7 @@ function populateUpstreamGallery(overlapData) {
     }
 
     gallery.innerHTML = ghosts.map(dev => {
-        const profileUrl = dev.has_profile ? `https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${dev.uuid}` : '#';
+        const profileUrl = dev.has_profile ? `https://network.bitcoindatalabs.org/profile.html?uuid=${dev.uuid}` : '#';
         const avatarUrl = dev.github ? `https://github.com/${dev.github}.png` : `https://github.com/identicon/${dev.uuid}.png`;
         
         let commitsHtml = '';
@@ -856,7 +856,7 @@ function renderProvenanceTable() {
 
         const badge = badgeMap[row.provenance] || badgeMap['ghost'];
         const nameHtml = row.has_profile 
-            ? `<a href="https://sorukumar.github.io/orange-dev-network/profile.html?uuid=${row.uuid}" target="_blank" style="color: var(--primary); text-decoration: underline; text-underline-offset: 2px;">${row.name}</a>`
+            ? `<a href="https://network.bitcoindatalabs.org/profile.html?uuid=${row.uuid}" target="_blank" style="color: var(--primary); text-decoration: underline; text-underline-offset: 2px;">${row.name}</a>`
             : `<span style="color: var(--text-primary)">${row.name}</span>`;
 
         tr.innerHTML = `

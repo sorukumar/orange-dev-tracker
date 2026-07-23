@@ -1,6 +1,6 @@
 # 🍊 Orange Dev Tracker | Analyzing the DNA of Bitcoin Core
 
-**[Enter the Tracker Dashboard](https://sorukumar.github.io/orange-dev-tracker/)**
+**[Enter the Tracker Dashboard](https://tracker.bitcoindatalabs.org/)**
 
 A high-fidelity analytical platform providing deep insights into the architectural evolution and human dynamics of the Bitcoin Core repository.
 
