@@ -176,37 +176,65 @@ function renderHotThreads(threads, sourceFilter) {
         ? threads.filter(t => t.source === sourceFilter)
         : threads;
 
-    if (filtered.length === 0) {
+    const toRender = filtered.slice(0, 8);
+
+    if (toRender.length === 0) {
         const label = sourceFilter === 'delving' ? 'Delving Bitcoin' : sourceFilter === 'mailing_list' ? 'the mailing list' : 'this window';
         el.innerHTML = `<p style="color: var(--text-secondary); font-size: 14px;">No active threads from ${label} in this window.</p>`;
         return;
     }
 
-    el.innerHTML = filtered.map(t => {
+    el.innerHTML = toRender.map(t => {
         const hasLink = t.link && t.link.trim();
-        const tag = hasLink ? 'a' : 'div';
-        const linkAttr = hasLink ? `href="${escHtml(t.link)}" target="_blank" rel="noopener noreferrer"` : '';
         const sourceClass = `source-${(t.source || '').replace(' ', '_')}`;
         const sourceLabel = t.source === 'delving' ? 'Delving' : 'Mailing List';
         const lastPost = t.last_post ? formatDate(t.last_post) : '';
+        
+        const subjectHtml = hasLink ? `<a href="${escHtml(t.link)}" target="_blank" style="color: inherit; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${escHtml(t.subject)}</a>` : escHtml(t.subject);
+
+        let authorName = t.author || '';
+        authorName = authorName.replace(/'? via Bitcoin Development Mailing List'?/gi, '').replace(/'/g, '').trim();
+
+        let authorHtml = '';
+        if (authorName && authorName !== 'nan' && authorName !== 'None') {
+            if (t.author_uuid && t.author_uuid !== 'nan' && t.author_uuid !== 'None') {
+                authorHtml = `<a href="https://network.bitcoindatalabs.org/profile.html?uuid=${escHtml(t.author_uuid)}" target="_blank" style="color: inherit; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='inherit'">@${escHtml(authorName)}</a>`;
+            } else {
+                authorHtml = `@${escHtml(authorName)}`;
+            }
+        }
+        
+        const prefix = t.is_original_author === false ? 'Discussion led by' : 'By';
+        
+        const authorLine = authorHtml 
+            ? `<div style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-top: -2px; margin-bottom: 12px;">${prefix} ${authorHtml}</div>` 
+            : '';
 
         return `
-            <${tag} class="thread-card" ${linkAttr}>
-                <div class="thread-card-top">
-                    <span class="thread-subject">${escHtml(t.subject)}</span>
+            <div class="thread-card">
+                <div class="thread-card-top" style="margin-bottom: 4px;">
+                    <span class="thread-subject">${subjectHtml}</span>
                     <div class="thread-badges">
                         <span class="category-badge">${escHtml(t.label)}</span>
                         <span class="source-badge ${sourceClass}">${sourceLabel}</span>
                     </div>
                 </div>
-                ${t.insight ? `<div class="thread-insight">${escHtml(t.insight)}</div>` : ''}
-                ${t.snippet ? `<div class="thread-snippet">${escHtml(t.snippet)}</div>` : ''}
+                ${authorLine}
+                <div class="thread-description" style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">
+                    ${t.summary ? escHtml(t.summary) : (t.insight ? `<em>${escHtml(t.insight)}</em>` : (t.snippet ? escHtml(t.snippet) : ''))}
+                </div>
+                ${t.technical_summary ? `
+                <details class="thread-tech-details">
+                    <summary>Technical Details</summary>
+                    <div class="tech-details-content">${escHtml(t.technical_summary)}</div>
+                </details>
+                ` : ''}
                 <div class="thread-footer">
                     <span class="thread-footer-stat"><i class="fas fa-reply"></i> ${t.reply_count} repl${t.reply_count === 1 ? 'y' : 'ies'}</span>
                     <span class="thread-footer-stat"><i class="fas fa-users"></i> ${t.unique_authors} voice${t.unique_authors === 1 ? '' : 's'}</span>
                     ${lastPost ? `<span class="thread-footer-stat"><i class="far fa-clock"></i> ${lastPost}</span>` : ''}
                 </div>
-            </${tag}>
+            </div>
         `;
     }).join('');
 }

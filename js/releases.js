@@ -379,6 +379,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             return true;
         });
 
+        filteredPRs.sort((a, b) => (b.review_count || 0) - (a.review_count || 0));
+
         const denseList = document.createElement('div');
         denseList.className = 'pr-dense-list';
 
@@ -386,7 +388,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const prNum = pr.pr.replace('#', '');
             const pubSummary = pr.public_summary || pr.description || "No public summary provided.";
             const techSummary = pr.technical_summary || "";
-            const prTitle = pr.title || pubSummary; // Fallback to pubSummary if no title
+            const prTitle = pr.title || ""; // No fallback to pubSummary
 
             let catTags = '';
             if (pr.categories) {
@@ -399,49 +401,64 @@ document.addEventListener('DOMContentLoaded', async () => {
             const prItem = document.createElement('div');
             prItem.className = 'pr-item';
 
-            // Meta Tags (Author & Merge Time)
+            // Meta tags (fast/slow, review_count, author)
             let metaTags = '';
             let authorBlock = '';
 
             if (pr.author && pr.author !== 'nan' && pr.author !== 'None') {
                 if (pr.author_uuid) {
-                    authorBlock = `(by <a href="https://network.bitcoindatalabs.org/profile.html?uuid=${pr.author_uuid}" target="_blank" class="pr-meta-author-link">@${pr.author}</a>)`;
+                    authorBlock = `<span class="pr-title-author">(by <a href="https://network.bitcoindatalabs.org/profile.html?uuid=${pr.author_uuid}" target="_blank" class="pr-meta-author-link">@${pr.author}</a>)</span>`;
                 } else {
-                    authorBlock = `(by <a href="https://github.com/${pr.author}" target="_blank" class="pr-meta-author-link">@${pr.author}</a>)`;
+                    authorBlock = `<span class="pr-title-author">(by <a href="https://github.com/${pr.author}" target="_blank" class="pr-meta-author-link">@${pr.author}</a>)</span>`;
                 }
             }
 
-            if (pr.merge_time_days !== undefined && pr.merge_time_days !== null) {
-                const speedClass = pr.merge_time_days < 5 ? 'fast' : (pr.merge_time_days > 45 ? 'slow' : 'normal');
-                metaTags += `<span class="pr-meta-tag ${speedClass}"><i class="fas fa-clock" style="font-size: 0.75rem; margin-right: 3px;"></i>${pr.merge_time_days} days in review</span>`;
+            if (pr.days_in_review !== undefined && pr.days_in_review !== null) {
+                const speedClass = pr.days_in_review < 30 ? 'fast' : (pr.days_in_review > 180 ? 'slow' : 'normal');
+                if (speedClass !== 'normal') {
+                    metaTags += `<span class="pr-meta-tag ${speedClass}"><i class="far fa-clock" style="font-size: 0.75rem; margin-right: 3px;"></i>${pr.days_in_review} days in review</span>`;
+                } else {
+                    metaTags += `<span class="pr-meta-tag" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); border-color: rgba(255,255,255,0.1);"><i class="far fa-clock" style="font-size: 0.75rem; margin-right: 3px;"></i>${pr.days_in_review} days in review</span>`;
+                }
+            }
+            
+            if (pr.review_count !== undefined && pr.review_count > 0) {
+                metaTags += `<span class="pr-meta-tag" style="background: rgba(247, 147, 26, 0.1); border-color: rgba(247, 147, 26, 0.3); color: var(--accent);"><i class="fas fa-comments" style="font-size: 0.75rem; margin-right: 3px;"></i>${pr.review_count} review comments</span>`;
             }
 
+            const titleHTML = prTitle ? `<span class="pr-title-text">${prTitle}</span>` : '';
+
             // Header Row (PR Number, Title, Tags)
-            const headerRow = document.createElement('div');
-            headerRow.className = 'pr-header-row';
-            headerRow.innerHTML = `
-                <div class="pr-title-container">
-                    <div class="pr-title-topline">
-                        <a href="https://github.com/bitcoin/bitcoin/pull/${prNum}" target="_blank" class="pr-number-link">[#${prNum}]</a>
-                        ${authorBlock ? `<span class="pr-title-author">${authorBlock}</span>` : ''}
-                        ${metaTags ? `<span class="pr-meta-group">${metaTags}</span>` : ''}
+            let headerHTML = `
+                <div class="pr-header-row">
+                    <div class="pr-title-container">
+                        <div class="pr-title-topline">
+                            <a href="https://github.com/bitcoin/bitcoin/pull/${prNum}" target="_blank" class="pr-number-link">[#${prNum}]</a>
+                            ${authorBlock}
+                            <div class="pr-meta-group">
+                                ${metaTags}
+                            </div>
+                        </div>
+                        ${titleHTML}
                     </div>
-                    <span class="pr-title-text">${prTitle}</span>
-                </div>
-                <div class="pr-cat-tags-container">
-                    ${catTags}
+                    <div class="pr-cat-tags-container">
+                        ${catTags}
+                    </div>
                 </div>
             `;
-            prItem.appendChild(headerRow);
+            prItem.innerHTML = headerHTML;
 
-            // Public Summary (only if it differs from the title, or if we have one)
-            if (pubSummary && pubSummary !== prTitle) {
+            // Public Summary (always render if it exists)
+            if (pubSummary) {
                 const summaryP = document.createElement('p');
                 summaryP.className = 'pr-public-summary';
                 summaryP.textContent = pubSummary;
+                // Add a slightly larger font size since it's acting as the main description when title is missing
+                if (!prTitle) {
+                    summaryP.style.fontSize = '14px';
+                    summaryP.style.color = 'var(--text-primary)';
+                }
                 prItem.appendChild(summaryP);
-            } else if (prTitle === pubSummary) {
-                // If title and pubsummary are the same (e.g. old data), we just show it as title
             }
 
             // Technical Details Toggle
