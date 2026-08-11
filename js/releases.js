@@ -185,9 +185,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let summaryText = release.release_summary || release.summary || `A curated log of high-impact features shipped in Bitcoin Core ${release.version}.`;
         let releaseNotesLink = release.status === 'upcoming' 
-            ? 'https://github.com/bitcoin/bitcoin/tree/master/doc/release-notes' 
+            ? 'https://github.com/bitcoin/bitcoin/milestones' 
             : `https://github.com/bitcoin/bitcoin/releases/tag/v${release.version}`;
-        summaryEl.innerHTML = `${summaryText} <a href="${releaseNotesLink}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9em; margin-left: 8px; white-space: nowrap;">Read official release notes <i class="fas fa-external-link-alt" style="font-size: 0.8em; margin-left: 2px;"></i></a>`;
+        let linkText = release.status === 'upcoming' ? 'View active milestones' : 'Read official release notes';
+            
+        let progressHtml = '';
+        if (release.status === 'upcoming' && release.milestone_progress) {
+            const openPRs = release.milestone_progress.open_prs || 0;
+            const closedPRs = release.milestone_progress.closed_prs || 0;
+            const totalPRs = openPRs + closedPRs;
+            const percent = totalPRs > 0 ? Math.round((closedPRs / totalPRs) * 100) : 0;
+            
+            progressHtml = `
+            <div style="margin-top: 15px; margin-bottom: 5px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; color: var(--text-secondary); font-weight: 600;">
+                    <span>Milestone Progress</span>
+                    <span>${percent}% Complete (${openPRs} Open / ${closedPRs} Closed)</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                    <div style="width: ${percent}%; height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s ease;"></div>
+                </div>
+            </div>`;
+        }
+            
+        summaryEl.innerHTML = `${progressHtml} <div style="margin-top: 12px;">${summaryText} <a href="${releaseNotesLink}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9em; margin-left: 8px; white-space: nowrap;">${linkText} <i class="fas fa-external-link-alt" style="font-size: 0.8em; margin-left: 2px;"></i></a></div>`;
 
         if (release.highlights && release.highlights.length > 0) {
             if (highlightsContainerEl) highlightsContainerEl.style.display = 'block';
