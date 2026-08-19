@@ -137,7 +137,7 @@ function populateUpstreamGallery(overlapData) {
         if (dev.sample_commits && dev.sample_commits.length > 0) {
             const earliest = dev.sample_commits.slice(0, 2).map(c => `
                 <div style="margin-bottom: 6px; line-height: 1.2;">
-                    <a href="https://github.com/bitcoinknots/bitcoin/commit/${c.hash}" target="_blank" style="color: var(--primary); text-decoration: none; font-family: monospace; font-size: 0.75em; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${c.subject}">${c.subject}</a>
+                    <a href="https://github.com/bitcoinknots/bitcoin/commit/${c.hash}" target="_blank" style="color: var(--primary); text-decoration: none; font-family: var(--bdl-font-mono); font-size: 0.75em; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${c.subject}">${c.subject}</a>
                     <div style="font-size: 0.65em; color: var(--text-secondary); margin-top: 2px; text-transform: capitalize;">
                         <i class="far fa-calendar-alt" style="margin-right: 3px; opacity: 0.7;"></i>${c.author_date} <span style="margin: 0 3px; opacity: 0.3;">|</span> <i class="fas fa-tag" style="margin-right: 3px; opacity: 0.7;"></i>${(c.category || 'other').replace(/_/g, ' ')}
                     </div>

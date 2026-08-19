@@ -180,7 +180,7 @@
     padding: 8px 18px;
     border-radius: 30px;
     font-size: 0.9rem;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--bdl-font-sans);
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -446,7 +446,7 @@
     border-radius: 30px;
     font-size: 0.95rem;
     font-weight: 600;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--bdl-font-sans);
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);

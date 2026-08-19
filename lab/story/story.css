@@ -5,7 +5,6 @@
     --accent: #E8916B; /* Terracotta */
     --accent-glow: rgba(232, 145, 107, 0.3);
     
-    --font-main: 'Inter', system-ui, -apple-system, sans-serif;
     --container-max: 1200px;
 }
 
@@ -18,7 +17,7 @@
 body {
     background-color: var(--bg-color);
     color: var(--text-primary);
-    font-family: var(--font-main);
+    font-family: var(--bdl-font-sans);
     overflow-x: hidden;
     line-height: 1.6;
 }
