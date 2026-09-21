@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>State of Bitcoin Core Archive | Bitcoin Data Labs</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400;0,6..72,800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://bitcoindatalabs.org/styles/styles.css">
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/reports.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.min.js"></script>
+</head>
+
+<body class="reports-body" data-loaded="false">
+    
+    <div class="slides-container">
+        
+        <!-- Slide 1: Cover & Headline -->
+        <div class="report-slide slide-1">
+            <div class="slide-header">
+                <div class="pre-title">BITCOIN DATA LABS • MACROECONOMIC DEVELOPMENT</div>
+                <h1 class="main-title">STATE OF BITCOIN CORE</h1>
+                <div class="date-range" id="cover-date">Loading...</div>
+            </div>
+            
+            <div class="branding-dots">
+                <div class="dot orange"></div>
+                <div class="dot blue"></div>
+                <div class="dot green"></div>
+            </div>
+            
+            <div class="metrics-grid headline-metrics">
+                <div class="metric-card">
+                    <div class="metric-label">ACTIVE CONTRIBUTORS (MONTH)</div>
+                    <div class="metric-value" id="val-active-devs">--</div>
+                    <div class="metric-sub">Merged code this month</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">NEW CONTRIBUTORS (MONTH)</div>
+                    <div class="metric-value" id="val-new-devs">--</div>
+                    <div class="metric-sub">Successfully onboarded</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">TOTAL PULL REQUESTS</div>
+                    <div class="metric-value" id="val-total-prs">--</div>
+                    <div class="metric-sub">Lifetime history</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">LIFETIME CONTRIBUTORS</div>
+                    <div class="metric-value" id="val-total-devs">--</div>
+                    <div class="metric-sub">Across all subsystems</div>
+                </div>
+            </div>
+            
+            <div class="slide-footer">
+                <div>Bitcoin Core Development Health • tracker.bitcoindatalabs.org</div>
+                <div>bitcoindatalabs.org</div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Active Contributor Growth (Chart) -->
+        <div class="report-slide slide-2">
+            <div class="slide-header small">
+                <div class="pre-title">CONTRIBUTOR DYNAMICS</div>
+                <h1 class="main-title">ACTIVE CONTRIBUTOR BASE</h1>
+                <div class="date-range" id="s2-date">Loading...</div>
+            </div>
+            <div class="branding-dots"><div class="dot orange"></div><div class="dot blue"></div><div class="dot green"></div></div>
+            
+            <div class="chart-container-large">
+                <canvas id="active-devs-chart"></canvas>
+            </div>
+            
+            <div class="slide-footer">
+                <div>Monthly Active Contributors (trailing 2 years)</div>
+                <div>bitcoindatalabs.org</div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Tech Stack Distribution -->
+        <div class="report-slide slide-3">
+            <div class="slide-header small">
+                <div class="pre-title">SUBSYSTEM FOCUS</div>
+                <h1 class="main-title">DEVELOPMENT BY DOMAIN</h1>
+                <div class="date-range" id="s3-date">Loading...</div>
+            </div>
+            <div class="branding-dots"><div class="dot orange"></div><div class="dot blue"></div><div class="dot green"></div></div>
+            
+            <div class="metrics-list" id="stack-metrics">
+                <!-- Injected via JS -->
+            </div>
+            
+            <div class="slide-footer">
+                <div>Pull request distribution across protocol subsystems</div>
+                <div>bitcoindatalabs.org</div>
+            </div>
+        </div>
+        
+        <!-- Generate slides 4-10 similarly, or use JS to inject -->
+        <!-- Keeping it simple for the MVP screenshot capture by just stubbing out the divs so Playwright can find them -->
+        <div class="report-slide slide-4"><h1 class="main-title">CONTRIBUTOR RETENTION</h1><div class="slide-footer"><div>bitcoindatalabs.org</div></div></div>
+        <div class="report-slide slide-5"><h1 class="main-title">CODEBASE VOLUME</h1><div class="slide-footer"><div>bitcoindatalabs.org</div></div></div>
+        <div class="report-slide slide-6"><h1 class="main-title">REVIEW VELOCITY</h1><div class="slide-footer"><div>bitcoindatalabs.org</div></div></div>
+        <div class="report-slide slide-7"><h1 class="main-title">DECENTRALIZATION METRICS</h1><div class="slide-footer"><div>bitcoindatalabs.org</div></div></div>
+        <div class="report-slide slide-8"><h1 class="main-title">MAINTAINER LOAD</h1><div class="slide-footer"><div>bitcoindatalabs.org</div></div></div>
+        <div class="report-slide slide-9"><h1 class="main-title">GEOGRAPHIC DISTRIBUTION</h1><div class="slide-footer"><div>bitcoindatalabs.org</div></div></div>
+        <div class="report-slide slide-10">
+            <h1 class="main-title">EXPLORE THE DATA</h1>
+            <div class="chart-container-large" style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:400px; text-align:center;">
+                <p style="font-size:32px; font-family:'Newsreader'; color:#1A1D24;">Bitcoin's protocol development is transparent, open-source, and verifiable.</p>
+                <p style="font-size:24px; color:#555; margin-top:20px;">tracker.bitcoindatalabs.org</p>
+            </div>
+            <div class="slide-footer"><div>bitcoindatalabs.org</div></div>
+        </div>
+
+    </div>
+    
+    <script src="scripts/reports.js"></script>
+</body>
+</html>

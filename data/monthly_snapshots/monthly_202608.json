@@ -1,0 +1,185 @@
+{
+  "target_month": "2026-08",
+  "target_month_formatted": "August 2026",
+  "metrics": {
+    "total_contributors": 0,
+    "total_prs": 0,
+    "monthly_active_contributors": 0,
+    "monthly_new_contributors": 0
+  },
+  "raw_data": {
+    "ui": {},
+    "growth": {
+      "xAxis": [
+        "2009",
+        "2010",
+        "2011",
+        "2012",
+        "2013",
+        "2014",
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2020",
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026"
+      ],
+      "series": [
+        {
+          "name": "New Contributors",
+          "type": "bar",
+          "stack": "total",
+          "data": [
+            2,
+            3,
+            82,
+            36,
+            63,
+            123,
+            79,
+            92,
+            96,
+            123,
+            98,
+            96,
+            93,
+            64,
+            42,
+            48,
+            59,
+            69
+          ]
+        },
+        {
+          "name": "Veterans",
+          "type": "bar",
+          "stack": "total",
+          "data": [
+            0,
+            2,
+            1,
+            20,
+            23,
+            31,
+            59,
+            57,
+            64,
+            75,
+            86,
+            91,
+            94,
+            98,
+            89,
+            85,
+            82,
+            85
+          ]
+        }
+      ]
+    },
+    "stack": {
+      "data": [
+        {
+          "name": "C++",
+          "value": 371883
+        },
+        {
+          "name": "Python",
+          "value": 91394
+        },
+        {
+          "name": "C",
+          "value": 32111
+        },
+        {
+          "name": "Shell",
+          "value": 3694
+        },
+        {
+          "name": "Assembly",
+          "value": 925
+        },
+        {
+          "name": "Other",
+          "value": 499,
+          "details": "Web (499 LOC)"
+        }
+      ],
+      "metadata": {
+        "top_languages": [
+          "C++",
+          "Python",
+          "C",
+          "Shell",
+          "Assembly"
+        ]
+      }
+    },
+    "work": {
+      "data": [
+        {
+          "name": "Merge",
+          "value": 17472
+        },
+        {
+          "name": "Utilities",
+          "value": 12302
+        },
+        {
+          "name": "Tests",
+          "value": 11977
+        },
+        {
+          "name": "Build & CI",
+          "value": 7240
+        },
+        {
+          "name": "Wallet",
+          "value": 4916
+        },
+        {
+          "name": "Node & RPC",
+          "value": 4497
+        },
+        {
+          "name": "GUI",
+          "value": 3196
+        },
+        {
+          "name": "Documentation",
+          "value": 3152
+        },
+        {
+          "name": "P2P Network",
+          "value": 2890
+        },
+        {
+          "name": "Consensus",
+          "value": 2390
+        },
+        {
+          "name": "Mempool",
+          "value": 896
+        },
+        {
+          "name": "Script",
+          "value": 800
+        },
+        {
+          "name": "Cryptography",
+          "value": 176
+        },
+        {
+          "name": "Database",
+          "value": 150
+        }
+      ]
+    }
+  }
+}
