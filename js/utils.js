@@ -6,12 +6,9 @@ const DATA_PATH_PREFIX = (function () {
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
     if (isLocal) {
         if (path.includes('/lab/')) {
-            return '../../';
+            return '../../orange-dev-data/';
         }
-        return '';
-    }
-    if (path.includes('/lab/')) {
-        return '../../';
+        return '../orange-dev-data/';
     }
     return 'https://raw.githubusercontent.com/sorukumar/orange-dev-data/main/';
 })();

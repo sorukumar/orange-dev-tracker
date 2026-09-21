@@ -5,7 +5,7 @@
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 const TRACKING_URL = isLocal
-    ? 'output/tracker/tracking_issues.json'
+    ? '../orange-dev-data/output/tracker/tracking_issues.json'
     : 'https://raw.githubusercontent.com/sorukumar/orange-dev-data/main/output/tracker/tracking_issues.json';
 
 let currentProject = null;

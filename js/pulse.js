@@ -5,11 +5,11 @@
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
 const PULSE_URL = isLocal
-    ? 'output/shared/discussions_pulse.json'
+    ? '../orange-dev-data/output/shared/discussions_pulse.json'
     : 'https://raw.githubusercontent.com/sorukumar/orange-dev-data/main/output/shared/discussions_pulse.json';
 
 const ECOSYSTEM_URL = isLocal
-    ? 'output/shared/ecosystem_summary.json'
+    ? '../orange-dev-data/output/shared/ecosystem_summary.json'
     : 'https://raw.githubusercontent.com/sorukumar/orange-dev-data/main/output/shared/ecosystem_summary.json';
 
 let pulseData = null;

@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const dataUrl = isLocal 
-            ? '../../output/lab/knots_comparison.json' 
+            ? '../../orange-dev-data/output/lab/knots_comparison.json' 
             : 'https://raw.githubusercontent.com/sorukumar/orange-dev-data/main/output/lab/knots_comparison.json';
             
         const response = await fetch(dataUrl);
